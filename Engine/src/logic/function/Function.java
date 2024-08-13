@@ -1,6 +1,9 @@
 package logic.function;
+import logic.function.returnable.Returnable;
 
-public interface Function {
+public interface Function{
 
-   public String getFunctionName();;
+    String getFunctionName();
+
+    Returnable invoke();
 }
