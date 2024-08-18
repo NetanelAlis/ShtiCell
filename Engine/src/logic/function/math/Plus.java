@@ -5,6 +5,8 @@ import logic.function.returnable.Number;
 import logic.function.returnable.Returnable;
 import logic.function.BinaryFunction;
 
+
+
 public class Plus extends BinaryFunction {
 
     private final java.lang.String name = "PLUS";
@@ -29,6 +31,5 @@ public class Plus extends BinaryFunction {
     protected boolean validateArgumentsTypes(Returnable firstNumber, Returnable secondNumber){
         return firstNumber instanceof Number && secondNumber instanceof Number;
     }
-
 
 }

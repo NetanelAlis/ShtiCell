@@ -1,16 +1,8 @@
 package component;
 
-public class Sheet {
-    private String sheetName;
-    private String  xmlPath;
-    private Layout  layout;
-    private int sheetVersion;
-//    private Map<String, Cell>;
+public interface Sheet {
 
-    private class Layout {
-        private int numberOfrows;
-        private int numberOfcolumn;
-        private int rowHeight;
-        private int columnWidth;
-    }
+    int getVersion();
+    Cell getCell(int row, int col);
+    void setCell(int row, int col, String value);
 }
