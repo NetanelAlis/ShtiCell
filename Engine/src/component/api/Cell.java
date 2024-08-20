@@ -6,18 +6,12 @@ import java.util.List;
 public interface Cell {
 
     String getCellId();
-    String getOrignalValue();
-    int getRow();
-    int getCol();
+    String getOrignalValue();;
     int getVersion();
     List<Cell> getDependsOn();
     List<Cell> getInfluecningOn();
     void setOrignalValue(String value);
     Returnable getEffectiveValue();
     void createEffectiveValue();
-
-    static String createCellId(int row, int col){
-        return row + ":" + col;
-    }
 
 }

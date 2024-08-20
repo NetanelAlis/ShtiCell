@@ -2,10 +2,12 @@ package logic;
 
 import component.api.Sheet;
 import component.impl.SheetImpl;
+import dto.CellDTO;
+import dto.SheetDTO;
 
 public class EngineImpl implements Engine {
 
-    Sheet sheet = new SheetImpl();
+    private Sheet sheet = null;
 
     @Override
     public boolean loadXmlFile(String filePath) {
@@ -13,13 +15,13 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public void showSheet() {
-
+    public SheetDTO getSheetAsDTO (){
+        return new SheetDTO(this.sheet);
     }
 
     @Override
-    public void showCellData(String cellId) {
-
+    public CellDTO geCellAsDTO(String cellId){
+        return new CellDTO(this.sheet.getCell());
     }
 
     @Override

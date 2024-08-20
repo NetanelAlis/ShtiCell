@@ -1,6 +1,7 @@
 package dto;
 
 import component.api.Cell;
+import component.api.Sheet;
 import component.impl.SheetImpl;
 import logic.function.returnable.Returnable;
 import java.util.HashMap;
@@ -11,17 +12,17 @@ public class SheetDTO {
     private final SheetImpl.Layout layout;
     private final int sheetVersion;
     private final int numberOfCellsThatHaveChanged;
-    private final Map<String, Returnable> cells;
+    private final Map<String, Returnable> activeCells;
 
-    SheetDTO(String sheetName, SheetImpl.Layout layout, int sheetVersion, int numberOfCellsThatHaveChanged, Map<String, Cell> cells) {
-        this.sheetName = sheetName;
-        this.layout = layout;
-        this.sheetVersion = sheetVersion;
-        this.numberOfCellsThatHaveChanged = numberOfCellsThatHaveChanged;
-        this.cells = new HashMap<String, Returnable>();
+    public SheetDTO(Sheet sheet) {
+        this.sheetName = sheet.getName();
+        this.layout = sheet.getLayout();
+        this.sheetVersion = sheet.getVersion();
+        this.numberOfCellsThatHaveChanged = sheet.getNumberOfCellsThatHaveChanged();
+        this.activeCells = new HashMap<>();
 
-        for (Cell cell : cells.values()) {
-            this.cells.put(cell.getCellId(), cell.getEffectiveValue());
+        for (Cell cell : sheet.getSheetCells().values()) {
+            this.activeCells.put(cell.getCellId(), cell.getEffectiveValue());
         }
     }
 

@@ -1,13 +1,12 @@
 package component.api;
 
-import logic.function.returnable.NoValue;
-import logic.function.returnable.Returnable;
+import logic.function.returnable.ErrorValue;
 
 public enum CellType {
         NUMERIC(Double.class),
         STRING(String.class) ,
         BOOLEAN(Boolean.class),
-        NO_VALUE(NoValue.class);
+        NO_VALUE(ErrorValue.class);
 
         private Class<?> type;
 
@@ -18,4 +17,5 @@ public enum CellType {
         public boolean isAssignableFrom(Class<?> aType) {
             return type.isAssignableFrom(aType);
         }
+
 }

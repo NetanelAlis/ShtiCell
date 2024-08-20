@@ -18,5 +18,5 @@ public abstract class TernaryFunction implements Function {
     }
 
     abstract protected Returnable calculate(Returnable result1, Returnable result2, Returnable result3);
-    abstract protected boolean validateArgumentsTypes(Returnable result1, Returnable result2, Returnable result3);
+
 }

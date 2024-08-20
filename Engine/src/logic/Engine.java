@@ -1,9 +1,12 @@
 package logic;
 
+import dto.CellDTO;
+import dto.SheetDTO;
+
 public interface Engine {
 
     boolean loadXmlFile(String filePath);
-    void showSheet();
-    void showCellData(String cellId);
-    void updateCellData(String cellId);
+    SheetDTO getSheetAsDTO();
+    CellDTO geCellAsDTO(String cellId);
+    CellDTO updateCellData(String cellId);
 }

@@ -1,5 +1,6 @@
 package ui.menu;
 
+import dto.SheetDTO;
 import logic.Engine;
 import java.util.Scanner;
 import static java.lang.System.exit;
@@ -31,7 +32,7 @@ public enum MainMenuOption {
     SHOW_SHEET {
         @Override
         public void executeOption(Engine engine) {
-            engine.showSheet();
+            SheetDTO sheetdto = engine.showSheet();
         }
 
         @Override

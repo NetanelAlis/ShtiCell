@@ -1,8 +1,8 @@
 package logic.function.returnable;
 
-import logic.function.Function;
+import component.api.CellType;
 
-public interface Returnable extends Function {
-
-    Object getValue();
+public interface Returnable {
+    CellType getCellType();
+    <T> T tryConvertTo(Class<T> clazz);
 }

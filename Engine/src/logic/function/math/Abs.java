@@ -1,9 +1,10 @@
 package logic.function.math;
 import component.api.CellType;
 import logic.function.Function;
-import logic.function.returnable.MyNumber;
+import logic.function.returnable.ErrorValue;
 import logic.function.returnable.Returnable;
 import logic.function.UnaryFunction;
+import logic.function.returnable.ReturnableImpl;
 
 public class Abs extends UnaryFunction {
 
@@ -15,9 +16,12 @@ public class Abs extends UnaryFunction {
 
     @Override
     protected Returnable calculate(Returnable argument) {
-        return argument instanceof MyNumber ?  new MyNumber(Math.abs((double) argument.getValue())) :
-                new MyNumber(Double.NaN);
+        try {
+            return new ReturnableImpl(Math.abs(argument.tryConvertTo(Double.class)), CellType.NUMERIC);
+        } catch (ClassCastException e) {
+            return ErrorValue.NAN;
         }
+    }
 
     @Override
     public java.lang.String getFunctionName() {

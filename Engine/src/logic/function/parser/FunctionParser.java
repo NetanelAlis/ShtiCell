@@ -5,31 +5,30 @@ import logic.function.Function;
 import logic.function.math.Abs;
 import logic.function.math.Minus;
 import logic.function.math.Plus;
-import logic.function.returnable.MyBoolean;
-import logic.function.returnable.MyNumber;
-import logic.function.returnable.MyString;
 import logic.function.string.Concat;
 import logic.function.string.Sub;
+import logic.function.system.Identity;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
 public enum FunctionParser {
+
     IDENTITY {
         @Override
         public Function parse(List<java.lang.String> arguments) {
             if (arguments.size() != 1) {
                 throw new IllegalArgumentException("Invalid number of arguments for IDENTITY function. Expected 1, but got " + arguments.size());
             }
-
-            // create the relevant function instance
             java.lang.String actualValue = arguments.get(0).trim();
+
             if (isBoolean(actualValue)) {
-                return new MyBoolean(java.lang.Boolean.parseBoolean(actualValue));
+                return new Identity(actualValue,CellType.BOOLEAN);
             } else if (isNumeric(actualValue)) {
-                return new MyNumber(java.lang.Double.parseDouble(actualValue));
+                return new Identity(actualValue,CellType.NUMERIC);
             } else {
-                return new MyString(actualValue);
+                return new Identity(actualValue,CellType.STRING);
             }
         }
 

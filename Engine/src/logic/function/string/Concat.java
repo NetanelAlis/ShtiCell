@@ -1,9 +1,11 @@
 package logic.function.string;
 
+import component.api.CellType;
 import logic.function.Function;
+import logic.function.returnable.ErrorValue;
 import logic.function.returnable.Returnable;
 import logic.function.BinaryFunction;
-import logic.function.returnable.MyString;
+import logic.function.returnable.ReturnableImpl;
 
 public class Concat extends BinaryFunction {
 
@@ -14,10 +16,13 @@ public class Concat extends BinaryFunction {
     }
 
     @Override
-    protected Returnable calculate(Returnable firstNumber, Returnable secondNumber) {
-            return validateArgumentsTypes(firstNumber, secondNumber) ?
-                new MyString((java.lang.String)firstNumber.getValue() + secondNumber.getValue()) :
-                new MyString("!UNDEFINED!");
+    protected Returnable calculate(Returnable argument1, Returnable argument2){
+        try{
+            return new ReturnableImpl(argument1.tryConvertTo(String.class) + argument2.tryConvertTo(String.class), CellType.STRING);
+        }
+        catch(ClassCastException e){
+            return ErrorValue.UNDEFINED;
+        }
     }
 
     @Override
@@ -26,8 +31,8 @@ public class Concat extends BinaryFunction {
     }
 
     @Override
-    protected boolean validateArgumentsTypes(Returnable firstNumber, Returnable secondNumber){
-        return firstNumber instanceof MyString && secondNumber instanceof MyString;
+    public CellType returnType() {
+        return CellType.STRING;
     }
 
 }

@@ -7,7 +7,7 @@ import java.util.List;
 
 public class CellImpl implements Cell {
 
-    private final String cellId;
+    private final String cellID;
     int row;
     int col;
     private String orignalValue;
@@ -17,7 +17,7 @@ public class CellImpl implements Cell {
     List<Cell> influecningCells;
 
     CellImpl(int row, int col, String orignalValue, Returnable effectivealue, int version, List<Cell> dependentCells, List<Cell> influecningCells){
-        this.cellId = Cell.createCellId(row, col);
+        this.cellID = Cell.createCellId(row, col);
         this.orignalValue = orignalValue;
         this.effectiveValue = effectivealue;
         this.version = version;
@@ -26,7 +26,7 @@ public class CellImpl implements Cell {
     }
     @Override
     public String getCellId() {
-        return this.cellId;
+        return this.cellID;
     }
 
     @Override
@@ -35,18 +35,8 @@ public class CellImpl implements Cell {
     }
 
     @Override
-    public int getRow() {
-        return this.row;
-    }
-
-    @Override
-    public int getCol() {
-        return this.col;
-    }
-
-    @Override
     public int getVersion() {
-        return 0;
+        return this.version;
     }
 
     @Override

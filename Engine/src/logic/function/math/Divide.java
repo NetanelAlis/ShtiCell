@@ -2,10 +2,10 @@ package logic.function.math;
 
 import component.api.CellType;
 import logic.function.Function;
-import logic.function.parser.FunctionParser;
-import logic.function.returnable.MyNumber;
+import logic.function.returnable.ErrorValue;
 import logic.function.returnable.Returnable;
 import logic.function.BinaryFunction;
+import logic.function.returnable.ReturnableImpl;
 
 public class Divide extends BinaryFunction {
 
@@ -16,10 +16,15 @@ public class Divide extends BinaryFunction {
     }
 
     @Override
-    protected Returnable calculate(Returnable firstNumber, Returnable secondNumber) {
-        return  validateArgumentsTypes(firstNumber, secondNumber) ?
-                new MyNumber((double) firstNumber.getValue() / (double) secondNumber.getValue()) :
-                new MyNumber(Double.NaN);
+    protected Returnable calculate(Returnable argument1, Returnable argument2){
+        try{
+            return argument2.tryConvertTo(Double.class) == 0 ?
+                    ErrorValue.NAN :
+             new ReturnableImpl(argument1.tryConvertTo(Double.class) / argument2.tryConvertTo(Double.class), CellType.NUMERIC);
+        }
+            catch(ClassCastException e){
+            return ErrorValue.NAN;
+        }
     }
 
     @Override
@@ -31,11 +36,5 @@ public class Divide extends BinaryFunction {
     public CellType returnType() {
             return CellType.NUMERIC;
     }
-
-    @Override
-     protected boolean validateArgumentsTypes(Returnable firstNumber, Returnable secondNumber){
-        return firstNumber instanceof MyNumber && secondNumber instanceof MyNumber && (double)secondNumber.getValue() != 0;
-    }
-
 
 }

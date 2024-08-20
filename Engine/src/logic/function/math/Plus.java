@@ -2,11 +2,10 @@ package logic.function.math;
 
 import component.api.CellType;
 import logic.function.Function;
-import logic.function.returnable.MyNumber;
-import logic.function.returnable.NoValue;
+import logic.function.returnable.ErrorValue;
 import logic.function.returnable.Returnable;
 import logic.function.BinaryFunction;
-
+import logic.function.returnable.ReturnableImpl;
 
 
 public class Plus extends BinaryFunction {
@@ -18,11 +17,13 @@ public class Plus extends BinaryFunction {
     }
 
     @Override
-    protected Returnable calculate(Returnable firstNumber, Returnable secondNumber) {
-        return ValidateArgumentsTypes(firstNumber, secondNumber) ?
-                new MyNumber((double) firstNumber.getValue() + (double) secondNumber.getValue()) :
-                 NoValue.NAN;
+    protected Returnable calculate(Returnable argument1, Returnable argument2) {
+        try {
+            return new ReturnableImpl(argument1.tryConvertTo(Double.class) + argument2.tryConvertTo(Double.class), CellType.NUMERIC);
+        } catch (ClassCastException e) {
+            return ErrorValue.NAN;
         }
+    }
 
     @Override
     public String getFunctionName() {
@@ -31,18 +32,7 @@ public class Plus extends BinaryFunction {
 
     @Override
     public CellType returnType() {
-            return CellType.NUMERIC;
+        return CellType.NUMERIC;
     }
 
-    @Override
-    protected boolean validateArgumentsTypes(Returnable firstNumber, Returnable secondNumber){
-        return firstNumber instanceof MyNumber && secondNumber instanceof MyNumber;
-    }
-
-
-        protected boolean ValidateArgumentsTypes(Returnable firstNumber, Returnable secondNumber){
-        return firstNumber.returnType().equals(CellType.NOVALUE) || secondNumber.returnType().equals(CellType.NOVALUE);
-
-        }
-    }
 }

@@ -22,6 +22,5 @@ public abstract class BinaryFunction implements Function {
 
     // Abstract method to be implemented by subclasses
     abstract protected Returnable calculate(Returnable result1, Returnable result2);
-    abstract protected boolean validateArgumentsTypes(Returnable result1, Returnable result2);
 
 }
