@@ -1,10 +1,12 @@
 package logic.function.returnable;
 
-public class String implements Returnable {
+import component.api.CellType;
+
+public class MyString implements Returnable {
 
     private java.lang.String value;
 
-    public String(java.lang.String str){
+    public MyString(java.lang.String str){
         this.value = str;
     }
 
@@ -19,8 +21,13 @@ public class String implements Returnable {
     }
 
     @Override
+    public CellType returnType() {
+        return CellType.STRING;
+    }
+
+    @Override
     public java.lang.String getFunctionName() {
-        return "";
+        return MyString.class.getSimpleName();
     }
 
 }

@@ -1,5 +1,6 @@
 package logic.function.system;
 
+import component.api.CellType;
 import logic.function.Function;
 import logic.function.UnaryFunction;
 import logic.function.returnable.Returnable;
@@ -18,6 +19,11 @@ public class Ref extends UnaryFunction {
 
     @Override
     public String getFunctionName() {
-        return "";
+        return this.name;
+    }
+
+    @Override
+    public CellType returnType() {
+    super.
     }
 }

@@ -1,10 +1,12 @@
 package logic.function.returnable;
 
-public class Boolean implements Returnable {
+import component.api.CellType;
+
+public class MyBoolean implements Returnable {
 
     private boolean value;
 
-    public Boolean(boolean value){
+    public MyBoolean(boolean value){
         this.value = value;
     }
 
@@ -15,12 +17,17 @@ public class Boolean implements Returnable {
 
     @Override
     public java.lang.String getFunctionName() {
-        return "";
+        return MyBoolean.class.getSimpleName();
     }
 
     @Override
     public Returnable invoke() {
         return this;
+    }
+
+    @Override
+    public CellType returnType() {
+        return null;
     }
 
 }

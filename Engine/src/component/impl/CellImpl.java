@@ -1,16 +1,17 @@
-package component;
+package component.impl;
 
-
+import component.api.Cell;
+import logic.function.parser.FunctionParser;
 import logic.function.returnable.Returnable;
 import java.util.List;
 
-public class CellImpl implements Cell{
+public class CellImpl implements Cell {
 
     private final String cellId;
     int row;
     int col;
     private String orignalValue;
-    private Returnable effectivealue;
+    private Returnable effectiveValue;
     private int version;
     List<Cell> dependentCells;
     List<Cell> influecningCells;
@@ -18,7 +19,7 @@ public class CellImpl implements Cell{
     CellImpl(int row, int col, String orignalValue, Returnable effectivealue, int version, List<Cell> dependentCells, List<Cell> influecningCells){
         this.cellId = Cell.createCellId(row, col);
         this.orignalValue = orignalValue;
-        this.effectivealue = effectivealue;
+        this.effectiveValue = effectivealue;
         this.version = version;
         this.dependentCells = dependentCells;
         this.influecningCells = influecningCells;
@@ -30,7 +31,7 @@ public class CellImpl implements Cell{
 
     @Override
     public String getOrignalValue() {
-        return "";
+        return this.orignalValue;
     }
 
     @Override
@@ -65,7 +66,12 @@ public class CellImpl implements Cell{
 
     @Override
     public Returnable getEffectiveValue() {
-        return this.effectivealue;
+        return this.effectiveValue;
+    }
+
+@Override
+    public void createEffectiveValue() {
+        this.effectiveValue = FunctionParser.parseFunction(this.orignalValue).invoke();
     }
 
 }

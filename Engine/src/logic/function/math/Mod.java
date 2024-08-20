@@ -1,7 +1,8 @@
 package logic.function.math;
 
+import component.api.CellType;
 import logic.function.Function;
-import logic.function.returnable.Number;
+import logic.function.returnable.MyNumber;
 import logic.function.returnable.Returnable;
 import logic.function.BinaryFunction;
 
@@ -16,8 +17,8 @@ public class Mod extends BinaryFunction {
     @Override
     protected Returnable calculate(Returnable firstNumber, Returnable secondNumber) {
         return (validateArgumentsTypes(firstNumber, secondNumber) ?
-                new Number((double) firstNumber.getValue() % (double) secondNumber.getValue()) :
-                new Number(Double.NaN));
+                new MyNumber((double) firstNumber.getValue() % (double) secondNumber.getValue()) :
+                new MyNumber(Double.NaN));
     }
 
     @Override
@@ -27,7 +28,12 @@ public class Mod extends BinaryFunction {
 
     @Override
     protected boolean validateArgumentsTypes(Returnable firstNumber, Returnable secondNumber){
-        return firstNumber instanceof Number && secondNumber instanceof Number;
+        return firstNumber instanceof MyNumber && secondNumber instanceof MyNumber;
+    }
+
+    @Override
+    public CellType returnType() {
+        return CellType.NUMERIC;
     }
 
 

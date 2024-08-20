@@ -1,4 +1,4 @@
-package component;
+package component.api;
 
 import logic.function.returnable.Returnable;
 import java.util.List;
@@ -14,6 +14,7 @@ public interface Cell {
     List<Cell> getInfluecningOn();
     void setOrignalValue(String value);
     Returnable getEffectiveValue();
+    void createEffectiveValue();
 
     static String createCellId(int row, int col){
         return row + ":" + col;
