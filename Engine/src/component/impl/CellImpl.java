@@ -16,10 +16,10 @@ public class CellImpl implements Cell {
     List<Cell> dependentCells;
     List<Cell> influecningCells;
 
-    CellImpl(int row, int col, String orignalValue, Returnable effectivealue, int version, List<Cell> dependentCells, List<Cell> influecningCells){
-        this.cellID = Cell.createCellId(row, col);
+    CellImpl(int row, int col, String orignalValue, int version, List<Cell> dependentCells, List<Cell> influecningCells){
+        this.cellID = "CellID";
         this.orignalValue = orignalValue;
-        this.effectiveValue = effectivealue;
+        this.effectiveValue = FunctionParser.parseFunction(this.orignalValue).invoke();
         this.version = version;
         this.dependentCells = dependentCells;
         this.influecningCells = influecningCells;
@@ -54,14 +54,9 @@ public class CellImpl implements Cell {
         this.orignalValue = value;
     }
 
-    @Override
+@Override
     public Returnable getEffectiveValue() {
         return this.effectiveValue;
-    }
-
-@Override
-    public void createEffectiveValue() {
-        this.effectiveValue = FunctionParser.parseFunction(this.orignalValue).invoke();
     }
 
 }

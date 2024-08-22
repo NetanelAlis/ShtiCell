@@ -12,6 +12,4 @@ public interface Cell {
     List<Cell> getInfluecningOn();
     void setOrignalValue(String value);
     Returnable getEffectiveValue();
-    void createEffectiveValue();
-
 }

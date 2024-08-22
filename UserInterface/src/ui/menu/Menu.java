@@ -2,6 +2,7 @@ package ui.menu;
 
 import logic.Engine;
 import logic.EngineImpl;
+import ui.output.Printer;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -11,7 +12,7 @@ public class Menu {
 
     public void runMenu() {
         do {
-            this.printMainMenu();
+            Printer.printMenu();
             this.chosenItem = this.getMenuOptionFromUser();
             this.chosenItem.executeOption(engine);
         }
@@ -34,18 +35,6 @@ public class Menu {
         return
                 userInput > 0 && userInput < MainMenuOption.values().length ? MainMenuOption.values()[userInput] :
                         MainMenuOption.INVALID_CHOICE;
-    }
-
-    public void printMainMenu() {
-
-        int i = 0;
-
-        for (MainMenuOption option : MainMenuOption.values()) {
-            if (option != MainMenuOption.INVALID_CHOICE) {
-                System.out.println((i++) + ")" + option.toString());
-            }
-        }
-
     }
 
     String getFilePathFromUser(){

@@ -24,11 +24,11 @@ public enum FunctionParser {
             java.lang.String actualValue = arguments.get(0).trim();
 
             if (isBoolean(actualValue)) {
-                return new Identity(actualValue,CellType.BOOLEAN);
+                return new Identity(actualValue, CellType.BOOLEAN);
             } else if (isNumeric(actualValue)) {
-                return new Identity(actualValue,CellType.NUMERIC);
+                return new Identity(actualValue, CellType.NUMERIC);
             } else {
-                return new Identity(actualValue,CellType.STRING);
+                return new Identity(actualValue, CellType.STRING);
             }
         }
 
@@ -130,13 +130,13 @@ public enum FunctionParser {
 
             if (!firstArgument.returnType().equals(CellType.STRING) ||
                     !secondArgument.returnType().equals(CellType.NUMERIC) ||
-                    !thirdArgument.returnType().equals(CellType.NUMERIC)){
+                    !thirdArgument.returnType().equals(CellType.NUMERIC)) {
                 throw new IllegalArgumentException("Invalid argument types for CONCAT function." +
                         " Expected STRING but got " + firstArgument.getFunctionName() +
                         "expected NUMERIC but got" + secondArgument.getFunctionName() + "and" + thirdArgument.getFunctionName());
             }
 
-                return new Sub(firstArgument, secondArgument, thirdArgument);
+            return new Sub(firstArgument, secondArgument, thirdArgument);
         }
     },
 
@@ -151,43 +151,41 @@ public enum FunctionParser {
             // structure is good. parse arguments
             Function firstArgument = parseFunction(arguments.get(0).trim());
 
-            if (!firstArgument.returnType().equals(CellType.NUMERIC){
+            if (!firstArgument.returnType().equals(CellType.NUMERIC)) {
 
                 throw new IllegalArgumentException("Invalid argument type for ABS function." +
-                        " Expected NUMERIC but got " + firstArgument.getFunctionName();
+                        " Expected NUMERIC but got " + firstArgument.getFunctionName());
             }
 
             return new Abs(firstArgument);
         }
-    },
+    };
 
-    REF{
-        @Override
-        public Function parse(List<String> arguments) {
-            if (arguments.size() != 1) {
-                throw new IllegalArgumentException("Invalid number of arguments for PLUS function. Expected 2, but got " + arguments.size());
-            }
+//    REF {
+//        @Override
+//        public Function parse(List<String> arguments) {
+//            if (arguments.size() != 1) {
+//                throw new IllegalArgumentException("Invalid number of arguments for PLUS function. Expected 2, but got " + arguments.size());
+//            }
+//
+//            Function firstArgument = parseFunction(arguments.get(0).trim());
+//
+//            if (!firstArgument.returnType().equals(CellType.STRING)) {
+//                throw new IllegalArgumentException("Invalid argument type for ABS function." +
+//                        " Expected NUMERIC but got " + firstArgument.getFunctionName());
+//            }
+//
+//        }
+//    }
 
-            Function firstArgument = parseFunction(arguments.get(0).trim());
-
-            if (!firstArgument.returnType().equals(CellType.STRING)){
-                throw new IllegalArgumentException("Invalid argument type for ABS function." +
-                        " Expected NUMERIC but got " + firstArgument.getFunctionName();
-            }
-
-        }
-    }
-
-
-    public static Function parseFunction(String input){
-        if(input.startsWith("{") && input.endsWith("}")){
-            java.lang.String functionNameAndContent = input.substring(1, input.length()-1);
+    public static Function parseFunction(String input) {
+        if (input.startsWith("{") && input.endsWith("}")) {
+            java.lang.String functionNameAndContent = input.substring(1, input.length() - 1);
             List<java.lang.String> topLevelParts = parseMainParts(functionNameAndContent);
             java.lang.String functionName = topLevelParts.get(0).toUpperCase();
             topLevelParts.remove(0);
             return FunctionParser.valueOf(functionName).parse(topLevelParts);
-        }
-        else {
+        } else {
             return FunctionParser.IDENTITY.parse(List.of(input.trim()));
         }
     }
@@ -222,5 +220,5 @@ public enum FunctionParser {
     }
 
     public abstract Function parse(List<String> parts);
-}
 
+}

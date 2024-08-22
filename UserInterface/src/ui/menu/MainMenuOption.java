@@ -2,13 +2,15 @@ package ui.menu;
 
 import dto.SheetDTO;
 import logic.Engine;
+import ui.output.Printer;
+
 import java.util.Scanner;
 import static java.lang.System.exit;
 
 public enum MainMenuOption {
     INVALID_CHOICE {
         @Override
-        public void executeOption() {
+        public void executeOption(Engine engine) {
             System.out.println("No such menu option, Please Try Again:");
         }
     },
@@ -32,7 +34,7 @@ public enum MainMenuOption {
     SHOW_SHEET {
         @Override
         public void executeOption(Engine engine) {
-            SheetDTO sheetdto = engine.showSheet();
+            Printer.printSheet( engine.getSheetAsDTO());
         }
 
         @Override
@@ -44,7 +46,7 @@ public enum MainMenuOption {
         @Override
         public void executeOption(Engine engine) {
             String cellId = getCellIDFromUser();
-            engine.showCellData(cellId);
+//            engine.showCellData(cellId);
         }
 
         @Override
@@ -64,10 +66,10 @@ public enum MainMenuOption {
             return "Update Single Cell Value";
         }
     },
+
     SHOW_VERSIONS {
         @Override
-        public void executeOption() {
-
+        public void executeOption(Engine engine) {
         }
 
         @Override
@@ -77,7 +79,7 @@ public enum MainMenuOption {
     },
     EXIT {
         @Override
-        public void executeOption() {
+        public void executeOption(Engine engine) {
             exit(0);
         }
 

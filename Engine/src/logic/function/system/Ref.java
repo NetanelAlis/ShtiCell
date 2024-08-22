@@ -24,6 +24,7 @@ public class Ref extends UnaryFunction {
 
     @Override
     public CellType returnType() {
-    this.returnType();
+    return null;
     }
+
 }

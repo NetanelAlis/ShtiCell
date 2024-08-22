@@ -35,7 +35,23 @@ public class SheetDTO {
     }
 
     public String getSheetName() {
-        return sheetName;
+        return this.sheetName;
+    }
+
+    public SheetImpl.Layout getLayout() {
+        return this.layout;
+    }
+
+    public int getSheetVersion() {
+        return this.sheetVersion;
+    }
+
+    public int getNumberOfCellsThatHaveChanged() {
+        return this.numberOfCellsThatHaveChanged;
+    }
+
+    public Map<String, Returnable> getActiveCells() {
+        return this.activeCells;
     }
 
 }

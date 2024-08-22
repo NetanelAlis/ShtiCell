@@ -12,9 +12,15 @@ public class ReturnableImpl implements Returnable {
         this.cellType = type;
     }
 
-    public CellType getType() {
+    public CellType getCellType() {
         return this.cellType;
     }
+
+    @Override
+    public Object getValue() {
+        return this.value;
+    }
+
 
     @Override
     public <T> T tryConvertTo(Class<T> type) {
@@ -24,4 +30,5 @@ public class ReturnableImpl implements Returnable {
             throw new ClassCastException();
         }
     }
+
 }
