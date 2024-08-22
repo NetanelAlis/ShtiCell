@@ -1,9 +1,9 @@
 package ui.menu;
 
-import dto.SheetDTO;
+import component.sheet.api.Sheet;
+import component.sheet.api.SheetReadOnly;
 import logic.Engine;
 import ui.output.Printer;
-
 import java.util.Scanner;
 import static java.lang.System.exit;
 
@@ -103,29 +103,12 @@ public enum MainMenuOption {
         System.out.println("Please Enter the cell ID(for example A4):");
         String cellID = scanner.nextLine();
 
-        while (!isValidCellID(cellID)){
+        while (!SheetReadOnly.isValidCellID(cellID)){
             System.out.println("Please Enter the valid cell ID(for example A4):");
             cellID = scanner.nextLine();
         }
 
         return cellID;
-    }
-
-    private static boolean isValidCellID(String cellID) {
-        boolean isValid = true;
-
-        if (cellID.isBlank()) {
-            System.out.println("Cannot enter an empty cell ID");
-            isValid = false;
-        }else if (!Character.isUpperCase(cellID.charAt(0))) {
-            System.out.println("Please enter column as upper case letter.");
-            isValid = false;
-        }else if (!cellID.substring(1).matches("\\d+")) {
-            System.out.println("Please enter row as number");
-            isValid = false;
-        }
-
-        return isValid;
     }
 
 }

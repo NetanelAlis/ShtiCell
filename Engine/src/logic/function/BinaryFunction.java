@@ -1,5 +1,6 @@
 package logic.function;
 
+import component.sheet.api.SheetReadOnly;
 import logic.function.returnable.Returnable;
 
 public abstract class BinaryFunction implements Function {
@@ -16,8 +17,8 @@ public abstract class BinaryFunction implements Function {
     }
 
     @Override
-    public Returnable invoke() {
-        return calculate(firstArgument.invoke(), secondArgument.invoke());
+    public Returnable invoke(SheetReadOnly sheet) {
+        return calculate(firstArgument.invoke(sheet), secondArgument.invoke(sheet));
     }
 
     // Abstract method to be implemented by subclasses

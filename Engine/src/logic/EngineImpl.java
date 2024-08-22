@@ -1,7 +1,7 @@
 package logic;
 
-import component.api.Sheet;
-import component.impl.SheetImpl;
+import component.sheet.api.Sheet;
+import component.sheet.impl.SheetImpl;
 import dto.CellDTO;
 import dto.SheetDTO;
 

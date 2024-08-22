@@ -1,7 +1,6 @@
 package dto;
 
-import component.api.Cell;
-import logic.function.parser.FunctionParser;
+import component.cell.api.Cell;
 import logic.function.returnable.Returnable;
 import java.util.ArrayList;
 import java.util.List;

@@ -1,8 +1,8 @@
 package dto;
 
-import component.api.Cell;
-import component.api.Sheet;
-import component.impl.SheetImpl;
+import component.cell.api.Cell;
+import component.sheet.api.Sheet;
+import component.sheet.impl.SheetImpl;
 import logic.function.returnable.Returnable;
 import java.util.HashMap;
 import java.util.Map;

@@ -1,6 +1,7 @@
-package logic.function.parser;
+package logic.parser;
 
 import component.api.CellType;
+import component.sheet.api.Sheet;
 import logic.function.Function;
 import logic.function.math.Abs;
 import logic.function.math.Minus;
@@ -8,6 +9,7 @@ import logic.function.math.Plus;
 import logic.function.string.Concat;
 import logic.function.string.Sub;
 import logic.function.system.Identity;
+import logic.function.system.Ref;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +48,28 @@ public enum FunctionParser {
         }
     },
 
+    ABS {
+        @Override
+        public Function parse(List<String> arguments) {
+            // validations of the function (e.g. number of arguments)
+            if (arguments.size() != 1) {
+                throw new IllegalArgumentException("Invalid number of arguments for PLUS function. Expected 2, but got " + arguments.size());
+            }
+
+            // structure is good. parse arguments
+            Function firstArgument = parseFunction(arguments.get(0).trim());
+            boolean validType = firstArgument.returnType().equals(CellType.NUMERIC) ||
+                    firstArgument.returnType().equals(CellType.UNKOWN);
+
+            if (!validType){
+                throw new IllegalArgumentException("Invalid argument type for ABS function." +
+                        " Expected NUMERIC but got " + firstArgument.getFunctionName());
+            }
+
+            return new Abs(firstArgument);
+        }
+    },
+
     PLUS {
         @Override
         public Function parse(List<String> arguments) {
@@ -57,9 +81,12 @@ public enum FunctionParser {
             // structure is good. parse arguments
             Function firstArgument = parseFunction(arguments.get(0).trim());
             Function secondArgument = parseFunction(arguments.get(1).trim());
+            boolean firstArgumentValid = firstArgument.returnType().equals(CellType.NUMERIC) ||
+                    firstArgument.returnType().equals(CellType.UNKOWN);
+            boolean secondArgumentValid = secondArgument.returnType().equals(CellType.NUMERIC) ||
+                    secondArgument.returnType().equals(CellType.UNKOWN);
 
-            if (!firstArgument.returnType().equals(CellType.NUMERIC) ||
-                    !secondArgument.returnType().equals(CellType.NUMERIC)) {
+            if(!firstArgumentValid || !secondArgumentValid) {
                 throw new IllegalArgumentException("Invalid argument types for PLUS function." +
                         " Expected NUMERIC, but got " + firstArgument.getFunctionName() +
                         " and " + secondArgument.getFunctionName());
@@ -80,9 +107,12 @@ public enum FunctionParser {
             // structure is good. parse arguments
             Function firstArgument = parseFunction(arguments.get(0).trim());
             Function secondArgument = parseFunction(arguments.get(1).trim());
+            boolean firstArgumentValid = firstArgument.returnType().equals(CellType.NUMERIC) ||
+                    firstArgument.returnType().equals(CellType.UNKOWN);
+            boolean secondArgumentValid = secondArgument.returnType().equals(CellType.NUMERIC) ||
+                    secondArgument.returnType().equals(CellType.UNKOWN);
 
-            if (!firstArgument.returnType().equals(CellType.NUMERIC) ||
-                    !secondArgument.returnType().equals(CellType.NUMERIC)) {
+            if (!firstArgumentValid || !secondArgumentValid) {
                 throw new IllegalArgumentException("Invalid argument types for MINUS function." +
                         " Expected NUMERIC, but got " + firstArgument.getFunctionName() +
                         " and " + secondArgument.getFunctionName());
@@ -103,9 +133,12 @@ public enum FunctionParser {
             // structure is good. parse arguments
             Function firstArgument = parseFunction(arguments.get(0).trim());
             Function secondArgument = parseFunction(arguments.get(1).trim());
+            boolean firstArgumentValid = firstArgument.returnType().equals(CellType.STRING) ||
+                    firstArgument.returnType().equals(CellType.UNKOWN);
+            boolean secondArgumentValid = secondArgument.returnType().equals(CellType.STRING) ||
+                    secondArgument.returnType().equals(CellType.UNKOWN);
 
-            if (!firstArgument.returnType().equals(CellType.STRING) ||
-                    !secondArgument.returnType().equals(CellType.STRING)) {
+            if (!firstArgumentValid || !secondArgumentValid) {
                 throw new IllegalArgumentException("Invalid argument types for CONCAT function." +
                         " Expected STRING, but got " + firstArgument.getFunctionName() +
                         " and " + secondArgument.getFunctionName());
@@ -127,9 +160,14 @@ public enum FunctionParser {
             Function firstArgument = parseFunction(arguments.get(0).trim());
             Function secondArgument = parseFunction(arguments.get(1).trim());
             Function thirdArgument = parseFunction(arguments.get(2).trim());
+            boolean firstArgumentValid = firstArgument.returnType().equals(CellType.STRING) ||
+                    firstArgument.returnType().equals(CellType.UNKOWN);
+            boolean secondArgumentValid = secondArgument.returnType().equals(CellType.NUMERIC) ||
+                    secondArgument.returnType().equals(CellType.UNKOWN);
+            boolean thirdArgumentValid = thirdArgument.returnType().equals(CellType.NUMERIC) ||
+                    thirdArgument.returnType().equals(CellType.UNKOWN);
 
-            if (!firstArgument.returnType().equals(CellType.STRING) ||
-                    !secondArgument.returnType().equals(CellType.NUMERIC) ||
+            if (!firstArgumentValid || !secondArgumentValid || !thirdArgumentValid)
                     !thirdArgument.returnType().equals(CellType.NUMERIC)) {
                 throw new IllegalArgumentException("Invalid argument types for CONCAT function." +
                         " Expected STRING but got " + firstArgument.getFunctionName() +
@@ -140,43 +178,23 @@ public enum FunctionParser {
         }
     },
 
-    ABS {
+    REF{
         @Override
         public Function parse(List<String> arguments) {
-            // validations of the function (e.g. number of arguments)
-            if (arguments.size() != 1) {
-                throw new IllegalArgumentException("Invalid number of arguments for PLUS function. Expected 2, but got " + arguments.size());
+            if(arguments.size() != 1) {
+                    throw new IllegalArgumentException("Invalid number of arguments for REF function. Expected 1, but got " + arguments.size());
             }
 
-            // structure is good. parse arguments
-            Function firstArgument = parseFunction(arguments.get(0).trim());
+            String target = arguments.get(0).trim();
 
-            if (!firstArgument.returnType().equals(CellType.NUMERIC)) {
+            if(Sheet.isValidCellID(target)){
+                throw new IllegalArgumentException("Invalid argument for REF function expected a valid cell ID but got" + target);
 
-                throw new IllegalArgumentException("Invalid argument type for ABS function." +
-                        " Expected NUMERIC but got " + firstArgument.getFunctionName());
             }
 
-            return new Abs(firstArgument);
+            return new Ref(target);
         }
     };
-
-//    REF {
-//        @Override
-//        public Function parse(List<String> arguments) {
-//            if (arguments.size() != 1) {
-//                throw new IllegalArgumentException("Invalid number of arguments for PLUS function. Expected 2, but got " + arguments.size());
-//            }
-//
-//            Function firstArgument = parseFunction(arguments.get(0).trim());
-//
-//            if (!firstArgument.returnType().equals(CellType.STRING)) {
-//                throw new IllegalArgumentException("Invalid argument type for ABS function." +
-//                        " Expected NUMERIC but got " + firstArgument.getFunctionName());
-//            }
-//
-//        }
-//    }
 
     public static Function parseFunction(String input) {
         if (input.startsWith("{") && input.endsWith("}")) {
@@ -219,6 +237,5 @@ public enum FunctionParser {
         return parts;
     }
 
-    public abstract Function parse(List<String> parts);
-
+    public abstract Function parse(List<String> arguments);
 }

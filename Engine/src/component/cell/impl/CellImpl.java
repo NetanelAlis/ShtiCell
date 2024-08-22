@@ -1,7 +1,8 @@
-package component.impl;
+package component.cell.impl;
 
-import component.api.Cell;
-import logic.function.parser.FunctionParser;
+import component.cell.api.Cell;
+import component.sheet.api.SheetReadOnly;
+import logic.parser.FunctionParser;
 import logic.function.returnable.Returnable;
 import java.util.List;
 
@@ -15,11 +16,13 @@ public class CellImpl implements Cell {
     private int version;
     List<Cell> dependentCells;
     List<Cell> influecningCells;
+    SheetReadOnly sheet;
 
-    CellImpl(int row, int col, String orignalValue, int version, List<Cell> dependentCells, List<Cell> influecningCells){
+    CellImpl(int row, int col, String orignalValue, int version, List<Cell> dependentCells, List<Cell> influecningCells, SheetReadOnly sheet){
         this.cellID = "CellID";
         this.orignalValue = orignalValue;
-        this.effectiveValue = FunctionParser.parseFunction(this.orignalValue).invoke();
+        this.sheet = sheet;
+        this.effectiveValue = FunctionParser.parseFunction(this.orignalValue).invoke(this.sheet);
         this.version = version;
         this.dependentCells = dependentCells;
         this.influecningCells = influecningCells;

@@ -1,6 +1,7 @@
 package logic.function.system;
 
 import component.api.CellType;
+import component.sheet.api.SheetReadOnly;
 import logic.function.Function;
 import logic.function.returnable.Returnable;
 import logic.function.returnable.ReturnableImpl;
@@ -21,7 +22,7 @@ public class Identity implements Function {
     }
 
     @Override
-    public Returnable invoke() {
+    public Returnable invoke(SheetReadOnly sheet) {
         return new ReturnableImpl(this.value, this.type);
     }
 

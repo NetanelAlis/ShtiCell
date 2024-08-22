@@ -1,16 +1,15 @@
-package component.api;
+package component.sheet.api;
 
-import component.impl.SheetImpl;
+import component.cell.api.Cell;
+import component.sheet.impl.SheetImpl;
+
 import java.util.Map;
 
-public interface Sheet {
-
+public interface SheetReadOnly {
     int getVersion();
     Cell getCell(String cellID);
-    void setCell(String cellID, String value);;
     String getName();
     SheetImpl.Layout getLayout();
     int getNumberOfCellsThatHaveChanged();
     Map<String, Cell> getSheetCells();
-
 }

@@ -1,0 +1,21 @@
+package component.sheet.api;
+
+public interface Sheet extends SheetReadOnly, SheetWriteOnly{
+
+    static boolean isValidCellID(String cellID) {
+        boolean isValid = true;
+
+        if (cellID.isBlank()) {
+            System.out.println("Cannot enter an empty cell ID");
+            isValid = false;
+        }else if (!Character.isUpperCase(cellID.charAt(0))) {
+            System.out.println("Column must be upper case letter.");
+            isValid = false;
+        }else if (!cellID.substring(1).matches("\\d+")) {
+            System.out.println("Row must be whole number number bigger than 0.");
+            isValid = false;
+        }
+
+        return isValid;
+    }
+}

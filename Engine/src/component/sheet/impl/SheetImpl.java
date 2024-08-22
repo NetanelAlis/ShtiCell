@@ -1,7 +1,7 @@
-package component.impl;
+package component.sheet.impl;
 
-import component.api.Cell;
-import component.api.Sheet;
+import component.cell.api.Cell;
+import component.sheet.api.Sheet;
 import java.util.HashMap;
 import java.util.Map;
 
