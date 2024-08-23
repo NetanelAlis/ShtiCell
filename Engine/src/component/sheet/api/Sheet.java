@@ -1,6 +1,6 @@
 package component.sheet.api;
 
-public interface Sheet extends SheetReadOnly, SheetWriteOnly{
+public interface Sheet extends ReadOnlySheet, WriteOnlySheet{
 
     static boolean isValidCellID(String cellID) {
         boolean isValid = true;

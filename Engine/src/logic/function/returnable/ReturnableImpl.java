@@ -2,6 +2,8 @@ package logic.function.returnable;
 
 import component.api.CellType;
 
+import java.util.Objects;
+
 public class ReturnableImpl implements Returnable {
 
     private Object value;
@@ -31,4 +33,21 @@ public class ReturnableImpl implements Returnable {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Returnable that = (Returnable) o;
+
+        if (cellType != that.getCellType()) return false;
+        return Objects.equals(value, that.getValue());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = cellType != null ? cellType.hashCode() : 0;
+        result = 31 * result + (value != null ? value.hashCode() : 0);
+        return result;
+    }
 }

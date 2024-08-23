@@ -1,31 +1,26 @@
 package component.cell.impl;
 
 import component.cell.api.Cell;
-import component.sheet.api.SheetReadOnly;
+import component.sheet.api.ReadOnlySheet;
 import logic.parser.FunctionParser;
 import logic.function.returnable.Returnable;
 import java.util.List;
 
 public class CellImpl implements Cell {
 
-    private final String cellID;
-    int row;
-    int col;
+    private final String cellID;;
     private String orignalValue;
     private Returnable effectiveValue;
     private int version;
     List<Cell> dependentCells;
     List<Cell> influecningCells;
-    SheetReadOnly sheet;
+    ReadOnlySheet sheet;
 
-    CellImpl(int row, int col, String orignalValue, int version, List<Cell> dependentCells, List<Cell> influecningCells, SheetReadOnly sheet){
-        this.cellID = "CellID";
+    public CellImpl(String cellID, String orignalValue, int version, ReadOnlySheet sheet){
+        this.cellID = cellID;
         this.orignalValue = orignalValue;
         this.sheet = sheet;
-        this.effectiveValue = FunctionParser.parseFunction(this.orignalValue).invoke(this.sheet);
         this.version = version;
-        this.dependentCells = dependentCells;
-        this.influecningCells = influecningCells;
     }
     @Override
     public String getCellId() {
@@ -61,5 +56,25 @@ public class CellImpl implements Cell {
     public Returnable getEffectiveValue() {
         return this.effectiveValue;
     }
+
+    @Override
+    public boolean calculateEffectiveValue(){
+        Returnable newEffectiveValue = FunctionParser.parseFunction(this.orignalValue).invoke(this.sheet);
+
+        if(newEffectiveValue.equals(this.effectiveValue)){
+            return false;
+        }
+
+        else{
+            this.effectiveValue = newEffectiveValue;
+            return true;
+        }
+    }
+
+    @Override
+    public void updateVersion(int sheetUpdatedVersion) {
+        this.version = sheetUpdatedVersion;
+    }
+
 
 }

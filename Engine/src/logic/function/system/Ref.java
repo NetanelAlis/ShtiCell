@@ -1,10 +1,8 @@
 package logic.function.system;
 
 import component.api.CellType;
-import component.sheet.api.Sheet;
-import component.sheet.api.SheetReadOnly;
+import component.sheet.api.ReadOnlySheet;
 import logic.function.Function;
-import logic.function.UnaryFunction;
 import logic.function.returnable.Returnable;
 
 public class Ref implements Function {
@@ -22,7 +20,7 @@ public class Ref implements Function {
     }
 
     @Override
-    public Returnable invoke(SheetReadOnly sheet) {
+    public Returnable invoke(ReadOnlySheet sheet) {
         return sheet.getCell(this.cellID).getEffectiveValue();
     }
 

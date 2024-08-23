@@ -29,7 +29,7 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public CellDTO updateCellData(String cellId) {
-        return null;
+    public void updateCellData(String cellId) {
+        this.sheet = this.sheet.updateCellValueAndCalculate(cellId, "helloWorld");
     }
 }

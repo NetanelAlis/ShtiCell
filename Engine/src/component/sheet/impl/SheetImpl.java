@@ -1,9 +1,13 @@
 package component.sheet.impl;
 
 import component.cell.api.Cell;
+import component.cell.impl.CellImpl;
 import component.sheet.api.Sheet;
-import java.util.HashMap;
-import java.util.Map;
+import component.sheet.topological.order.TopologicalOrder;
+
+import java.io.*;
+import java.util.*;
+
 
 public class SheetImpl implements Sheet {
 
@@ -13,7 +17,7 @@ public class SheetImpl implements Sheet {
     private Map<String, Cell> activeCells;
     private int numberOfCellsThatHaveChanged;
 
-    public class Layout {
+    public class Layout implements Serializable {
         private int numberOfrows;
         private int numberOfcolumn;
         private int rowHeight;
@@ -66,11 +70,6 @@ public class SheetImpl implements Sheet {
     }
 
     @Override
-    public void setCell(String cellID, String value) {
-        this.activeCells.get(value).setOrignalValue(value);
-    }
-
-    @Override
     public String getName() {
         return this.sheetName;
     }
@@ -106,6 +105,56 @@ public class SheetImpl implements Sheet {
         boolean colValid = (col >= 0 && col <= this.layout.getNumberOfColumns());
 
         return rowValid && colValid;
+    }
+
+    private SheetImpl copySheet() {
+
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(this);
+            oos.close();
+
+            ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
+            return (SheetImpl) ois.readObject();
+        } catch (Exception e) {
+            throw new RuntimeException(e); // catch in the ui
+        }
+    }
+
+    @Override
+    public Sheet updateCellValueAndCalculate(String cellID, String value) {
+
+        SheetImpl newSheetVersion = copySheet();
+        Cell newCell = new CellImpl(cellID, value, newSheetVersion.getVersion() + 1, newSheetVersion);
+        newSheetVersion.activeCells.put(value, newCell);
+
+        try {
+            List<Cell> cellsThatHaveChanged =
+                    newSheetVersion
+                            .orderCellsForCalculation()
+                            .stream()
+                            .filter(Cell::calculateEffectiveValue)
+                            .toList();
+
+            // successful calculation. update sheet and relevant cells version
+             int newVersion = newSheetVersion.increaseVersion();
+             cellsThatHaveChanged.forEach(cell -> cell.updateVersion(newVersion));
+             this.numberOfCellsThatHaveChanged = cellsThatHaveChanged.size();
+
+            return newSheetVersion;
+        } catch (Exception e) {
+            // deal with the runtime error that was discovered as part of invocation
+            return this;
+        }
+    }
+
+    private List<Cell> orderCellsForCalculation() {
+        return TopologicalOrder.SORT.topologicalSort(this.activeCells);
+    }
+
+    private int increaseVersion(){
+        return ++this.version;
     }
 
 }

@@ -10,7 +10,6 @@ import logic.function.string.Concat;
 import logic.function.string.Sub;
 import logic.function.system.Identity;
 import logic.function.system.Ref;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -167,8 +166,7 @@ public enum FunctionParser {
             boolean thirdArgumentValid = thirdArgument.returnType().equals(CellType.NUMERIC) ||
                     thirdArgument.returnType().equals(CellType.UNKOWN);
 
-            if (!firstArgumentValid || !secondArgumentValid || !thirdArgumentValid)
-                    !thirdArgument.returnType().equals(CellType.NUMERIC)) {
+            if (!firstArgumentValid || !secondArgumentValid || !thirdArgumentValid){
                 throw new IllegalArgumentException("Invalid argument types for CONCAT function." +
                         " Expected STRING but got " + firstArgument.getFunctionName() +
                         "expected NUMERIC but got" + secondArgument.getFunctionName() + "and" + thirdArgument.getFunctionName());

@@ -1,6 +1,6 @@
 package logic.function;
 
-import component.sheet.api.SheetReadOnly;
+import component.sheet.api.ReadOnlySheet;
 import logic.function.returnable.Returnable;
 
 public abstract class UnaryFunction implements Function {
@@ -12,7 +12,7 @@ public abstract class UnaryFunction implements Function {
     }
 
     @Override
-    public Returnable invoke(SheetReadOnly sheet) {
+    public Returnable invoke(ReadOnlySheet sheet) {
         return (argument.invoke(sheet));
     }
 

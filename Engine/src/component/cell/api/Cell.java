@@ -1,10 +1,10 @@
 package component.cell.api;
 
 import logic.function.returnable.Returnable;
+import java.io.Serializable;
 import java.util.List;
 
-public interface Cell {
-
+public interface Cell extends Serializable{
     String getCellId();
     String getOrignalValue();;
     int getVersion();
@@ -12,4 +12,6 @@ public interface Cell {
     List<Cell> getInfluecningOn();
     void setOrignalValue(String value);
     Returnable getEffectiveValue();
+    boolean calculateEffectiveValue();
+    void updateVersion(int sheetUpdatedVersion);
 }

@@ -1,7 +1,6 @@
 package ui.menu;
 
-import component.sheet.api.Sheet;
-import component.sheet.api.SheetReadOnly;
+import component.sheet.api.ReadOnlySheet;
 import logic.Engine;
 import ui.output.Printer;
 import java.util.Scanner;
@@ -103,7 +102,7 @@ public enum MainMenuOption {
         System.out.println("Please Enter the cell ID(for example A4):");
         String cellID = scanner.nextLine();
 
-        while (!SheetReadOnly.isValidCellID(cellID)){
+        while (!ReadOnlySheet.isValidCellID(cellID)){
             System.out.println("Please Enter the valid cell ID(for example A4):");
             cellID = scanner.nextLine();
         }
