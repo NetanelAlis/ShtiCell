@@ -1,11 +1,14 @@
 package logic;
 
+import component.archive.api.Archive;
+import component.archive.impl.ArchiveImpl;
 import component.cell.api.Cell;
 import component.cell.impl.CellImpl;
 import component.sheet.api.Sheet;
 import component.sheet.impl.SheetImpl;
 import dto.CellDTO;
 import dto.SheetDTO;
+import dto.VersionsChangesDTO;
 import jakarta.xml.bind.JAXBException;
 import jaxb.converter.XMLToSheetConverter;
 import java.io.FileNotFoundException;
@@ -13,13 +16,15 @@ import java.io.FileNotFoundException;
 public class EngineImpl implements Engine {
 
     private Sheet sheet = null;
+    private Archive archive = null;
 
     @Override
-    public boolean LoadDataFromXML(String path) {
+    public void LoadDataFromXML(String path) {
         try {
             XMLToSheetConverter converter = new jaxb.converter.XMLToSheetConverterImpl();
             this.sheet = converter.convert(path);
-            return true;
+            this.archive = new ArchiveImpl();
+            this.archive.storeInArchive(this.sheet.copySheet());
         } catch (JAXBException | FileNotFoundException e) {
             throw new RuntimeException("Error loading data from XML", e);
         }
@@ -41,6 +46,7 @@ public class EngineImpl implements Engine {
         SheetImpl newSheetVersion = this.sheet.copySheet();
         updateCell(cellId, value, newSheetVersion);
         this.sheet = this.sheet.updateSheet(newSheetVersion);
+        this.archive.storeInArchive(this.sheet.copySheet());
 }
 
     @Override
@@ -59,4 +65,13 @@ public class EngineImpl implements Engine {
     }
 }
 
+    @Override
+    public VersionsChangesDTO getVersionsChangesAsDTO() {
+        return new VersionsChangesDTO(this.archive.getAllVersionsChanges());
+    }
+
+    @Override
+    public SheetDTO getSheetVersionsAsDTO(int version) {
+        return new SheetDTO(this.archive.retrieveFromArchive(version));
+    }
 }

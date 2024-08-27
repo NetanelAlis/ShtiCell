@@ -58,7 +58,7 @@ public class SheetImpl implements Sheet {
                 sheet.getSTLLayout().getColumns(),
                 sheet.getSTLLayout().getSTLSize().getRowsHeightUnits(),
                 sheet.getSTLLayout().getSTLSize().getColumnWidthUnits());
-        this.version = 1;
+        this.version = 0;
         this.activeCells = new HashMap<>();
         this.numberOfCellsThatHaveChanged = 0;
 
@@ -144,7 +144,7 @@ public class SheetImpl implements Sheet {
         // successful calculation. update sheet and relevant cells version
          int newVersion = newSheetVersion.increaseVersion();
          cellsThatHaveChanged.forEach(cell -> cell.updateVersion(newVersion));
-         this.numberOfCellsThatHaveChanged = cellsThatHaveChanged.size();
+         newSheetVersion.numberOfCellsThatHaveChanged = cellsThatHaveChanged.size();
 
         return newSheetVersion;
 

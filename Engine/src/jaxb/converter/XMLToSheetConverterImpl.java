@@ -41,7 +41,7 @@ public class XMLToSheetConverterImpl implements XMLToSheetConverter {
         CellImpl cell = new CellImpl(cellID, STLcell.getSTLOriginalValue(),
                 1, sheet);
 
-        sheet.getSheetCells().put(cellID, cell);
+        sheet.getSheetCells().put(cell.getCellId(), cell);
     }
 
     private String createCellID(int row, String col){

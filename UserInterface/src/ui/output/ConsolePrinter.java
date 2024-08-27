@@ -2,12 +2,14 @@ package ui.output;
 
 import dto.CellDTO;
 import dto.SheetDTO;
+import dto.VersionsChangesDTO;
 import logic.function.returnable.Returnable;
 import ui.menu.MainMenuOption;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class ConsolePrinter {
@@ -21,15 +23,19 @@ public class ConsolePrinter {
         }
     }
 
-    public static String getInputFromUser(String messageToUser, Predicate<String> inputValidationMethod) {
+    public static String getInputFromUser(String messageToUser, String errorMessageToUser ,Predicate<String> inputValidationMethod) {
         Scanner scanner = new Scanner(System.in);
         String input;
 
-        do{
+        System.out.println(messageToUser + ", Or press Q to go back to the main menu:");
+        input = scanner.nextLine();
+        String errorMessageWithUserInput = errorMessageToUser.replace("#",input);
+
+        while (!input.equalsIgnoreCase("q") && !inputValidationMethod.test(input)){
+            System.out.println(errorMessageWithUserInput + "please try again");
             System.out.println(messageToUser + ", Or press Q to go back to the main menu:");
             input = scanner.nextLine();
         }
-        while (input.equalsIgnoreCase("q") && inputValidationMethod.test(input));
 
         return input;
     }
@@ -161,5 +167,16 @@ public class ConsolePrinter {
 
     protected void printSheetNotLoaded() {
         System.out.println("Sheet is not loaded, please load Sheet before trying any other option");
+    }
+
+    public static void printVersions(VersionsChangesDTO versionsChangesDTO) {
+        // Print table header
+        System.out.println("Version Number | Number of Changed Cells");
+        System.out.println("---------------|----------------------");
+        int i = 1;
+        for (int numOfChanges: versionsChangesDTO.getVersionChanges()) {
+            // Print each row in the table
+            System.out.printf("%14d | %22d%n", i++, numOfChanges);
+        }
     }
 }

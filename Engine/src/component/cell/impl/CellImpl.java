@@ -29,6 +29,7 @@ public class CellImpl implements Cell {
         this.dependingOnCells = new ArrayList<>();
         this.influencingCells = new ArrayList<>();
 
+        getInfluencingCellsFromDummy();
         this.setDependencies();
 
     }
@@ -51,6 +52,13 @@ public class CellImpl implements Cell {
         RefParser.PARSE.extractRefs(originalValue).stream()
                 .filter(Sheet::isValidCellID)
                 .forEach(this::setDependentAndInfluencingCells);
+    }
+
+    private void getInfluencingCellsFromDummy(){
+        Cell dummyCell = this.sheet.getCell(this.cellID);
+        if(dummyCell != null){
+            this.influencingCells.addAll(dummyCell.getInfluecningOn());
+        }
     }
 
     @Override

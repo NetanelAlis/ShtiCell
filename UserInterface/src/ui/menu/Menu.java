@@ -22,19 +22,17 @@ public class Menu {
     private MainMenuOption getMenuOptionFromUser() {
         Scanner scanner = new Scanner(System.in);
         int userInput = 0;
-        MainMenuOption optionToReturn;
 
         try {
 
             userInput = scanner.nextInt();
         } catch (InputMismatchException e) {
-//            MainMenuOptions.INITIALIZER.invoke()
-            return MainMenuOption.INVALID_CHOICE;
+            System.out.println("Error: input entered is not a whole number");
         }
 
-        return
-                userInput > 0 && userInput < MainMenuOption.values().length ? MainMenuOption.values()[userInput] :
-                        MainMenuOption.INVALID_CHOICE;
+          return userInput > 0 && userInput < MainMenuOption.values().length ?
+                    MainMenuOption.values()[userInput] :
+                    MainMenuOption.INVALID_CHOICE;
     }
 }
 
