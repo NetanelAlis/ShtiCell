@@ -12,7 +12,7 @@ public class Menu {
 
     public void runMenu() {
         do {
-            ConsolePrinter.printMenu();
+            ConsolePrinter.printMainMenu();
             this.chosenItem = this.getMenuOptionFromUser();
             this.chosenItem.executeOption(engine);
         }

@@ -9,4 +9,5 @@ public interface Engine {
     SheetDTO getSheetAsDTO();
     CellDTO geCellAsDTO(String cellId);
     void updateSingleCellData(String cellId, String value);
+    boolean isSheetLoaded();
 }

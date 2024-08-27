@@ -60,7 +60,12 @@ public enum MainMenuOption {
     SHOW_SHEET {
         @Override
         public void executeOption(Engine engine) {
-            ConsolePrinter.printSheet(engine.getSheetAsDTO());
+            if(engine.isSheetLoaded()){
+                ConsolePrinter.printSheet(engine.getSheetAsDTO());
+            }
+            else{
+                ConsolePrinter.printMainMenu();
+            }
         }
 
         @Override
@@ -71,19 +76,25 @@ public enum MainMenuOption {
     SHOW_SINGLE_CELL {
         @Override
         public void executeOption(Engine engine) {
-            try{
-                String cellID = ConsolePrinter.getInputFromUser("Please Enter the cell ID(for example A4):", Sheet::isValidCellID);
-                CellDTO cellDTO = engine.geCellAsDTO(cellID);
-                if(cellDTO.isActive()){
-                    ConsolePrinter.printCell(cellDTO);
+            if(engine.isSheetLoaded()){
+                try{
+                    String cellID = ConsolePrinter.getInputFromUser("Please Enter the cell ID(for example A4):", Sheet::isValidCellID);
+                    CellDTO cellDTO = engine.geCellAsDTO(cellID);
+                    if(cellDTO.isActive()){
+                        ConsolePrinter.printCell(cellDTO);
+                    }
+                    else{
+                        System.out.println("the cell" + cellID + "has no value yet");
+                    }
                 }
-                else{
-                    System.out.println("the cell" + cellID + "has no value yet");
+                catch(RuntimeException e){
+                    System.out.println(e.getMessage());
                 }
             }
-           catch(RuntimeException e){
-               System.out.println(e.getMessage());
-           }
+            else{
+                ConsolePrinter.printMainMenu();
+            }
+
 
         }
 
@@ -95,23 +106,28 @@ public enum MainMenuOption {
     UPDATE_SINGLE_CELL {
         @Override
         public void executeOption(Engine engine) {
-            try{
-                String cellID = ConsolePrinter.getInputFromUser("Please Enter the cell ID(for example A4):", Sheet::isValidCellID);
-                CellDTO cellDTO = engine.geCellAsDTO(cellID);
+            if(engine.isSheetLoaded()){
+                try{
+                    String cellID = ConsolePrinter.getInputFromUser("Please Enter the cell ID(for example A4):", Sheet::isValidCellID);
+                    CellDTO cellDTO = engine.geCellAsDTO(cellID);
 
-                if(cellDTO.isActive()){
-                    ConsolePrinter.printSimplifiedCell(cellDTO);
-                }
-                else{
-                    System.out.println("the cell" + cellID + "has no value yet");
-                }
+                    if(cellDTO.isActive()){
+                        ConsolePrinter.printSimplifiedCell(cellDTO);
+                    }
+                    else{
+                        System.out.println("the cell" + cellID + "has no value yet");
+                    }
 
-                String cellNewOriginalValue = ConsolePrinter.getOriginalValueFromUser(cellID);
-                engine.updateSingleCellData(cellID, cellNewOriginalValue);
-                SHOW_SHEET.executeOption(engine);
+                    String cellNewOriginalValue = ConsolePrinter.getOriginalValueFromUser(cellID);
+                    engine.updateSingleCellData(cellID, cellNewOriginalValue);
+                    SHOW_SHEET.executeOption(engine);
+                }
+                catch(RuntimeException e){
+                    System.out.println(e.getMessage());
+                }
             }
-            catch(RuntimeException e){
-                System.out.println(e.getMessage());
+            else{
+                ConsolePrinter.printMainMenu();
             }
 
         }

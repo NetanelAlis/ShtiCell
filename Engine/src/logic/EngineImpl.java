@@ -43,7 +43,12 @@ public class EngineImpl implements Engine {
         this.sheet = this.sheet.updateSheet(newSheetVersion);
 }
 
-private void updateCell(String cellToUpdateID, String value, Sheet newSheetVersion){
+    @Override
+    public boolean isSheetLoaded() {
+        return this.sheet != null;
+    }
+
+    private void updateCell(String cellToUpdateID, String value, Sheet newSheetVersion){
     Cell updatedCell = newSheetVersion.getCell(cellToUpdateID);
     if(updatedCell != null){
         updatedCell.setOriginalValue(value, newSheetVersion.getVersion() + 1);

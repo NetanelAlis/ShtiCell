@@ -4,21 +4,34 @@ import dto.CellDTO;
 import dto.SheetDTO;
 import logic.function.returnable.Returnable;
 import ui.menu.MainMenuOption;
-
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.function.Predicate;
 
 public class ConsolePrinter {
 
-   public static void printMenu() {
-        int i = 1;
-
+    public static void printMainMenu() {
+        System.out.println("Please Choose The Option Number out of the Following Options:");
         for (MainMenuOption option : MainMenuOption.values()) {
-            if (option != MainMenuOption.INVALID_CHOICE) {
-                System.out.println((i++) + ")" + option.toString());
+            if(MainMenuOption.INVALID_CHOICE != option) {
+                System.out.println(option.ordinal() + ") " + option);
             }
         }
+    }
+
+    public static String getInputFromUser(String messageToUser, Predicate<String> inputValidationMethod) {
+        Scanner scanner = new Scanner(System.in);
+        String input;
+
+        do{
+            System.out.println(messageToUser + ", Or press Q to go back to the main menu:");
+            input = scanner.nextLine();
+        }
+        while (input.equalsIgnoreCase("q") && inputValidationMethod.test(input));
+
+        return input;
     }
 
     public static void printSheet(SheetDTO sheet) {
@@ -45,7 +58,7 @@ public class ConsolePrinter {
 
         // Print each row
         for (int row = 0; row < numRows; row++) {
-            System.out.print(padLeft(String.format("%02d", row + 1), 3) + "|"); // Print row number with leading zero and separator
+            System.out.print(padLeft(String.format("%02d ", row + 1), 3) + "|"); // Print row number with leading zero and separator
             for (int col = 0; col < numCols; col++) {
                 char colHeader = (char) ('A' + col);
                 String cellKey = colHeader + String.valueOf(row + 1);
@@ -55,13 +68,27 @@ public class ConsolePrinter {
                     cellValue = activeCells.get(cellKey).getValue().toString();
                 }
 
-                if(cellValue.length() > colWidth) {
+                if (cellValue.length() > colWidth) {
                     cellValue = cellValue.substring(0, colWidth);
                 }
+
+                cellValue = numberFormatter(cellValue);
 
                 System.out.print(centerText(cellValue, colWidth) + "|");
             }
             System.out.println();
+        }
+        System.out.println();
+    }
+
+    private static String numberFormatter(String input) {
+        try{
+            double  number = Double.parseDouble(input);
+            DecimalFormat formatter = new DecimalFormat("#,###.##");
+            formatter.setRoundingMode(RoundingMode.DOWN);
+            return formatter.format(number);
+        } catch (Exception ignored) {
+            return input;
         }
     }
 
@@ -89,37 +116,11 @@ public class ConsolePrinter {
         return String.format("%" + n + "s", s);
     }
 
-    public static String getInputFromUser(String messageToUser, Predicate<String> inputValidationMethod) {
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.println(messageToUser);
-        String input = scanner.nextLine();
-
-        while (!inputValidationMethod.test(input)){
-            System.out.println(messageToUser);
-            input = scanner.nextLine();
-        }
-
-        return input;
-    }
-
-    public static String getOriginalValueFromUser(String cellID) {
-        System.out.println("Please Enter the new Value for cell " + cellID + ":");
-        System.out.println("The new Value can be of the Following Types:");
-        System.out.println(" - Number (positive, negative or floating point)");
-        System.out.println(" - Boolean (TRUE/FALSE - Capital Letters Only)");
-        System.out.println(" - String (string of any kind)");
-        System.out.println(" - Function (Must be in the Following format: {NAME,argument1,argument2}");
-        System.out.println("   function name must be capital letters only)");
-        System.out.println("   function examples: {PLUS,{REF,A3},4} or {CONCAT, hello, world}");
-        Scanner scanner = new Scanner(System.in);
-        return scanner.nextLine();
-    }
-
     public static void printSimplifiedCell(CellDTO cellDTO){
         System.out.println("Cell ID: " + cellDTO.getCellId());
         System.out.println("Original Value: " + cellDTO.getOriginalValue());
-        System.out.println("Effective Value: " + cellDTO.getEffectiveValue().getValue());
+        System.out.println("Effective Value: "
+                + numberFormatter(cellDTO.getEffectiveValue().getValue().toString()));
     }
 
     public static void printCell(CellDTO cellDTO) {
@@ -143,5 +144,22 @@ public class ConsolePrinter {
         } else {
             System.out.println(" None");
         }
+    }
+
+    public static String getOriginalValueFromUser(String cellID) {
+        System.out.println("Please Enter the new Value for cell " + cellID + ":");
+        System.out.println("The new Value can be of the Following Types:");
+        System.out.println(" - Number (positive, negative or floating point)");
+        System.out.println(" - Boolean (TRUE/FALSE - Capital Letters Only)");
+        System.out.println(" - String (string of any kind)");
+        System.out.println(" - Function (Must be in the Following format: {NAME,argument1,argument2}");
+        System.out.println("   function name must be capital letters only)");
+        System.out.println("   function examples: {PLUS,{REF,A3},4} or {CONCAT, hello, world}");
+        Scanner scanner = new Scanner(System.in);
+        return scanner.nextLine();
+    }
+
+    protected void printSheetNotLoaded() {
+        System.out.println("Sheet is not loaded, please load Sheet before trying any other option");
     }
 }
