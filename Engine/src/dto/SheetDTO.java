@@ -4,19 +4,21 @@ import component.cell.api.Cell;
 import component.sheet.api.Sheet;
 import component.sheet.impl.SheetImpl;
 import logic.function.returnable.Returnable;
+
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 public class SheetDTO {
     private final String sheetName;
-    private final SheetImpl.Layout layout;
+    private final LayoutDTO layout;
     private final int sheetVersion;
     private final int numberOfCellsThatHaveChanged;
     private final Map<String, Returnable> activeCells;
 
     public SheetDTO(Sheet sheet) {
         this.sheetName = sheet.getName();
-        this.layout = sheet.getLayout();
+        this.layout = new LayoutDTO(sheet.getLayout());
         this.sheetVersion = sheet.getVersion();
         this.numberOfCellsThatHaveChanged = sheet.getNumberOfCellsThatHaveChanged();
         this.activeCells = new HashMap<>();
@@ -26,19 +28,41 @@ public class SheetDTO {
         }
     }
 
-    public int getNumberOfRows() {
-        return this.layout.getNumberOfRows();
-    }
+    public class LayoutDTO implements Serializable {
+        private int numberOfrows;
+        private int numberOfcolumn;
+        private int rowHeight;
+        private int columnWidth;
 
-    public int getNumberOfColumns() {
-        return this.getNumberOfColumns();
-    }
+        public LayoutDTO(SheetImpl.Layout layout) {
+            this.numberOfrows = layout.getNumberOfRows();
+            this.numberOfcolumn = layout.getNumberOfColumns();
+            this.rowHeight = layout.getRowHeight();
+            this.columnWidth = layout.getColumnWidth();
+        }
+
+            public int getNumberOfRows () {
+                return this.numberOfrows;
+            }
+
+            public int getNumberOfColumns () {
+                return this.numberOfcolumn;
+            }
+
+            public int getRowHeight () {
+            return this.rowHeight;
+            }
+
+            public int getColumnWidth () {
+            return this.columnWidth;
+            }
+        }
 
     public String getSheetName() {
         return this.sheetName;
     }
 
-    public SheetImpl.Layout getLayout() {
+    public LayoutDTO getLayout() {
         return this.layout;
     }
 

@@ -1,10 +1,9 @@
 package component.sheet.impl;
 
 import component.cell.api.Cell;
-import component.cell.impl.CellImpl;
 import component.sheet.api.Sheet;
 import component.sheet.topological.order.TopologicalOrder;
-
+import jaxb.generated.STLSheet;
 import java.io.*;
 import java.util.*;
 
@@ -18,6 +17,8 @@ public class SheetImpl implements Sheet {
     private int numberOfCellsThatHaveChanged;
 
     public class Layout implements Serializable {
+        private final static int MAX_NUM_OF_ROWS = 50;
+        private final static int MAX_NUM_OF_COLUMNS = 20;
         private int numberOfrows;
         private int numberOfcolumn;
         private int rowHeight;
@@ -28,6 +29,11 @@ public class SheetImpl implements Sheet {
             this.numberOfcolumn = numberOfcolumn;
             this.rowHeight = rowHeight;
             this.columnWidth = columnWidth;
+
+            if (numberOfrows > MAX_NUM_OF_ROWS || numberOfrows <= 0 || numberOfcolumn > MAX_NUM_OF_COLUMNS || numberOfcolumn <= 0) {
+                throw new IllegalArgumentException("the sheet layout is not valid.\n got row = " + numberOfrows + " and columns " + numberOfcolumn
+                +"\n but expected rows 1 - " + MAX_NUM_OF_ROWS + " and columns 1 - " + MAX_NUM_OF_COLUMNS);
+            }
         }
         public int getNumberOfRows(){
             return this.numberOfrows;
@@ -43,13 +49,17 @@ public class SheetImpl implements Sheet {
         public int getColumnWidth(){
             return this.columnWidth;
         }
+
     }
 
-    public SheetImpl(String sheetName) {
-        this.sheetName = sheetName;
-        this.layout = new Layout(4, 4, 1, 8);
-        this.version = 0;
-        this.activeCells = new HashMap<String,Cell>();
+    public SheetImpl(STLSheet sheet) {
+        this.sheetName = sheet.getName();
+        this.layout = new Layout(sheet.getSTLLayout().getRows(),
+                sheet.getSTLLayout().getColumns(),
+                sheet.getSTLLayout().getSTLSize().getRowsHeightUnits(),
+                sheet.getSTLLayout().getSTLSize().getColumnWidthUnits());
+        this.version = 1;
+        this.activeCells = new HashMap<>();
         this.numberOfCellsThatHaveChanged = 0;
 
     }
@@ -61,6 +71,7 @@ public class SheetImpl implements Sheet {
 
     @Override
     public Cell getCell(String cellID) {
+        cellID = Character.toUpperCase(cellID.charAt(0)) + cellID.substring(1);
         if(cellInLayout(cellID)){
             return activeCells.get(cellID);
         }
@@ -94,11 +105,11 @@ public class SheetImpl implements Sheet {
     }
 
     private int parseCellIDCol(String cellID){
-        char colLetter = cellID.charAt(0);
+        char colLetter = Character.toUpperCase(cellID.charAt(0));
         return colLetter - 'A';
     }
 
-    boolean cellInLayout(String cellID){
+    public boolean cellInLayout(String cellID){
         int row = parseCellIDRow(cellID);
         int col = parseCellIDCol(cellID);
         boolean rowValid = (row >= 0 && row <= this.layout.getNumberOfRows());
@@ -107,8 +118,8 @@ public class SheetImpl implements Sheet {
         return rowValid && colValid;
     }
 
-    private SheetImpl copySheet() {
-
+    @Override
+    public SheetImpl copySheet() {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos);
@@ -123,30 +134,20 @@ public class SheetImpl implements Sheet {
     }
 
     @Override
-    public Sheet updateCellValueAndCalculate(String cellID, String value) {
+    public Sheet updateSheet(SheetImpl newSheetVersion) {
+        List<Cell> cellsThatHaveChanged =
+                TopologicalOrder.SORT.topologicalSort(newSheetVersion.getSheetCells())
+                        .stream()
+                        .filter(Cell::calculateEffectiveValue)
+                        .toList();
 
-        SheetImpl newSheetVersion = copySheet();
-        Cell newCell = new CellImpl(cellID, value, newSheetVersion.getVersion() + 1, newSheetVersion);
-        newSheetVersion.activeCells.put(value, newCell);
+        // successful calculation. update sheet and relevant cells version
+         int newVersion = newSheetVersion.increaseVersion();
+         cellsThatHaveChanged.forEach(cell -> cell.updateVersion(newVersion));
+         this.numberOfCellsThatHaveChanged = cellsThatHaveChanged.size();
 
-        try {
-            List<Cell> cellsThatHaveChanged =
-                    newSheetVersion
-                            .orderCellsForCalculation()
-                            .stream()
-                            .filter(Cell::calculateEffectiveValue)
-                            .toList();
+        return newSheetVersion;
 
-            // successful calculation. update sheet and relevant cells version
-             int newVersion = newSheetVersion.increaseVersion();
-             cellsThatHaveChanged.forEach(cell -> cell.updateVersion(newVersion));
-             this.numberOfCellsThatHaveChanged = cellsThatHaveChanged.size();
-
-            return newSheetVersion;
-        } catch (Exception e) {
-            // deal with the runtime error that was discovered as part of invocation
-            return this;
-        }
     }
 
     private List<Cell> orderCellsForCalculation() {

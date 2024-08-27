@@ -41,7 +41,7 @@ public class ReturnableImpl implements Returnable {
         Returnable that = (Returnable) o;
 
         if (cellType != that.getCellType()) return false;
-        return Objects.equals(value, that.getValue());
+        return Objects.equals(this.value, that.getValue());
     }
 
     @Override

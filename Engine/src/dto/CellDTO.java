@@ -8,38 +8,40 @@ import java.util.List;
 public class CellDTO {
 
     private final String cellID;
-    private final String orignalValue;
+    private final String originalValue;
     private final Returnable effectiveValue;
     private final int version;
-    private final List<String> dependentCellsID;
-    private final List<String> influecningCellsID;
+    private final List<String> dependingOnCellsID;
+    private final List<String> influencingCellsID;
     private final boolean isActive;
 
     public CellDTO(Cell cell){
-        this.dependentCellsID = new ArrayList<>();
-        this.influecningCellsID = new ArrayList<>();
 
         if(cell != null){
             this.cellID = cell.getCellId();
-            this.orignalValue = cell.getOrignalValue();
+            this.originalValue = cell.getOriginalValue();
             this.effectiveValue = cell.getEffectiveValue();
             this.version = cell.getVersion();
             this.isActive = true;
+            this.dependingOnCellsID = new ArrayList<>();
+            this.influencingCellsID = new ArrayList<>();
 
             for(Cell dependantCell : cell.getDependsOn()){
-                this.dependentCellsID.add(cell.getCellId());
+                this.dependingOnCellsID.add(dependantCell.getCellId());
             }
 
             for(Cell influenceCell : cell.getInfluecningOn()){
-                this.dependentCellsID.add(cell.getCellId());
+                this.influencingCellsID.add(influenceCell.getCellId());
             }
         }
         else{
             this.cellID = null;
-            this.orignalValue = "";
+            this.originalValue = "";
             this.effectiveValue = null;
             this.version = 0;
             this.isActive = false;
+            this.dependingOnCellsID = null;
+            this.influencingCellsID = null;
         }
     }
 
@@ -47,8 +49,8 @@ public class CellDTO {
         return this.cellID;
     }
 
-    public String getOrignalValue() {
-        return this.orignalValue;
+    public String getOriginalValue() {
+        return this.originalValue;
     }
 
     public int getVersion() {
@@ -56,19 +58,19 @@ public class CellDTO {
     }
 
     public List<String> getDependsOn() {
-        return this.dependentCellsID;
+        return this.dependingOnCellsID;
     }
 
-    public List<String> getInfluecningOn() {
-        return this.influecningCellsID;
+    public List<String> getInfluencingOn() {
+        return this.influencingCellsID;
     }
 
     public Returnable getEffectiveValue() {
         return this.effectiveValue;
     }
 
-//    public void createEffectiveValue() {
-//        this.effectiveValue = FunctionParser.parseFunction(this.orignalValue).invoke();
-//    }
+    public boolean isActive(){
+        return this.isActive;
+    }
 
 }

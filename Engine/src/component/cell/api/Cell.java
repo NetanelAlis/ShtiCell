@@ -6,11 +6,11 @@ import java.util.List;
 
 public interface Cell extends Serializable{
     String getCellId();
-    String getOrignalValue();;
+    String getOriginalValue();;
     int getVersion();
     List<Cell> getDependsOn();
     List<Cell> getInfluecningOn();
-    void setOrignalValue(String value);
+    void setOriginalValue(String value, int newSheetVersion);
     Returnable getEffectiveValue();
     boolean calculateEffectiveValue();
     void updateVersion(int sheetUpdatedVersion);

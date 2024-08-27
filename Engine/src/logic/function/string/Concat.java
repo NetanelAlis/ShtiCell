@@ -2,7 +2,7 @@ package logic.function.string;
 
 import component.api.CellType;
 import logic.function.Function;
-import logic.function.returnable.ErrorValue;
+import logic.function.returnable.SpecialValue;
 import logic.function.returnable.Returnable;
 import logic.function.BinaryFunction;
 import logic.function.returnable.ReturnableImpl;
@@ -21,7 +21,7 @@ public class Concat extends BinaryFunction {
             return new ReturnableImpl(argument1.tryConvertTo(String.class) + argument2.tryConvertTo(String.class), CellType.STRING);
         }
         catch(ClassCastException e){
-            return ErrorValue.UNDEFINED;
+            return SpecialValue.UNDEFINED;
         }
     }
 

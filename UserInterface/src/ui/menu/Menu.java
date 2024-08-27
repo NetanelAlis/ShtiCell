@@ -2,7 +2,7 @@ package ui.menu;
 
 import logic.Engine;
 import logic.EngineImpl;
-import ui.output.Printer;
+import ui.output.ConsolePrinter;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -12,7 +12,7 @@ public class Menu {
 
     public void runMenu() {
         do {
-            Printer.printMenu();
+            ConsolePrinter.printMenu();
             this.chosenItem = this.getMenuOptionFromUser();
             this.chosenItem.executeOption(engine);
         }
@@ -35,12 +35,6 @@ public class Menu {
         return
                 userInput > 0 && userInput < MainMenuOption.values().length ? MainMenuOption.values()[userInput] :
                         MainMenuOption.INVALID_CHOICE;
-    }
-
-    String getFilePathFromUser(){
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Please Enter The Full Path To your XML file:");
-        return scanner.nextLine();
     }
 }
 

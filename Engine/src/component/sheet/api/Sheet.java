@@ -8,8 +8,8 @@ public interface Sheet extends ReadOnlySheet, WriteOnlySheet{
         if (cellID.isBlank()) {
             System.out.println("Cannot enter an empty cell ID");
             isValid = false;
-        }else if (!Character.isUpperCase(cellID.charAt(0))) {
-            System.out.println("Column must be upper case letter.");
+        }else if (!Character.isLetter(cellID.charAt(0))) {
+            System.out.println("Column must be a single letter.");
             isValid = false;
         }else if (!cellID.substring(1).matches("\\d+")) {
             System.out.println("Row must be whole number number bigger than 0.");

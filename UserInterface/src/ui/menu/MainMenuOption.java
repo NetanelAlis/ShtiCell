@@ -1,9 +1,15 @@
 package ui.menu;
 
-import component.sheet.api.ReadOnlySheet;
+import component.sheet.api.Sheet;
+import dto.CellDTO;
 import logic.Engine;
-import ui.output.Printer;
-import java.util.Scanner;
+import ui.output.ConsolePrinter;
+
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import static java.lang.System.exit;
 
 public enum MainMenuOption {
@@ -16,12 +22,33 @@ public enum MainMenuOption {
     LOAD_XML_FILE {
         @Override
         public void executeOption(Engine engine) {
-            String path = getFilePathFromUser();
-            if (engine.loadXmlFile(path)) {
-                System.out.println("file load succesfully");
-            } else {
-                System.out.println("file dosnt exist");
+            String path = ConsolePrinter.getInputFromUser("Please Enter the full path of the file you wish to load:", this::isValidPathFormat);
+            try{
+                engine.LoadDataFromXML(path);
+                System.out.println("Load completed!");
             }
+            catch(RuntimeException e){
+                System.out.println("Error loading File:\n" + e.getMessage() + "\n");
+            }
+        }
+
+        public boolean isValidPathFormat(String filePath) {
+            Path path = Paths.get(filePath);
+            boolean isValid = true;
+            int suffixIndex;
+
+            if (!Files.exists(path)) {
+                System.out.println("The File " + filePath + " does not exist.");
+                isValid = false;
+            } else if ((suffixIndex = path.getFileName().toString().lastIndexOf(".")) == -1){
+                System.out.println("The file " + filePath + " is not a valid XML file");
+                isValid = false;
+            } else if (path.getFileName().toString().substring(suffixIndex).equals("xml")){
+                System.out.println("The file " + filePath + " is not a valid XML file");
+                isValid = false;
+            }
+
+            return isValid;
         }
 
         @Override
@@ -33,7 +60,7 @@ public enum MainMenuOption {
     SHOW_SHEET {
         @Override
         public void executeOption(Engine engine) {
-            Printer.printSheet( engine.getSheetAsDTO());
+            ConsolePrinter.printSheet(engine.getSheetAsDTO());
         }
 
         @Override
@@ -44,8 +71,20 @@ public enum MainMenuOption {
     SHOW_SINGLE_CELL {
         @Override
         public void executeOption(Engine engine) {
-            String cellId = getCellIDFromUser();
-//            engine.showCellData(cellId);
+            try{
+                String cellID = ConsolePrinter.getInputFromUser("Please Enter the cell ID(for example A4):", Sheet::isValidCellID);
+                CellDTO cellDTO = engine.geCellAsDTO(cellID);
+                if(cellDTO.isActive()){
+                    ConsolePrinter.printCell(cellDTO);
+                }
+                else{
+                    System.out.println("the cell" + cellID + "has no value yet");
+                }
+            }
+           catch(RuntimeException e){
+               System.out.println(e.getMessage());
+           }
+
         }
 
         @Override
@@ -56,8 +95,25 @@ public enum MainMenuOption {
     UPDATE_SINGLE_CELL {
         @Override
         public void executeOption(Engine engine) {
-            String cellId = getCellIDFromUser();
-            engine.updateCellData(cellId);
+            try{
+                String cellID = ConsolePrinter.getInputFromUser("Please Enter the cell ID(for example A4):", Sheet::isValidCellID);
+                CellDTO cellDTO = engine.geCellAsDTO(cellID);
+
+                if(cellDTO.isActive()){
+                    ConsolePrinter.printSimplifiedCell(cellDTO);
+                }
+                else{
+                    System.out.println("the cell" + cellID + "has no value yet");
+                }
+
+                String cellNewOriginalValue = ConsolePrinter.getOriginalValueFromUser(cellID);
+                engine.updateSingleCellData(cellID, cellNewOriginalValue);
+                SHOW_SHEET.executeOption(engine);
+            }
+            catch(RuntimeException e){
+                System.out.println(e.getMessage());
+            }
+
         }
 
         @Override
@@ -89,25 +145,5 @@ public enum MainMenuOption {
     };
 
     public abstract void executeOption(Engine engine);
-
-    String getFilePathFromUser() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Please enter the full path to your XML file:");
-        return scanner.nextLine();
-    }
-
-    private static String getCellIDFromUser() {
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.println("Please Enter the cell ID(for example A4):");
-        String cellID = scanner.nextLine();
-
-        while (!ReadOnlySheet.isValidCellID(cellID)){
-            System.out.println("Please Enter the valid cell ID(for example A4):");
-            cellID = scanner.nextLine();
-        }
-
-        return cellID;
-    }
 
 }

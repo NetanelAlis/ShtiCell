@@ -6,6 +6,7 @@ import logic.function.Function;
 import logic.function.math.Abs;
 import logic.function.math.Minus;
 import logic.function.math.Plus;
+import logic.function.returnable.SpecialValue;
 import logic.function.string.Concat;
 import logic.function.string.Sub;
 import logic.function.system.Identity;
@@ -24,10 +25,13 @@ public enum FunctionParser {
             }
             java.lang.String actualValue = arguments.get(0).trim();
 
-            if (isBoolean(actualValue)) {
-                return new Identity(actualValue, CellType.BOOLEAN);
+            if(actualValue.isEmpty()){
+                return new Identity(actualValue, CellType.NO_VALUE);
+            }
+            else if (isBoolean(actualValue)) {
+                return new Identity(Boolean.parseBoolean(actualValue), CellType.BOOLEAN);
             } else if (isNumeric(actualValue)) {
-                return new Identity(actualValue, CellType.NUMERIC);
+                return new Identity(Double.parseDouble(actualValue), CellType.NUMERIC);
             } else {
                 return new Identity(actualValue, CellType.STRING);
             }
@@ -185,7 +189,7 @@ public enum FunctionParser {
 
             String target = arguments.get(0).trim();
 
-            if(Sheet.isValidCellID(target)){
+            if(!Sheet.isValidCellID(target)){
                 throw new IllegalArgumentException("Invalid argument for REF function expected a valid cell ID but got" + target);
 
             }

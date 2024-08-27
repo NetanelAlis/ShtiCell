@@ -14,8 +14,8 @@ public enum TopologicalOrder {
         for (String cellID : graph.keySet()) {
             if (!visited.contains(cellID)) {
                 if (dfs(graph, cellID, visited, visiting, result)) {
-                    throw new IllegalArgumentException("Error: found Circular Reference in the sheet" +
-                            " containing cell ID " + cellID);
+                    throw new IllegalArgumentException("Found Circular Reference in the sheet" +
+                            " containing cell - " + cellID);
                 }
             }
         }

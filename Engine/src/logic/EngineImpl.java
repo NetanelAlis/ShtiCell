@@ -1,21 +1,29 @@
 package logic;
 
+import component.cell.api.Cell;
+import component.cell.impl.CellImpl;
 import component.sheet.api.Sheet;
 import component.sheet.impl.SheetImpl;
 import dto.CellDTO;
 import dto.SheetDTO;
+import jakarta.xml.bind.JAXBException;
+import jaxb.converter.XMLToSheetConverter;
+import java.io.FileNotFoundException;
 
 public class EngineImpl implements Engine {
 
     private Sheet sheet = null;
 
-    public EngineImpl() {
-        this.sheet = new SheetImpl("Brown Sheet");
-    }
-
     @Override
-    public boolean loadXmlFile(String filePath) {
-        return true;
+    public boolean LoadDataFromXML(String path) {
+        try {
+            XMLToSheetConverter converter = new jaxb.converter.XMLToSheetConverterImpl();
+            this.sheet = converter.convert(path);
+            return true;
+        } catch (JAXBException | FileNotFoundException e) {
+            throw new RuntimeException("Error loading data from XML", e);
+        }
+
     }
 
     @Override
@@ -29,7 +37,21 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public void updateCellData(String cellId) {
-        this.sheet = this.sheet.updateCellValueAndCalculate(cellId, "helloWorld");
+    public void updateSingleCellData(String cellId, String value) {;
+        SheetImpl newSheetVersion = this.sheet.copySheet();
+        updateCell(cellId, value, newSheetVersion);
+        this.sheet = this.sheet.updateSheet(newSheetVersion);
+}
+
+private void updateCell(String cellToUpdateID, String value, Sheet newSheetVersion){
+    Cell updatedCell = newSheetVersion.getCell(cellToUpdateID);
+    if(updatedCell != null){
+        updatedCell.setOriginalValue(value, newSheetVersion.getVersion() + 1);
     }
+    else{
+        updatedCell = new CellImpl(cellToUpdateID, value, newSheetVersion.getVersion() , newSheetVersion);
+        newSheetVersion.getSheetCells().put(updatedCell.getCellId(), updatedCell);
+    }
+}
+
 }

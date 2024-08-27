@@ -1,5 +1,7 @@
 package component.sheet.api;
 
+import component.sheet.impl.SheetImpl;
+
 public interface WriteOnlySheet {
-    Sheet updateCellValueAndCalculate(String cellID, String newValue);;
+    Sheet updateSheet(SheetImpl newSheetVersion);
 }

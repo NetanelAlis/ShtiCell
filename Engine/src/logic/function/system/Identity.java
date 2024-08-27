@@ -28,6 +28,6 @@ public class Identity implements Function {
 
     @Override
     public CellType returnType() {
-        return null;
+        return this.type;
     }
 }
