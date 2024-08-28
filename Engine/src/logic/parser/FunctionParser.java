@@ -291,7 +291,12 @@ public enum FunctionParser {
             String functionName = topLevelParts.getFirst().trim().toUpperCase();
 
             topLevelParts.removeFirst();
-            return FunctionParser.valueOf(functionName).parse(topLevelParts);
+            try{
+                return FunctionParser.valueOf(functionName).parse(topLevelParts);
+            }
+            catch(IllegalArgumentException e){
+                throw new IllegalArgumentException("Invalid function name: " + functionName);
+            }
         }
 
         return FunctionParser.IDENTITY.parse(List.of(input));
