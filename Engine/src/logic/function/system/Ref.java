@@ -2,10 +2,8 @@ package logic.function.system;
 
 import component.api.CellType;
 import component.sheet.api.ReadOnlySheet;
-import component.sheet.api.Sheet;
 import logic.function.Function;
 import logic.function.returnable.Returnable;
-import logic.function.returnable.ReturnableImpl;
 import logic.function.returnable.SpecialValue;
 
 public class Ref implements Function {
@@ -30,8 +28,8 @@ public class Ref implements Function {
     }
 
     @Override
-    public CellType returnType() {
-    return CellType.UNKOWN;
+    public CellType getReturnType() {
+    return CellType.UNKNOWN;
     }
 
 }

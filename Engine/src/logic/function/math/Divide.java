@@ -33,7 +33,7 @@ public class Divide extends BinaryFunction {
     }
 
     @Override
-    public CellType returnType() {
+    public CellType getReturnType() {
             return CellType.NUMERIC;
     }
 

@@ -7,5 +7,5 @@ public interface Function{
 
     String getFunctionName();
     Returnable invoke(ReadOnlySheet sheet);
-    CellType returnType();
+    CellType getReturnType();
 }

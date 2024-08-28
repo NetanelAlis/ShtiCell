@@ -35,7 +35,7 @@ public class Sub extends TernaryFunction {
     }
 
     @Override
-    public CellType returnType() {
+    public CellType getReturnType() {
         return CellType.STRING;
     }
 

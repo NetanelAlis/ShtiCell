@@ -30,7 +30,7 @@ public class Mod extends BinaryFunction {
     }
 
     @Override
-    public CellType returnType() {
+    public CellType getReturnType() {
         return CellType.NUMERIC;
     }
 

@@ -29,7 +29,7 @@ public class Abs extends UnaryFunction {
     }
 
     @Override
-    public CellType returnType() {
+    public CellType getReturnType() {
         return CellType.NUMERIC;
     }
 

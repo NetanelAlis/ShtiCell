@@ -7,7 +7,7 @@ public enum CellType {
         STRING(String.class) ,
         BOOLEAN(Boolean.class),
         NO_VALUE(SpecialValue.class),
-        UNKOWN(Void.class);
+        UNKNOWN(Void.class);
 
         private Class<?> type;
 

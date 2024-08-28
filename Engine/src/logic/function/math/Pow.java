@@ -30,7 +30,7 @@ public class Pow extends BinaryFunction {
     }
 
     @Override
-    public CellType returnType() {
+    public CellType getReturnType() {
         return null;
     }
 

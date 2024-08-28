@@ -31,7 +31,7 @@ public class Concat extends BinaryFunction {
     }
 
     @Override
-    public CellType returnType() {
+    public CellType getReturnType() {
         return CellType.STRING;
     }
 

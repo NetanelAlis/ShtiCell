@@ -27,7 +27,7 @@ public class Identity implements Function {
     }
 
     @Override
-    public CellType returnType() {
+    public CellType getReturnType() {
         return this.type;
     }
 }
