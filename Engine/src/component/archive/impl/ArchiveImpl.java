@@ -2,6 +2,10 @@ package component.archive.impl;
 
 import component.archive.api.Archive;
 import component.sheet.api.Sheet;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.*;
 
 public class ArchiveImpl implements Archive {
@@ -28,6 +32,24 @@ public class ArchiveImpl implements Archive {
     @Override
     public List<Integer> getAllVersionsChanges() {
         return this.changesPerVersion;
+    }
+
+    @Override
+    public void saveToFile(String filePath) {
+        try (ObjectOutputStream out =
+                     new ObjectOutputStream(
+                             new FileOutputStream(filePath))) {
+            out.writeObject(this);
+            out.flush();
+        }
+        catch (IOException e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Sheet retrieveLastSheetVersionFromArchive() {
+       return this.retrieveFromArchive(this.storedSheet.get(this.storedSheet.size() - 1).getVersion());
     }
 
     public static boolean isValidVersion(String version) {

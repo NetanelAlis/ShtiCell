@@ -12,6 +12,10 @@ import dto.VersionsChangesDTO;
 import jakarta.xml.bind.JAXBException;
 import jaxb.converter.XMLToSheetConverter;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class EngineImpl implements Engine {
 
@@ -73,5 +77,16 @@ public class EngineImpl implements Engine {
     @Override
     public SheetDTO getSheetVersionsAsDTO(int version) {
         return new SheetDTO(this.archive.retrieveFromArchive(version));
+    }
+
+    @Override
+    public void saveToFile(String path) {
+        this.archive.saveToFile(path);
+    }
+
+    @Override
+    public void LoadDataFromFile(String path) {
+        this.archive = Archive.loadFromFile(path);
+        this.sheet = this.archive.retrieveLastSheetVersionFromArchive();
     }
 }

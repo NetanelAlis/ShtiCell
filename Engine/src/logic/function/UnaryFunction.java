@@ -13,7 +13,7 @@ public abstract class UnaryFunction implements Function {
 
     @Override
     public Returnable invoke(ReadOnlySheet sheet) {
-        return (argument.invoke(sheet));
+        return calculate(argument.invoke(sheet));
     }
 
     abstract protected Returnable calculate(Returnable result1);

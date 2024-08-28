@@ -8,6 +8,7 @@ import dto.VersionsChangesDTO;
 import logic.Engine;
 import ui.output.ConsolePrinter;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -27,8 +28,8 @@ public enum MainMenuOption {
         public void executeOption(Engine engine) {
             try{
                 String userMessage = "Please Enter the full path of the file you wish to load:";
-                String errorMessage = "The file # is not a valid XML file";
-                String input = ConsolePrinter.getInputFromUser(userMessage, errorMessage, this::isValidPathFormat);
+                String errorMessage = "The File # is not a valid XML file";
+                String input = ConsolePrinter.getInputFromUser(userMessage, errorMessage, this::isValidXmlPathFormat);
                 if(!input.equalsIgnoreCase("q")) {
                     engine.LoadDataFromXML(input);
                     System.out.println("Load completed!");
@@ -38,7 +39,7 @@ public enum MainMenuOption {
                 }
         }
 
-        public boolean isValidPathFormat(String filePath) {
+        public boolean isValidXmlPathFormat(String filePath) {
             Path path = Paths.get(filePath);
             boolean isValid = true;
             int suffixIndex;
@@ -168,6 +169,73 @@ public enum MainMenuOption {
         @Override
         public String toString() {
             return "Show Sheet Versions";
+        }
+    },
+    SAVE_TO_FILE{
+        @Override
+        public void executeOption(Engine engine) {
+            if(engine.isSheetLoaded()){
+                try{
+                    String userMessage = "Please Enter the full path for the file you wish to save:";
+                    String errorMessage = "The File Path # is not a valid file path";
+                    String input = ConsolePrinter.getInputFromUser(userMessage, errorMessage, this::isValidPathFormat);
+                    if(!input.equalsIgnoreCase("q")) {
+                        engine.saveToFile(input);
+                        System.out.println("File saved Successfully!");
+                    }
+                } catch (RuntimeException e) {
+                    System.out.println("Error loading File:\n" + e.getMessage() + "\n");
+                }
+            }
+
+        }
+
+        @Override
+        public String toString() {
+            return "save Current Sheet State to a File";
+        }
+
+        public boolean isValidPathFormat(String filePath) {
+
+            try{
+                Paths.get(filePath);
+                return true;
+            }
+            catch (InvalidPathException e){
+                return false;
+            }
+        }
+    },
+    LOAD_FROM_FILE{
+        @Override
+        public void executeOption(Engine engine) {
+            if (engine.isSheetLoaded()) {
+                try {
+                    String userMessage = "Please Enter the full path for the file you wish to load:";
+                    String errorMessage = "The File Path # is not valid file path or the file doesnt exist ";
+                    String path = ConsolePrinter.getInputFromUser(userMessage, errorMessage, this::isValidPathFormat);
+                    if (!path.equalsIgnoreCase("q")) {
+                        engine.LoadDataFromFile(path);
+                        System.out.println("File load Successfully!");
+                    }
+                } catch (RuntimeException e) {
+                    System.out.println("Error loading File:\n" + e.getMessage() + "\n");
+                }
+            }
+        }
+
+            public boolean isValidPathFormat (String filePath){
+                try {
+                    Path path = Paths.get(filePath);
+                    return Files.exists(path);
+                } catch (InvalidPathException e) {
+                    return false;
+                }
+            }
+
+        @Override
+        public String toString() {
+            return "Load Existing Sheet From a File";
         }
     },
     EXIT {
