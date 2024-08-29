@@ -49,7 +49,7 @@ public class ArchiveImpl implements Archive {
 
     @Override
     public Sheet retrieveLastSheetVersionFromArchive() {
-       return this.retrieveFromArchive(this.storedSheet.get(this.storedSheet.size() - 1).getVersion());
+       return this.retrieveFromArchive(this.storedSheet.size());
     }
 
     public static boolean isValidVersion(String version) {

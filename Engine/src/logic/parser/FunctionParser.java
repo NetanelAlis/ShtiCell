@@ -4,7 +4,6 @@ import component.api.CellType;
 import component.sheet.api.Sheet;
 import logic.function.Function;
 import logic.function.math.*;
-import logic.function.returnable.SpecialValue;
 import logic.function.string.Concat;
 import logic.function.string.Sub;
 import logic.function.system.Identity;
@@ -291,12 +290,16 @@ public enum FunctionParser {
             String functionName = topLevelParts.getFirst().trim().toUpperCase();
 
             topLevelParts.removeFirst();
+
+            FunctionParser functiontoParse;
             try{
-                return FunctionParser.valueOf(functionName).parse(topLevelParts);
+                functiontoParse = FunctionParser.valueOf(functionName);
             }
             catch(IllegalArgumentException e){
                 throw new IllegalArgumentException("Invalid function name: " + functionName);
             }
+
+            return functiontoParse.parse(topLevelParts);
         }
 
         return FunctionParser.IDENTITY.parse(List.of(input));

@@ -23,7 +23,7 @@ public class Ref implements Function {
     @Override
     public Returnable invoke(ReadOnlySheet sheet) {
         return sheet.getCell(this.cellID).getEffectiveValue().getCellType().equals(CellType.NO_VALUE) ?
-                SpecialValue.UNDEFINED :
+                SpecialValue.EMPTY :
                 sheet.getCell(this.cellID).getEffectiveValue();
     }
 
