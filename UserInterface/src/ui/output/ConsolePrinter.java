@@ -9,7 +9,6 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class ConsolePrinter {
