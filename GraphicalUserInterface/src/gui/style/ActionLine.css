@@ -1,0 +1,21 @@
+.act-line-btn{
+    -fx-background-color: #748ffc;
+    -fx-text-fill: #edf2ff;
+    -fx-font-weight: 700;
+    -fx-border-color: transparent;
+}
+
+.act-line-btn:hover{
+    -fx-background-color: #5c7cfa;
+    -fx-border-color: transparent;
+    -fx-text-fill: #edf2ff;
+    -fx-font-weight: 700;
+}
+
+.label{
+    -fx-font-family:sans-serif;
+    -fx-line-spaceing: -0.5px;
+    -fx-text-fill: #212529;
+    -fx-font-weight: 600;
+
+}

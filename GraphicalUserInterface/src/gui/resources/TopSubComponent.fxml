@@ -11,11 +11,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<TitledPane alignment="CENTER" text="Sheet Name and Version" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
+<TitledPane alignment="CENTER" styleClass="titlePane-top" stylesheets="@../style/TopSubComponent.css" text="Sheet Name and Version" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
    <content>
       <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="-Infinity" prefHeight="136.0" prefWidth="946.0">
          <content>
-            <VBox alignment="TOP_CENTER" prefHeight="138.0" prefWidth="945.0">
+            <VBox alignment="TOP_CENTER" prefHeight="138.0" prefWidth="945.0" styleClass="vbox-container">
                <children>
                   <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefWidth="938.0" spacing="5.0" VBox.vgrow="NEVER">
                      <children>
@@ -27,7 +27,7 @@
                               <Insets bottom="4.0" left="4.0" right="8.0" top="4.0" />
                            </padding>
                         </Button>
-                        <TextField promptText="File path..." HBox.hgrow="ALWAYS" />
+                        <TextField editable="false" promptText="File path..." HBox.hgrow="ALWAYS" />
                      </children>
                      <VBox.margin>
                         <Insets left="10.0" top="10.0" />

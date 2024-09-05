@@ -1,0 +1,87 @@
+/*****************************/
+/*    #edf2ff #c1d3fe #304d6d
+/*****************************/
+
+.titlePane-top .title .text {
+    -fx-font-weight: 700;
+    -fx-text-alignment: center;
+    -fx-font-family:sans-serif;
+    -fx-fill: #304d6d;
+    -fx-line-spaceing: -0.5px;
+}
+.titlePane-top:expanded .title .text {
+-fx-fill:white;;
+-fx-font-weight: 900;
+}
+
+.titlePane-top .title {
+    -fx-background-color: #c1d3fe;
+    -fx-padding: 5px;
+}
+
+.titlePane-top .title:hover{
+    -fx-background-color: #bac8ff;
+
+}
+
+.button {
+    -fx-padding: 5px 10px; /* padding */
+    -fx-font-size: 12px; /* font size */
+    -fx-text-fill: #304d6d; /* text color */
+    -fx-background-color: white; /* background color */
+    -fx-border-color: #304d6d; /* blue border color */
+    -fx-border-width: 1px; /* border thickness */
+    -fx-cursor: hand; /* cursor style */
+    -fx-border-radius: 20%; /* rounded border */
+    -fx-background-radius: 50px;
+}
+
+    .button:hover {
+        -fx-background-color: #c1d3fe; /* Change background color on hover */
+        -fx-text-fill: white;
+        -fx-font-weight: 700; /* text color change on hover, set to black by default */
+        -fx-border-color: #c1d3fe;
+
+    }
+.titlePane-top .title .arrow-button {
+    -fx-padding: 2px;
+    -fx-background-radius: 50%;
+    -fx-border-radius: 50%;
+    -fx-border-color: #304d6d;
+    -fx-border-width: 3px;
+    -fx-cursor: hand;
+    -fx-shape: "M 0 0 L 8 12 L 0 24 L 0 20 L 6 12 L 0 4 Z"; /* Arrow pointing right */
+    -fx-rotate: 0; /* Initial rotation */
+    -fx-transition: -fx-rotate 4s ease-in-out; /* Smooth rotation transition */
+}
+
+.titlePane-top:expanded .title .arrow-button {
+    -fx-rotate: 90; /* Rotate arrow to point down when expanded */
+    -fx-border-color: #edf2ff; /* White color for the arrow */
+
+}
+
+.titlePane-top .title .arrow-button .arrow {
+    -fx-background-color: transparent; /* Make the original arrow invisible */
+    -fx-background-image: none; /* Remove any default image */
+    -fx-shape: "M 0 0 L 6 6 L 12 0 L 10 0 L 6 4 L 2 0 Z"; /* Apply your custom arrow shape */
+}
+
+.vbox-container {
+    -fx-background-color: #edf2ff;
+}
+
+.text-field:readonly{
+    -fx-background-color: transparent; /* Make the original arrow invisible */
+    -fx-border-width: 5px;
+    -fx-border-color: white;
+    -fx-border-radius: 50%;
+}
+
+/*}*/
+/*.text-field {*/
+/*    -fx-background-color: transparent; !* Make the original arrow invisible *!*/
+/*    -fx-border-width: 5px;*/
+/*    -fx-border-color: rgba(145, 167, 255, 0.75);*/
+/*    -fx-border-radius: 50%;*/
+/*}*/

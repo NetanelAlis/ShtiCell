@@ -1,0 +1,7 @@
+.main-border {
+ -fx-background-color: white;
+}
+:focused {
+ -fx-focus-color: #dbe4ff;
+ -fx-faint-focus-color: #ffc299;
+}
