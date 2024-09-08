@@ -5,14 +5,10 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 
-
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="400.0" minWidth="600.0" prefHeight="336.0" prefWidth="802.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="400.0" minWidth="600.0" prefHeight="336.0" prefWidth="802.0" styleClass="main-border" stylesheets="@../style/mainAppView.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
    <top>
       <fx:include source="TopSubComponent.fxml" />
    </top>
-   <center>
-      <fx:include source="MainGridComponent.fxml" BorderPane.alignment="CENTER" />
-   </center>
    <left>
       <Accordion BorderPane.alignment="CENTER">
         <panes>

@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox alignment="CENTER" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
+<HBox alignment="CENTER" stylesheets="@../style/ActionLine.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Label text="Selected Cell ID">
          <font>
@@ -23,7 +23,7 @@
          </font>
       </Label>
       <Separator maxWidth="1.7976931348623157E308" opacity="0.0" orientation="VERTICAL" HBox.hgrow="ALWAYS" />
-      <Button mnemonicParsing="false" text="Update Value">
+      <Button mnemonicParsing="false" styleClass="act-line-btn" text="Update Value">
          <HBox.margin>
             <Insets right="10.0" top="5.0" />
          </HBox.margin>
