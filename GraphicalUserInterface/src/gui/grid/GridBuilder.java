@@ -5,14 +5,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
-
 import java.io.IOException;
 import java.util.Objects;
 
@@ -51,7 +49,7 @@ public class GridBuilder {
         scrollPane.setMaxWidth(Double.MAX_VALUE);
         scrollPane.setMinHeight(0.0);
         scrollPane.setMinWidth(0.0);
-        scrollPane.getStylesheets().add("/gui/style/mainGridComponent");
+        scrollPane.getStylesheets().add("/gui/grid/MainGridComponent.css");
 
         return scrollPane;
     }
@@ -146,7 +144,7 @@ public class GridBuilder {
     private void buildCellsComponents(ObservableList<Node> children) throws IOException {
         for (int i = 1; i <= this.row; i++) {
             for (int j = 1; j <= this.col; j++) {
-                Button cell = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/gui/resources/CellSubComponent.fxml")));
+                Button cell = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/gui/cell/CellSubComponent.fxml")));
                 GridPane.setColumnIndex(cell, j);
                 GridPane.setRowIndex(cell, i);
                 children.add(cell);

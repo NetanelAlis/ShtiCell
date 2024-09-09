@@ -8,7 +8,7 @@
     -fx-border-width: 3px; /* border thickness */
     -fx-cursor: hand; /* cursor style */
     -fx-border-radius: 12px; /* rounded border */
-/-fx-background-radius: 12px;/
+    -fx-background-radius: 12px;
 }
 .button:hover {
     -fx-font-weight: Bold;/* text color change on hover, set to black by default */

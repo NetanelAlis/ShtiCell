@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SplitMenuButton?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="main-border" stylesheets="@MainAppView.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.main.MainAppViewController">
+    <top>
+        <fx:include fx:id="topSubComponent" source="../top/TopSubComponent.fxml" BorderPane.alignment="TOP_CENTER" />
+    </top>
+    <left>
+        <Accordion BorderPane.alignment="CENTER">
+            <panes>
+                <TitledPane animated="false" text="Commands">
+                    <content>
+                        <SplitMenuButton mnemonicParsing="false" text="SplitMenuButton">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="Action 1" />
+                                <MenuItem mnemonicParsing="false" text="Action 2" />
+                            </items>
+                        </SplitMenuButton>
+                    </content></TitledPane>
+                <TitledPane animated="false" prefHeight="222.0" prefWidth="90.0" text="Ranges" />
+            </panes>
+            <effect>
+                <DropShadow />
+            </effect>
+            <opaqueInsets>
+                <Insets />
+            </opaqueInsets>
+            <BorderPane.margin>
+                <Insets bottom="5.0" left="5.0" right="5.0" />
+            </BorderPane.margin>
+        </Accordion>
+    </left>
+</BorderPane>
