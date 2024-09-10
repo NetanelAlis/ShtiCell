@@ -29,9 +29,16 @@
     -fx-font-weight: bold;
 }
 
+
 .hbox-action-line {
     -fx-background-color: white;
     -fx-background-radius: 15px ;
+}
+
+#selected-cell{
+    -fx-border-color: white;
+    -fx-border-color: #5c7cfa;
+    -fx-border-width: 2px;
 }
 
 .text-field {

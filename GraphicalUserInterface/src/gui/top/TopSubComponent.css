@@ -114,6 +114,7 @@
 
 .menu-item:hover {
     -fx-background-color: #dbe4ff ;
+    -fx-cursor: hand;
 }
 
 .menu-item:pressed {
@@ -151,4 +152,12 @@
 
 .scroll-pane:fitToWidth:fitToHeight .scroll-bar:horizontal .increment-button .increment-arrow {
     -fx-background-color: #f5f5ff;
+}
+
+.check-menu-item .left-container .check{
+    -fx-opacity: 0;
+}
+
+.active-menu-item .left-container .check{
+    -fx-opacity: 1;
 }

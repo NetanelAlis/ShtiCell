@@ -98,14 +98,14 @@
     -fx-text-fill: #91a7ff;
 }
 
-.menu-button .arrow-button .arrow {
-    -fx-padding: 5px; /* Adjust padding to control the size */
-    -fx-background-color: #91a7ff; /* Set the color of the arrow */
-    -fx-min-width: 10px; /* Minimum width */
-    -fx-min-height: 7px; /* Minimum height */
-    -fx-max-width: 10px; /* Maximum width */
-    -fx-max-height: 7px; /* Maximum height */
-}
+/*.menu-button .arrow-button .arrow {*/
+/*    -fx-padding: 5px; !* Adjust padding to control the size *!*/
+/*    -fx-background-color: #91a7ff; !* Set the color of the arrow *!*/
+/*    -fx-min-width: 10px; !* Minimum width *!*/
+/*    -fx-min-height: 7px; !* Minimum height *!*/
+/*    -fx-max-width: 10px; !* Maximum width *!*/
+/*    -fx-max-height: 7px; !* Maximum height *!*/
+/*}*/
 
 .menu-item {
     -fx-padding: 5px 20px 5px 10px ;

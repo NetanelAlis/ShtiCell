@@ -1,4 +1,4 @@
-.button {
+.label {
     -fx-font-size: 12px; /* font size */
     -fx-font-weight: Bold;
     -fx-text-fill: black; /* text color */
@@ -7,7 +7,7 @@
     -fx-border-width: 1px; /* border thickness */
     -fx-cursor: hand; /* cursor style */
 }
-.button:hover {
+.label:hover {
     -fx-background-color: #f5f5ff;
     -fx-border-color: #4c6ef5;
     -fx-border-width: 2px;

@@ -8,9 +8,9 @@
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="main-border" stylesheets="@MainAppView.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="main-border" stylesheets="@MainAppView.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.main.MainAppViewController">
     <top>
-        <fx:include source="../top/TopSubComponent.fxml" fx:id="" BorderPane.alignment="TOP_CENTER" />
+        <fx:include fx:id="topSubComponent" source="../top/TopSubComponent.fxml" BorderPane.alignment="TOP_CENTER" />
     </top>
     <left>
         <Accordion BorderPane.alignment="CENTER">

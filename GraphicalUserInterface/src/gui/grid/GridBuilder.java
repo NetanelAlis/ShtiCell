@@ -6,13 +6,14 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import java.io.IOException;
-import java.util.Objects;
+import java.net.URL;
 
 public class GridBuilder {
 
@@ -20,15 +21,19 @@ public class GridBuilder {
     private final int col;
     private final int rowSpan;
     private final int colSpan;
+    private MainSheetController mainSheetController;
 
     public GridBuilder(int row, int col, int rowSpan, int colSpan) {
         this.row = row;
         this.col = col;
         this.rowSpan = rowSpan;
         this.colSpan = colSpan;
+        mainSheetController = null;
     }
 
-    public ScrollPane createGrid() throws IOException {
+    public ScrollPane build() throws IOException {
+        this.mainSheetController = new MainSheetController();
+
         ScrollPane scrollPane = createRootScrollPane();
         GridPane gridPane = createGridPane();
         ObservableList<ColumnConstraints> columnConstraints = createColumnConstraints(gridPane);
@@ -119,12 +124,14 @@ public class GridBuilder {
         ObservableList<Node> children = gridPane.getChildren();
 
         for (int i = 1; i < this.col ; i++) {
-            Button button = createRowAndColumnIndexButton((char) ('A' + (i - 1)) + "", i, 0);
-            children.add(button);
+            Button col = createRowAndColumnIndexButton((char) ('A' + (i - 1)) + "", i, 0);
+            children.add(col);
+            this.mainSheetController.addColumnHeader(col);
         }
         for (int i = 0; i < this.row; i++) {
-            Button button = createRowAndColumnIndexButton(i < 9 ? "0" + (i + 1) : (i + 1) + "", 0, i + 1);
-            children.add(button);
+            Button row = createRowAndColumnIndexButton(i < 9 ? "0" + (i + 1) : (i + 1) + "", 0, i + 1);
+            children.add(row);
+            this.mainSheetController.addRowHeader(row);
         }
 
         return children;
@@ -144,12 +151,25 @@ public class GridBuilder {
     private void buildCellsComponents(ObservableList<Node> children) throws IOException {
         for (int i = 1; i <= this.row; i++) {
             for (int j = 1; j <= this.col; j++) {
-                Button cell = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/gui/cell/CellSubComponent.fxml")));
+                FXMLLoader loader = new FXMLLoader();
+                URL url = getClass().getResource("/gui/cell/CellSubComponent.fxml");
+                loader.setLocation(url);
+                Label cell = loader.load();
                 GridPane.setColumnIndex(cell, j);
                 GridPane.setRowIndex(cell, i);
                 children.add(cell);
+                this.mainSheetController.addCellController(createCellID(i,j), loader.getController());
             }
         }
+    }
+
+    private String createCellID(int row, int col) {
+        char column = (char) ('A' + col - 1);
+        return "" + column + row;
+    }
+
+    public MainSheetController getConroller(){
+        return this.mainSheetController;
     }
 
 }

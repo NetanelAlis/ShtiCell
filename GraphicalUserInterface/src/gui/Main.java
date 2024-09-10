@@ -1,6 +1,7 @@
 package gui;
 
 import gui.grid.GridBuilder;
+import gui.main.MainAppViewController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -14,16 +15,16 @@ import java.util.Objects;
 public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
-        GridBuilder gridBuilder = new GridBuilder(10, 10, 35, 110);
         FXMLLoader fxmlLoader = new FXMLLoader();
         URL url = getClass().getResource("/gui/main/MainAppView.fxml");
         fxmlLoader.setLocation(url);
         BorderPane root = fxmlLoader.load(url.openStream());
+        MainAppViewController mainAppViewController = fxmlLoader.getController();
 
-        root.setCenter(gridBuilder.createGrid());
         Scene scene = new Scene(root, 800, 600);
-        stage.setTitle("Hello World");
+        stage.setTitle("ShtiCell");
         stage.setScene(scene);
+        mainAppViewController.setPrimaryStage(stage);
         stage.show();
     }
 
