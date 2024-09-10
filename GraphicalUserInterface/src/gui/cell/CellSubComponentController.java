@@ -1,6 +1,7 @@
 package gui.cell;
 
 import gui.main.MainAppViewController;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -11,6 +12,11 @@ public class CellSubComponentController {
     @FXML
     private Label cellComponent;
     private MainAppViewController mainAppViewController;
+    private StringProperty cellID;
+
+    public CellSubComponentController() {
+        this.cellID = new SimpleStringProperty();
+    }
 
     public StringProperty getCellValueProperty(){
         return this.cellComponent.textProperty();
@@ -21,7 +27,11 @@ public class CellSubComponentController {
     }
     @FXML
     public void onCellPressed(MouseEvent mouseEvent) {
-        this.mainAppViewController.cellPressed(this);
+        this.mainAppViewController.showCellDetails(this.cellID.get());
+    }
+
+    public StringProperty getCellIDProperty(){
+        return this.cellID;
     }
 
 }

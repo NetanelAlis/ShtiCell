@@ -36,7 +36,7 @@
                         </TextField>
                         <MenuButton fx:id="themeMenuButton" mnemonicParsing="false" text="Light Mode">
                            <items>
-                              <CheckMenuItem mnemonicParsing="false" onAction="#onThemeChanged" text="LIght Mode" />
+                              <CheckMenuItem mnemonicParsing="false" onAction="#onThemeChanged" styleClass="active-menu-item" text="LIght Mode" />
                               <CheckMenuItem mnemonicParsing="false" onAction="#onThemeChanged" text="Dark Mode" />
                            </items>
                            <tooltip>
@@ -56,7 +56,7 @@
                               <Tooltip text="Select Sheet Version" />
                            </tooltip>
                            <items>
-                              <CheckMenuItem mnemonicParsing="false" onAction="#onVersionChanged" styleClass="check-menu-item" text="Version 1" />
+                              <CheckMenuItem mnemonicParsing="false" onAction="#onVersionChanged" styleClass="active-menu-item" text="Version 1" />
                               <CheckMenuItem mnemonicParsing="false" text="Version 2" />
                            </items>
                         </MenuButton>

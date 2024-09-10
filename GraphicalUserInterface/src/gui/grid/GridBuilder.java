@@ -1,5 +1,6 @@
 package gui.grid;
 
+import gui.cell.CellSubComponentController;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -155,10 +156,13 @@ public class GridBuilder {
                 URL url = getClass().getResource("/gui/cell/CellSubComponent.fxml");
                 loader.setLocation(url);
                 Label cell = loader.load();
+                String cellID = createCellID(i,j);
+                CellSubComponentController cellController = loader.getController();
                 GridPane.setColumnIndex(cell, j);
                 GridPane.setRowIndex(cell, i);
                 children.add(cell);
-                this.mainSheetController.addCellController(createCellID(i,j), loader.getController());
+                cellController.getCellIDProperty().set(cellID);
+                this.mainSheetController.addCellController(cellID, loader.getController());
             }
         }
     }
@@ -168,7 +172,7 @@ public class GridBuilder {
         return "" + column + row;
     }
 
-    public MainSheetController getConroller(){
+    public MainSheetController getController(){
         return this.mainSheetController;
     }
 

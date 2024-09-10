@@ -37,14 +37,15 @@ public class MainSheetController {
         return this.cellControllers;
     }
 
-    public void initAndBindCellsTextProperies(Map<String,Returnable> sheetDTOCells){
+    public void initializeGridModel(Map<String,Returnable> sheetDTOCells){
         this.gridModel = new GridModel(this.cellControllers);
-
-        sheetDTOCells.forEach(this::updateCellEffectiveValues);
+        this.updateGridModel(sheetDTOCells);
     }
 
-    public void updateCellEffectiveValues(String cellID, Returnable cellEffectiveValue){
-        StringProperty cellTextProperty = this.gridModel.getCellTextProperty(cellID);
-        cellTextProperty.setValue(cellEffectiveValue.getValue().toString());
+    public void updateGridModel(Map<String,Returnable> sheetDTOCells){
+        sheetDTOCells.forEach((cellID, cell) -> {
+            StringProperty cellTextProperty = this.gridModel.getCellTextProperty(cellID);
+            cellTextProperty.setValue(cell.getValue().toString());
+        });
     }
 }

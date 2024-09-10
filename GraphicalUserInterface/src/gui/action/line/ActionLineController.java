@@ -1,15 +1,15 @@
 package gui.action.line;
 
-import gui.grid.MainSheetController;
+import dto.CellDTO;
+import gui.cell.ActionLineCellModel;
+import gui.cell.CellModel;
 import gui.main.MainAppViewController;
 import gui.top.TopSubComponentController;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -20,6 +20,7 @@ import javax.naming.Binding;
 public class ActionLineController {
     private TopSubComponentController topSubComponentController;
     private MainAppViewController mainAppViewController;
+    private ActionLineCellModel actionLineCellModel;
     @FXML
     private Label cellIDLabel;
 
@@ -33,21 +34,21 @@ public class ActionLineController {
     private Button updateValueButton;
 
     private BooleanProperty fileNotLoaded;
-    private StringProperty cellID;
 
     public ActionLineController() {
         fileNotLoaded = new SimpleBooleanProperty(true);
-        cellID = new SimpleStringProperty("Cell ID ??");
+        actionLineCellModel = new CellModel();
     }
 
     @FXML
     public void initialize(){
         this.updateValueButton.disableProperty().bind(Bindings.or(fileNotLoaded, originalValueTextField.textProperty().isEmpty()));
-        this.cellIDLabel.textProperty().bind(cellID);
+        actionLineCellModel.bind(this.cellIDLabel.textProperty(), this.originalValueTextField.textProperty(),
+                this.lastUpdatedCellValueVersionLabel.textProperty());
     }
 
     public void toggleFileLoadedProperty() {
-        fileNotLoaded.setValue(!fileNotLoaded.getValue());
+        fileNotLoaded.setValue(false);
     }
 
     @FXML
@@ -63,7 +64,10 @@ public class ActionLineController {
         this.mainAppViewController = mainAppViewController;
     }
 
-    public void updateCellIDLabel(String key) {
-        this.cellID.set("cell ID " + key);
+
+    public void showCellDetails(CellDTO cellDTO) {
+        this.actionLineCellModel.getCellIDProperty().set(cellDTO.getCellId());
+        this.actionLineCellModel.getOriginalValueProperty().set(cellDTO.getOriginalValue());
+        this.actionLineCellModel.getLastVersionProperty().set(String.valueOf(cellDTO.getVersion()));
     }
 }

@@ -15,7 +15,7 @@ public class CellDTO {
     private final List<String> influencingCellsID;
     private final boolean isActive;
 
-    public CellDTO(Cell cell){
+    public CellDTO(Cell cell, String cellID){
 
         if(cell != null){
             this.cellID = cell.getCellId();
@@ -35,7 +35,7 @@ public class CellDTO {
             }
         }
         else{
-            this.cellID = null;
+            this.cellID = cellID;
             this.originalValue = "";
             this.effectiveValue = null;
             this.version = 0;

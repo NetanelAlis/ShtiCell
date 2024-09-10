@@ -1,11 +1,13 @@
 package gui.main;
 
+import dto.CellDTO;
 import dto.SheetDTO;
 import gui.action.line.ActionLineController;
 import gui.cell.CellSubComponentController;
 import gui.grid.GridBuilder;
 import gui.grid.MainSheetController;
 import gui.top.TopSubComponentController;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
@@ -71,9 +73,9 @@ public class MainAppViewController {
 
             BorderPane root = (BorderPane)primaryStage.getScene().getRoot();
             root.setCenter(gridBuilder.build());
-            this.setMainSheetController(gridBuilder.getConroller());
+            this.setMainSheetController(gridBuilder.getController());
             this.setCellSubComponentController();
-            this.mainSheetController.initAndBindCellsTextProperies(sheetDTO.getActiveCells());
+            this.mainSheetController.initializeGridModel(sheetDTO.getActiveCells());
             this.actionLineController.toggleFileLoadedProperty();
             this.topSubComponentController.setSheetNameAndVersion(sheetDTO.getSheetName(), sheetDTO.getSheetVersion());
         }
@@ -83,16 +85,10 @@ public class MainAppViewController {
 
     }
 
-    public void cellPressed(CellSubComponentController cellSubComponentController) {
-        String cellID = null;
+    public void showCellDetails(String cellID){
+        CellDTO cellDTO = this.engine.geCellAsDTO(cellID);
 
-        for (Map.Entry<String, CellSubComponentController> entry : this.cellSubComponentControllers.entrySet()) {
-            if (entry.getValue() == cellSubComponentController) {
-                cellID = entry.getKey();
-                break;
-            }
-        }
-
-        this.actionLineController.updateCellIDLabel(cellID);
+        this.actionLineController.showCellDetails(cellDTO);
     }
+
 }
