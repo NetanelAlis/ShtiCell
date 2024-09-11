@@ -46,6 +46,11 @@ public class CellModel implements ActionLineCellModel, DependenciesCellModel {
     }
 
     @Override
+    public void rebindOriginalValueProperty(StringProperty originalValueProperty) {
+        originalValueProperty.bind(this.originalValueProperty);
+    }
+
+    @Override
     public List<String> getDependsOnPropertyList() {
         return this.dependsOnPropertyList;
     }

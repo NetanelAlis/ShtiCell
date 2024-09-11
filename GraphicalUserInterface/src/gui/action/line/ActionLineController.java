@@ -45,6 +45,10 @@ public class ActionLineController {
         this.updateValueButton.disableProperty().bind(Bindings.or(fileNotLoaded, originalValueTextField.textProperty().isEmpty()));
         actionLineCellModel.bind(this.cellIDLabel.textProperty(), this.originalValueTextField.textProperty(),
                 this.lastUpdatedCellValueVersionLabel.textProperty());
+
+        this.originalValueTextField.setOnMouseClicked(event -> {
+                this.originalValueTextField.textProperty().unbind();
+        });
     }
 
     public void toggleFileLoadedProperty() {
@@ -53,7 +57,9 @@ public class ActionLineController {
 
     @FXML
     private void onUpdateValuePressed(ActionEvent event) {
-        lastUpdatedCellValueVersionLabel.setText("next version");
+       this.mainAppViewController.updateCellValue(this.actionLineCellModel.getCellIDProperty().getValue(), this.originalValueTextField.textProperty().get());
+       this.actionLineCellModel.rebindOriginalValueProperty(this.originalValueTextField.textProperty());
+
     }
 
     public void setTopSubComponentController(TopSubComponentController topSubComponentController) {
@@ -68,6 +74,15 @@ public class ActionLineController {
     public void showCellDetails(CellDTO cellDTO) {
         this.actionLineCellModel.getCellIDProperty().set(cellDTO.getCellId());
         this.actionLineCellModel.getOriginalValueProperty().set(cellDTO.getOriginalValue());
+        this.actionLineCellModel.rebindOriginalValueProperty(this.originalValueTextField.textProperty());
         this.actionLineCellModel.getLastVersionProperty().set(String.valueOf(cellDTO.getVersion()));
     }
+
+    public void resetCellModel() {
+        this.actionLineCellModel.getCellIDProperty().set("");
+        this.actionLineCellModel.getOriginalValueProperty().set("");
+        this.actionLineCellModel.getLastVersionProperty().set("");
+    }
+
+
 }

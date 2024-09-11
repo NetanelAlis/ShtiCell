@@ -48,14 +48,20 @@
     -fx-background-color: white;
 }
 
-.selected-cell{
-    -fx-border-color: yellow;;
+.selected-cell {
+    -fx-background-color: #f5f5ff; /* Change background color on hover */
+    -fx-border-color: #214fff; /* blue border color */
+    -fx-border-width: 2px;
 }
 
-.depending-cell{
-    -fx-border-color: red;
+.depending-cell {
+    -fx-background-color: #fff5f5; /* Change background color on hover */
+    -fx-border-color: #fa5252; /* blue border color */
+    -fx-border-width: 2px;
 }
 
-.influencing-cell{
-    -fx-border-color: lime;
+.influencing-cell {
+    -fx-background-color: #f4fce3; /* Change background color on hover */
+    -fx-border-color: #94d82d; /* blue border color */
+    -fx-border-width: 2px;
 }

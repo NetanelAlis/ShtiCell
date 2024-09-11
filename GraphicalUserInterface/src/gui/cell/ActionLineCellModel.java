@@ -7,4 +7,5 @@ public interface ActionLineCellModel {
     StringProperty getCellIDProperty();
     StringProperty getOriginalValueProperty();
     StringProperty getLastVersionProperty();
+    void rebindOriginalValueProperty(StringProperty originalValueProperty);
 }

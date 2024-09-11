@@ -7,7 +7,6 @@ import gui.cell.CellSubComponentController;
 import gui.grid.GridBuilder;
 import gui.grid.MainSheetController;
 import gui.top.TopSubComponentController;
-import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
@@ -76,6 +75,7 @@ public class MainAppViewController {
             this.setMainSheetController(gridBuilder.getController());
             this.setCellSubComponentController();
             this.mainSheetController.initializeGridModel(sheetDTO.getActiveCells());
+            this.actionLineController.resetCellModel();
             this.actionLineController.toggleFileLoadedProperty();
             this.topSubComponentController.setSheetNameAndVersion(sheetDTO.getSheetName(), sheetDTO.getSheetVersion());
         }
@@ -92,4 +92,20 @@ public class MainAppViewController {
         this.mainSheetController.showSelectedCellAndDependencies(cellDTO);
     }
 
+    public void updateCellValue(String cellID, String cellOriginalValue) {
+        try{
+            this.engine.updateSingleCellData(cellID, cellOriginalValue);
+            SheetDTO sheetDTO = this.engine.getSheetAsDTO();
+            this.mainSheetController.updateGridModel(sheetDTO.getActiveCells());
+            CellDTO cellDTO = this.engine.geCellAsDTO(cellID);
+            this.actionLineController.showCellDetails(cellDTO);
+            this.mainSheetController.showSelectedCellAndDependencies(cellDTO);
+
+        }
+        catch (RuntimeException e){
+            e.printStackTrace();
+        }
+
+
+    }
 }
