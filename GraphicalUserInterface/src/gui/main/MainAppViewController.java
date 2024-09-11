@@ -89,6 +89,7 @@ public class MainAppViewController {
         CellDTO cellDTO = this.engine.geCellAsDTO(cellID);
 
         this.actionLineController.showCellDetails(cellDTO);
+        this.mainSheetController.showSelectedCellAndDependencies(cellDTO);
     }
 
 }

@@ -34,4 +34,15 @@ public class CellSubComponentController {
         return this.cellID;
     }
 
+    public void deselect(String className){
+        this.cellComponent.getStyleClass().remove(className);
+    }
+
+    public void select(String className){
+        this.cellComponent.getStyleClass().add(className);
+
+    }
+
+
+
 }

@@ -12,6 +12,7 @@ public class CellModel implements ActionLineCellModel, DependenciesCellModel {
     private StringProperty lastUpdatedVersionProperty;
     private List<String> dependsOnPropertyList;
     private List<String> influencingOnPropertyList;
+    private String selectedCellD;
 
     public CellModel() {
         this.cellIDProperty = new SimpleStringProperty("");
@@ -25,9 +26,8 @@ public class CellModel implements ActionLineCellModel, DependenciesCellModel {
     @Override
     public void bind(StringProperty cellIDProperty, StringProperty originalValueProperty, StringProperty lastVersionProperty) {
         cellIDProperty.bind(Bindings.concat("Cell ID ", this.cellIDProperty));
-        cellIDProperty.bind(Bindings.concat("Last Updated Version ", this.lastUpdatedVersionProperty));
         originalValueProperty.bind(this.originalValueProperty);
-        lastVersionProperty.bind(this.lastUpdatedVersionProperty);
+        lastVersionProperty.bind(Bindings.concat("Last Updated Version ", this.lastUpdatedVersionProperty));
     }
 
     @Override
@@ -46,13 +46,35 @@ public class CellModel implements ActionLineCellModel, DependenciesCellModel {
     }
 
     @Override
-    public List<String> getDependsOnPropertyList(List<String> dependencies) {
+    public List<String> getDependsOnPropertyList() {
         return this.dependsOnPropertyList;
     }
 
     @Override
-    public List<String> getInfluencingOnPropertyList(List<String> influencing) {
+    public List<String> getInfluencingOnPropertyList() {
         return this.influencingOnPropertyList;
+    }
+
+    @Override
+    public String getSelectedCellID() {
+        return this.selectedCellD;
+    }
+
+    @Override
+    public void setDependingOn(List<String> dependingOn) {
+        this.dependsOnPropertyList.clear();
+        this.dependsOnPropertyList.addAll(dependingOn);
+    }
+
+    @Override
+    public void setInfluencingOn(List<String> influencingOn) {
+        this.influencingOnPropertyList.clear();
+        this.influencingOnPropertyList.addAll(influencingOn);
+    }
+
+    @Override
+    public void setSelectedCell(String cellId) {
+        this.selectedCellD = cellId;
     }
 
 }

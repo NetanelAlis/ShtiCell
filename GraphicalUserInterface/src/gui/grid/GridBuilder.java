@@ -43,6 +43,7 @@ public class GridBuilder {
         buildCellsComponents(children);
 
         scrollPane.setContent(gridPane);
+
         return scrollPane;
 
     }
@@ -162,7 +163,7 @@ public class GridBuilder {
                 GridPane.setRowIndex(cell, i);
                 children.add(cell);
                 cellController.getCellIDProperty().set(cellID);
-                this.mainSheetController.addCellController(cellID, loader.getController());
+                this.mainSheetController.addCellController(cellID, cellController);
             }
         }
     }

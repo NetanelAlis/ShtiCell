@@ -5,6 +5,7 @@ import gui.main.MainAppViewController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -23,6 +24,7 @@ public class Main extends Application {
 
         Scene scene = new Scene(root, 800, 600);
         stage.setTitle("ShtiCell");
+        stage.getIcons().add(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("style/imgs/ShtiCell-icon.png"))));
         stage.setScene(scene);
         mainAppViewController.setPrimaryStage(stage);
         stage.show();

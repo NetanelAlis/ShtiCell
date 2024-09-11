@@ -47,3 +47,15 @@
 .scroll-pane:fitToWidth:fitToHeight .scroll-bar .increment-button .increment-arrow {
     -fx-background-color: white;
 }
+
+.selected-cell{
+    -fx-border-color: yellow;;
+}
+
+.depending-cell{
+    -fx-border-color: red;
+}
+
+.influencing-cell{
+    -fx-border-color: lime;
+}
