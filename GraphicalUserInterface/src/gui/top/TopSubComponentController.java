@@ -37,7 +37,8 @@ public class TopSubComponentController {
             actionLineController.setTopSubComponentController(this);
         }
         this.filePathTextField.textProperty().bind(fileName);
-        this.sheetNameTitledPane.textProperty().bind(Bindings.concat(this.sheetName, " ", this.sheetVersion));
+        this.sheetNameTitledPane.textProperty().bind(this.sheetName);
+        this.currentVersionMenuButton.textProperty().bind(Bindings.concat("Version ", this.sheetVersion));
     }
 
     @FXML
@@ -81,6 +82,10 @@ public class TopSubComponentController {
     public void setSheetNameAndVersion(String sheetName, int sheetVersion) {
         this.sheetName.set(sheetName);
         this.sheetVersion.set(String.valueOf(sheetVersion));
+    }
+
+    public void setVersion(int version) {
+        this.sheetVersion.set(String.valueOf(version));
     }
 
 }

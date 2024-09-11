@@ -8,7 +8,6 @@ import java.util.List;
 
 public class CellModel implements ActionLineCellModel, DependenciesCellModel {
     private StringProperty cellIDProperty;
-    private StringProperty originalValueProperty;
     private StringProperty lastUpdatedVersionProperty;
     private List<String> dependsOnPropertyList;
     private List<String> influencingOnPropertyList;
@@ -16,7 +15,6 @@ public class CellModel implements ActionLineCellModel, DependenciesCellModel {
 
     public CellModel() {
         this.cellIDProperty = new SimpleStringProperty("");
-        this.originalValueProperty = new SimpleStringProperty();
         this.lastUpdatedVersionProperty = new SimpleStringProperty("");
         this.dependsOnPropertyList = new ArrayList<>();
         this.influencingOnPropertyList = new ArrayList<>();
@@ -24,9 +22,8 @@ public class CellModel implements ActionLineCellModel, DependenciesCellModel {
 
 
     @Override
-    public void bind(StringProperty cellIDProperty, StringProperty originalValueProperty, StringProperty lastVersionProperty) {
+    public void bind(StringProperty cellIDProperty, StringProperty lastVersionProperty) {
         cellIDProperty.bind(Bindings.concat("Cell ID ", this.cellIDProperty));
-        originalValueProperty.bind(this.originalValueProperty);
         lastVersionProperty.bind(Bindings.concat("Last Updated Version ", this.lastUpdatedVersionProperty));
     }
 
@@ -36,18 +33,8 @@ public class CellModel implements ActionLineCellModel, DependenciesCellModel {
     }
 
     @Override
-    public StringProperty getOriginalValueProperty() {
-        return this.originalValueProperty;
-    }
-
-    @Override
     public StringProperty getLastVersionProperty() {
         return this.lastUpdatedVersionProperty;
-    }
-
-    @Override
-    public void rebindOriginalValueProperty(StringProperty originalValueProperty) {
-        originalValueProperty.bind(this.originalValueProperty);
     }
 
     @Override
