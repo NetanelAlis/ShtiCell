@@ -15,4 +15,5 @@ public interface Engine {
     SheetDTO getSheetVersionsAsDTO(int version);
     void saveToFile(String input);
     void LoadDataFromFile(String path);
+    void addRange(String rangeName, String range);
 }

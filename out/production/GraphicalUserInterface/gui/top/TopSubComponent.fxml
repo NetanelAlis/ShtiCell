@@ -15,7 +15,7 @@
 
 <TitledPane fx:id="sheetNameTitledPane" focusTraversable="false" styleClass="top-titled-pane" stylesheets="@TopSubComponent.css" text="Sheet Name and Version" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.top.TopSubComponentController">
    <content>
-      <ScrollPane fitToHeight="true" fitToWidth="true" vbarPolicy="NEVER">
+      <ScrollPane fitToHeight="true" fitToWidth="true" minHeight="100.0" vbarPolicy="NEVER">
          <content>
             <VBox alignment="TOP_CENTER" maxWidth="1.7976931348623157E308" minHeight="150.0" minWidth="-Infinity" spacing="5.0" styleClass="vbox">
                <children>
@@ -51,14 +51,10 @@
                   <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="20.0" VBox.vgrow="NEVER">
                      <children>
                         <fx:include fx:id="actionLine" source="../action/line/ActionLine.fxml" HBox.hgrow="ALWAYS" />
-                        <MenuButton fx:id="currentVersionMenuButton" mnemonicParsing="false" text="Current Version" HBox.hgrow="NEVER">
+                        <MenuButton fx:id="currentVersionMenuButton" mnemonicParsing="false" onMouseClicked="#onVersionMenuClicked" text="Current Version" HBox.hgrow="NEVER">
                            <tooltip>
                               <Tooltip text="Select Sheet Version" />
                            </tooltip>
-                           <items>
-                              <CheckMenuItem mnemonicParsing="false" onAction="#onVersionChanged" styleClass="active-menu-item" text="Version 1" />
-                              <CheckMenuItem mnemonicParsing="false" text="Version 2" />
-                           </items>
                         </MenuButton>
                      </children>
                      <padding>

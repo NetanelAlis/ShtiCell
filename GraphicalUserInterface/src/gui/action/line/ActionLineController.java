@@ -39,13 +39,10 @@ public class ActionLineController {
 
     @FXML
     public void initialize(){
-        this.updateValueButton.disableProperty().bind(Bindings.or(Bindings.or(this.fileNotLoaded, originalValueTextField.textProperty().isEmpty()),
-                this.cellIDLabel.textProperty().isEqualTo("Cell ID ")));
+        this.updateValueButton.disableProperty().bind(Bindings.or(this.fileNotLoaded, this.cellIDLabel.textProperty().isEqualTo("Cell ID ")));
+        this.originalValueTextField.disableProperty().bind(Bindings.or(this.fileNotLoaded, this.cellIDLabel.textProperty().isEqualTo("Cell ID ")));
         actionLineCellModel.bind(this.cellIDLabel.textProperty(), this.lastUpdatedCellValueVersionLabel.textProperty());
 
-        this.originalValueTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            this.originalValueTextField.setText(newValue);
-        });
     }
 
     public void toggleFileLoadedProperty() {

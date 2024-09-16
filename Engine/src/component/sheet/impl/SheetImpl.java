@@ -1,6 +1,7 @@
 package component.sheet.impl;
 
 import component.cell.api.Cell;
+import component.range.api.Range;
 import component.sheet.api.Sheet;
 import component.sheet.topological.order.TopologicalOrder;
 import jaxb.generated.STLSheet;
@@ -15,6 +16,7 @@ public class SheetImpl implements Sheet {
     private int version;
     private Map<String, Cell> activeCells;
     private int numberOfCellsThatHaveChanged;
+    private Map <String, Range> ranges;
 
     public class Layout implements Serializable {
         private final static int MAX_NUM_OF_ROWS = 50;
@@ -61,6 +63,7 @@ public class SheetImpl implements Sheet {
         this.version = 0;
         this.activeCells = new HashMap<>();
         this.numberOfCellsThatHaveChanged = 0;
+        this.ranges = new HashMap<>();
 
     }
 
@@ -129,7 +132,7 @@ public class SheetImpl implements Sheet {
             ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
             return (SheetImpl) ois.readObject();
         } catch (Exception e) {
-            throw new RuntimeException(e); // catch in the ui
+            throw new RuntimeException(e);
         }
     }
 
@@ -156,6 +159,11 @@ public class SheetImpl implements Sheet {
 
     private int increaseVersion(){
         return ++this.version;
+    }
+
+@Override
+    public Map<String, Range> getRanges() {
+        return this.ranges;
     }
 
 }

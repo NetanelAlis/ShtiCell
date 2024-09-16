@@ -4,6 +4,7 @@ import component.archive.api.Archive;
 import component.archive.impl.ArchiveImpl;
 import component.cell.api.Cell;
 import component.cell.impl.CellImpl;
+import component.range.impl.RangeImpl;
 import component.sheet.api.Sheet;
 import component.sheet.impl.SheetImpl;
 import dto.CellDTO;
@@ -16,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 public class EngineImpl implements Engine {
 
@@ -46,10 +48,13 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public void updateSingleCellData(String cellId, String value) {;
+    public void updateSingleCellData(String cellId, String value) {
         Cell cellToUpdate = this.sheet.getCell(cellId);
 
-        if(cellToUpdate != null && cellToUpdate.getOriginalValue().equals(value)) {
+        boolean originalAndCellAreEmpty = (cellToUpdate == null) && Objects.equals(value, "");
+        boolean originalAndCellAreNotEmptyButTheSame = cellToUpdate != null && cellToUpdate.getOriginalValue().equals(value);
+
+        if(originalAndCellAreEmpty || originalAndCellAreNotEmptyButTheSame) {
             return;
         }
 
@@ -67,6 +72,7 @@ public class EngineImpl implements Engine {
     private void updateCell(String cellToUpdateID, String value, Sheet newSheetVersion){
     Cell updatedCell = newSheetVersion.getCell(cellToUpdateID);
     if(updatedCell != null){
+        newSheetVersion.getRanges().get(updatedCell.getRangeNameIfUsed()).reduceUsage();
         updatedCell.setOriginalValue(value, newSheetVersion.getVersion() + 1);
     }
     else{
@@ -95,4 +101,10 @@ public class EngineImpl implements Engine {
         this.archive = Archive.loadFromFile(path);
         this.sheet = this.archive.retrieveLastSheetVersionFromArchive();
     }
+
+    @Override
+    public void addRange(String rangeName, String range){
+        this.sheet.getRanges().put(rangeName, new RangeImpl(rangeName, range, this.sheet));
+    }
+
 }

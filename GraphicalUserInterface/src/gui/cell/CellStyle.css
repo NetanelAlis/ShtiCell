@@ -18,6 +18,13 @@
     -fx-background-color: #f5f5ff;
 }
 
+.old-version:hover {
+    -fx-background-color: white;
+    -fx-border-color: #797979;
+    -fx-border-width: 1px; /* border thickness */
+    -fx-cursor: normal;
+}
+
 /* ------------- SCROLL PANE ---------------*/
 .scroll-pane .scroll-bar .track-background {
     -fx-background-color: white;

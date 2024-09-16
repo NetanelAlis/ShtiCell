@@ -9,9 +9,9 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="10.0" styleClass="hbox-action-line" stylesheets="@ActionLine.css" fx:controller="gui.action.line.ActionLineController" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
+<HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="10.0" styleClass="hbox-action-line" stylesheets="@ActionLine.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.action.line.ActionLineController">
     <children>
-        <Label text="Cell ID A4" HBox.hgrow="NEVER" fx:id="cellIDLabel">
+        <Label fx:id="cellIDLabel" text="Cell ID A4" HBox.hgrow="NEVER">
             <font>
                 <Font size="14.0" />
             </font>
@@ -26,12 +26,12 @@
                 <Font size="14.0" />
             </font>
         </Label>
-        <TextField minWidth="250.0" promptText="original value - {PLUS,{REF{A4},17}" HBox.hgrow="ALWAYS" fx:id="originalValueTextField">
+        <TextField fx:id="originalValueTextField" minWidth="250.0" onAction="#onUpdateValuePressed" promptText="original value - {PLUS,{REF{A4},17}" HBox.hgrow="ALWAYS">
             <font>
                 <Font name="Monospaced Bold Italic" size="14.0" />
             </font>
         </TextField>
-        <Button mnemonicParsing="false" text="Update Value" HBox.hgrow="NEVER" fx:id="updateValueButton" onAction="#onUpdateValuePressed">
+        <Button fx:id="updateValueButton" mnemonicParsing="false" onAction="#onUpdateValuePressed" text="Update Value" HBox.hgrow="NEVER">
             <font>
                 <Font size="14.0" />
             </font>
@@ -39,7 +39,7 @@
                 <Cursor fx:constant="HAND" />
             </cursor>
         </Button>
-        <Label text="Last Updated Version" HBox.hgrow="NEVER" fx:id="lastUpdatedCellValueVersionLabel">
+        <Label fx:id="lastUpdatedCellValueVersionLabel" text="Last Updated Version" HBox.hgrow="NEVER">
             <font>
                 <Font size="14.0" />
             </font>

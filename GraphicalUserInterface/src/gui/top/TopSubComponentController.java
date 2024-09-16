@@ -3,13 +3,11 @@ package gui.top;
 import gui.action.line.ActionLineController;
 import gui.main.MainAppViewController;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import java.io.File;
 
@@ -19,9 +17,7 @@ public class TopSubComponentController {
     @FXML private MenuButton currentVersionMenuButton;
     @FXML private TextField filePathTextField;
     @FXML private TitledPane sheetNameTitledPane;
-    @FXML private MenuButton themeMenuButton;
     private MainAppViewController mainAppViewController;
-
     private StringProperty fileName;
     private StringProperty sheetName;
     private StringProperty sheetVersion;
@@ -29,7 +25,7 @@ public class TopSubComponentController {
     public TopSubComponentController() {
         this.fileName = new SimpleStringProperty("path/to/your/xml/filename.xml");
         this.sheetName = new SimpleStringProperty("Sheet Name");
-        this.sheetVersion = new SimpleStringProperty("Version");
+        this.sheetVersion = new SimpleStringProperty("");
     }
     @FXML
     public void initialize() {
@@ -54,11 +50,6 @@ public class TopSubComponentController {
         String absolutePath = selectedFile.getAbsolutePath();
         this.fileName.set(absolutePath); // add bind
         this.mainAppViewController.loadNewSheetFromXmlFile(absolutePath);
-//        this.mainAppViewController.setMainSheetController();
-
-//        ElementObservableListDecorator<E> selectedFileProperty;
-//        selectedFileProperty.set(absolutePath);
-//        isFileSelected.set(true);
     }
 
     @FXML
@@ -67,10 +58,21 @@ public class TopSubComponentController {
     }
 
     @FXML
-    private void onVersionChanged(ActionEvent event) {
+    public void onVersionMenuClicked(MouseEvent mouseEvent) {
+      int numberOfSheetVersions =  this.mainAppViewController.getSheetVersions();
+      if(numberOfSheetVersions > this.currentVersionMenuButton.getItems().size()) {
+          for(int i = this.currentVersionMenuButton.getItems().size(); i < numberOfSheetVersions; i++) {
+              MenuItem newLastMenuItem = new MenuItem("Version " + (i + 1));
+              newLastMenuItem.setOnAction(this::onVersionChanged);
+              this.currentVersionMenuButton.getItems().add(newLastMenuItem);
+          }
+      }
+  }
 
+    public void onVersionChanged(ActionEvent event){
+        MenuItem clickedMenuItem = (MenuItem) event.getSource();
+        this.mainAppViewController.loadSheetVersion(Integer.parseInt(clickedMenuItem.getText().substring("Version ".length())));
     }
-
     public void setMainAppController(MainAppViewController mainSheetController) {
         this.mainAppViewController = mainSheetController;
     }
@@ -82,6 +84,7 @@ public class TopSubComponentController {
     public void setSheetNameAndVersion(String sheetName, int sheetVersion) {
         this.sheetName.set(sheetName);
         this.sheetVersion.set(String.valueOf(sheetVersion));
+        this.currentVersionMenuButton.getItems().clear();
     }
 
     public void setVersion(int version) {

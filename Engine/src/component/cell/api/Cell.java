@@ -14,4 +14,5 @@ public interface Cell extends Serializable{
     Returnable getEffectiveValue();
     boolean calculateEffectiveValue();
     void updateVersion(int sheetUpdatedVersion);
+    String getRangeNameIfUsed();
 }

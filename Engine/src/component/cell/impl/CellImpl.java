@@ -127,5 +127,10 @@ public class CellImpl implements Cell {
         this.version = sheetUpdatedVersion;
     }
 
+    @Override
+    public String getRangeNameIfUsed() {
+
+    }
+
 
 }

@@ -6,10 +6,9 @@ import gui.cell.CellSubComponentController;
 import gui.cell.DependenciesCellModel;
 import gui.main.MainAppViewController;
 import javafx.beans.property.StringProperty;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import logic.function.returnable.Returnable;
-import java.util.Optional;
-
 import java.util.*;
 
 public class MainSheetController {
@@ -89,5 +88,7 @@ public class MainSheetController {
 
         this.cellModel.setSelectedCell(cellDTO.getCellId());
     }
+
+
 }
 

@@ -22,6 +22,10 @@ public class CellSubComponentController {
         return this.cellComponent.textProperty();
     }
 
+    public Label getCellComponentLabel(){
+        return this.cellComponent;
+    }
+
     public void setMainAppController(MainAppViewController mainAppController){
         this.mainAppViewController = mainAppController;
     }
@@ -41,6 +45,10 @@ public class CellSubComponentController {
     public void select(String className){
         this.cellComponent.getStyleClass().add(className);
 
+    }
+
+    public void addOldVersionStyleClass(){
+        this.cellComponent.getStyleClass().add("old-version");
     }
 
 
