@@ -66,6 +66,18 @@ public enum FunctionParser {
             return new Abs(argument);
         }
     },
+    AVERAGE{
+        @Override
+        public Function parse(List<String> arguments) {
+            if (arguments.size() != 1) {
+                throw new IllegalArgumentException("Invalid number of arguments for AVERAGE function." +
+                        " Expected 1, but got " + arguments.size());
+            }
+
+            return new Average(arguments.getFirst());
+
+        }
+    },
     DIVIDE{
         @Override
         public Function parse(List<String> arguments) {
@@ -259,6 +271,18 @@ public enum FunctionParser {
             }
 
             return new Sub(firstArgument, secondArgument, thirdArgument);
+        }
+    },
+    SUM{
+        @Override
+        public Function parse(List<String> arguments) {
+            if (arguments.size() != 1) {
+                throw new IllegalArgumentException("Invalid number of arguments for SUM function." +
+                        " Expected 1, but got " + arguments.size());
+            }
+
+            return new Sum(arguments.getFirst());
+
         }
     },
     REF{
