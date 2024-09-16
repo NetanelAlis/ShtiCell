@@ -5,7 +5,7 @@
 //
 
 
-package jaxb.generatedv2;
+package jaxb.generated;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -26,7 +26,6 @@ import jakarta.xml.bind.annotation.XmlType;
  *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       <sequence>
  *         <element ref="{}STL-Layout"/>
- *         <element ref="{}STL-Ranges" minOccurs="0"/>
  *         <element ref="{}STL-Cells"/>
  *       </sequence>
  *       <attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
@@ -40,7 +39,6 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "stlLayout",
-    "stlRanges",
     "stlCells"
 })
 @XmlRootElement(name = "STL-Sheet")
@@ -48,8 +46,6 @@ public class STLSheet {
 
     @XmlElement(name = "STL-Layout", required = true)
     protected STLLayout stlLayout;
-    @XmlElement(name = "STL-Ranges")
-    protected STLRanges stlRanges;
     @XmlElement(name = "STL-Cells", required = true)
     protected STLCells stlCells;
     @XmlAttribute(name = "name", required = true)
@@ -77,30 +73,6 @@ public class STLSheet {
      */
     public void setSTLLayout(STLLayout value) {
         this.stlLayout = value;
-    }
-
-    /**
-     * Gets the value of the stlRanges property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link STLRanges }
-     *     
-     */
-    public STLRanges getSTLRanges() {
-        return stlRanges;
-    }
-
-    /**
-     * Sets the value of the stlRanges property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link STLRanges }
-     *     
-     */
-    public void setSTLRanges(STLRanges value) {
-        this.stlRanges = value;
     }
 
     /**
