@@ -4,4 +4,5 @@ import component.sheet.impl.SheetImpl;
 
 public interface WriteOnlySheet {
     Sheet updateSheet(SheetImpl newSheetVersion);
+    void deleteRange(String rangeName);
 }

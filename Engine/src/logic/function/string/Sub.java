@@ -24,7 +24,7 @@ public class Sub extends TernaryFunction {
             return this.isIndexesValid(startIndex, endIndex, sourceString.length()) ?
              new ReturnableImpl(sourceString.substring((int) startIndex, (int) endIndex), CellType.STRING):
              SpecialValue.UNDEFINED;
-        } catch (ClassCastException e) {
+        }  catch (ClassCastException | UnsupportedOperationException e)  {
             return SpecialValue.UNDEFINED;
         }
     }

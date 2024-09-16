@@ -11,6 +11,7 @@ import java.util.*;
 public class RangeImpl implements Range {
     private String name;
     private Set<Cell> cellsInRange;
+    private int usage;
 
     public RangeImpl(String name, String cellsRange, ReadOnlySheet sheet) {
         this.name = name;
@@ -24,6 +25,7 @@ public class RangeImpl implements Range {
             throw new IllegalArgumentException("Range exceeds sheet boundaries");
         }
 
+        this.usage = 0;
         this.cellsInRange = this.createRange(edges[0], edges[1], sheet);
 
 
@@ -73,5 +75,21 @@ public class RangeImpl implements Range {
     @Override
     public String getName() {
         return "";
+    }
+
+    @Override
+    public void reduceUsage() {
+        this.usage--;
+    }
+
+    @Override
+    public void increaseUsage() {
+        this.usage++;
+    }
+
+
+    @Override
+    public boolean inUse() {
+        return this.usage > 0;
     }
 }

@@ -15,4 +15,7 @@ public interface Sheet extends ReadOnlySheet, WriteOnlySheet{
 
         return isValid;
     }
+
+     boolean isExistingRange(String rangeName);
+
 }

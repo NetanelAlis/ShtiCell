@@ -19,7 +19,7 @@ public class Pow extends BinaryFunction {
     protected Returnable calculate(Returnable argument1, Returnable argument2) {
         try {
             return new ReturnableImpl(Math.pow(argument1.tryConvertTo(Double.class), argument2.tryConvertTo(Double.class)), CellType.NUMERIC);
-        } catch (ClassCastException e) {
+        }  catch (ClassCastException | UnsupportedOperationException e)  {
             return SpecialValue.NAN;
         }
     }

@@ -18,7 +18,7 @@ public class Abs extends UnaryFunction {
     protected Returnable calculate(Returnable argument) {
         try {
             return new ReturnableImpl(Math.abs(argument.tryConvertTo(Double.class)), CellType.NUMERIC);
-        } catch (ClassCastException e) {
+        }  catch (ClassCastException | UnsupportedOperationException e)  {
             return SpecialValue.NAN;
         }
     }

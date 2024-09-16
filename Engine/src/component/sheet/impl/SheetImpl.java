@@ -153,17 +153,28 @@ public class SheetImpl implements Sheet {
 
     }
 
-    private List<Cell> orderCellsForCalculation() {
-        return TopologicalOrder.SORT.topologicalSort(this.activeCells);
+    @Override
+    public void deleteRange(String rangeName) {
+        if(!this.ranges.get(rangeName).inUse()){
+            this.ranges.remove(rangeName);
+        }
+        else{
+            throw new IllegalArgumentException("range " + rangeName + " is in use");
+        }
     }
 
     private int increaseVersion(){
         return ++this.version;
     }
 
-@Override
+    @Override
     public Map<String, Range> getRanges() {
         return this.ranges;
+    }
+
+    @Override
+    public boolean isExistingRange(String rangeName) {
+        return ranges.containsKey(rangeName);
     }
 
 }

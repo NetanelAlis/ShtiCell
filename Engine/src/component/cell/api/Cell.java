@@ -3,6 +3,7 @@ package component.cell.api;
 import logic.function.returnable.Returnable;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 public interface Cell extends Serializable{
     String getCellId();
@@ -14,5 +15,5 @@ public interface Cell extends Serializable{
     Returnable getEffectiveValue();
     boolean calculateEffectiveValue();
     void updateVersion(int sheetUpdatedVersion);
-    String getRangeNameIfUsed();
+    Set<String> getUsedRanges();
 }

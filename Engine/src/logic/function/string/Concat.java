@@ -20,7 +20,7 @@ public class Concat extends BinaryFunction {
         try{
             return new ReturnableImpl(argument1.tryConvertTo(String.class) + argument2.tryConvertTo(String.class), CellType.STRING);
         }
-        catch(ClassCastException e){
+        catch (ClassCastException | UnsupportedOperationException e) {
             return SpecialValue.UNDEFINED;
         }
     }

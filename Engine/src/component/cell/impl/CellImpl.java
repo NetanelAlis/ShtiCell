@@ -1,15 +1,20 @@
 package component.cell.impl;
 
 import component.cell.api.Cell;
+import component.range.api.Range;
 import component.sheet.api.ReadOnlySheet;
 import component.sheet.api.Sheet;
-import jaxb.generated.STLCell;
 import logic.parser.FunctionParser;
 import logic.function.returnable.Returnable;
-import logic.parser.RefParser;
+import logic.parser.OriginalValueParser;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static logic.parser.OriginalValueParser.REF;
 
 public class CellImpl implements Cell {
 
@@ -21,9 +26,9 @@ public class CellImpl implements Cell {
     List<Cell> influencingCells;
     ReadOnlySheet sheet;
 
-    public CellImpl(String cellID, String orignalValue, int version, ReadOnlySheet sheet){
+    public CellImpl(String cellID, String originalValue, int version, ReadOnlySheet sheet){
         this.cellID =  Character.toUpperCase(cellID.charAt(0)) + cellID.substring(1);
-        this.originalValue = orignalValue;
+        this.originalValue = originalValue;
         this.sheet = sheet;
         this.version = version;
         this.dependingOnCells = new ArrayList<>();
@@ -48,10 +53,49 @@ public class CellImpl implements Cell {
 
     }
 
+    private void setDependenciesFromRangeAndIncreaseUsage(){
+        Set<String> cellsInRangeIDs = OriginalValueParser.SUM.extract(originalValue);
+        cellsInRangeIDs.addAll(OriginalValueParser.AVERAGE.extract(originalValue));
+
+        cellsInRangeIDs.forEach(rangeName -> {
+            Range range = this.sheet.getRanges().get(rangeName);
+            range.getRangeCells().forEach((dependentCellID -> setDependentAndInfluencingCells(dependentCellID.getCellId())));
+            range.increaseUsage();
+        });
+
+    }
+
     private void setDependencies(){
-        RefParser.PARSE.extractRefs(originalValue).stream()
-                .filter(Sheet::isValidCellID)
-                .forEach(this::setDependentAndInfluencingCells);
+        Set<String> dependencies = this.getDependenciesRanges();
+
+        dependencies.addAll(this.getDependenciesFromRef());
+        dependencies.forEach(this::setDependentAndInfluencingCells);
+
+    }
+
+    private Set<String> getDependenciesFromRef(){
+       Set<String> dependencies =
+        OriginalValueParser.REF.extract(originalValue)
+                .stream()
+               .filter(Sheet::isValidCellID)
+               .collect(Collectors.toSet());
+
+            return dependencies;
+    }
+
+    private Set<String> getDependenciesRanges() {
+        Set<String> dependencies = new HashSet<>();
+
+        this.getUsedRanges()
+                .stream()
+                .filter(this.sheet::isExistingRange)
+                .forEach(rangeName -> {
+                    Range currentRange = this.sheet.getRanges().get(rangeName);
+                    currentRange.increaseUsage();
+                    currentRange.getRangeCells().forEach((cell -> dependencies.add(cell.getCellId())));
+                });
+
+        return dependencies;
     }
 
     private void getInfluencingCellsFromDummy(){
@@ -90,17 +134,11 @@ public class CellImpl implements Cell {
     public void setOriginalValue(String value, int newSheetVersion) {
         this.originalValue = value;
 
-        for(Cell cell : this.dependingOnCells){
-            cell.getInfluecningOn().remove(this);
-        }
+        this.dependingOnCells.forEach(cell -> cell.getInfluecningOn().remove(this));
 
         this.dependingOnCells.clear();
         this.setDependencies();
-
-        if(value.equals(originalValue)){
-            this.version = newSheetVersion;
-        }
-
+        this.version = newSheetVersion;
     }
 
 @Override
@@ -128,9 +166,13 @@ public class CellImpl implements Cell {
     }
 
     @Override
-    public String getRangeNameIfUsed() {
+    public Set<String> getUsedRanges() {
+        Set<String> rangeNames = OriginalValueParser.SUM.extract(this.originalValue);
+        rangeNames.addAll(OriginalValueParser.AVERAGE.extract(this.originalValue));
+        return rangeNames;
 
     }
+
 
 
 }

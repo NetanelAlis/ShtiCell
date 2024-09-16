@@ -4,6 +4,7 @@ import component.archive.api.Archive;
 import component.archive.impl.ArchiveImpl;
 import component.cell.api.Cell;
 import component.cell.impl.CellImpl;
+import component.range.api.Range;
 import component.range.impl.RangeImpl;
 import component.sheet.api.Sheet;
 import component.sheet.impl.SheetImpl;
@@ -13,10 +14,6 @@ import dto.VersionsChangesDTO;
 import jakarta.xml.bind.JAXBException;
 import jaxb.converter.XMLToSheetConverter;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Objects;
 
 public class EngineImpl implements Engine {
@@ -72,7 +69,11 @@ public class EngineImpl implements Engine {
     private void updateCell(String cellToUpdateID, String value, Sheet newSheetVersion){
     Cell updatedCell = newSheetVersion.getCell(cellToUpdateID);
     if(updatedCell != null){
-        newSheetVersion.getRanges().get(updatedCell.getRangeNameIfUsed()).reduceUsage();
+        updatedCell.getUsedRanges()
+                .forEach(rangeName -> {
+                    Range currentRange = this.sheet.getRanges().get(rangeName);
+                    currentRange.reduceUsage();
+                });
         updatedCell.setOriginalValue(value, newSheetVersion.getVersion() + 1);
     }
     else{
@@ -104,7 +105,16 @@ public class EngineImpl implements Engine {
 
     @Override
     public void addRange(String rangeName, String range){
-        this.sheet.getRanges().put(rangeName, new RangeImpl(rangeName, range, this.sheet));
+        if(!sheet.getRanges().containsKey(rangeName)) {
+            this.sheet.getRanges().put(rangeName, new RangeImpl(rangeName, range, this.sheet));
+        }else{
+            throw new IllegalArgumentException("The Range " + rangeName + " already exists");
+        }
+    }
+
+    @Override
+    public void deleteRange(String rangeName) {
+        this.sheet.deleteRange(rangeName);
     }
 
 }

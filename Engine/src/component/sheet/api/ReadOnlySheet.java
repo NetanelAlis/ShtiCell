@@ -16,4 +16,6 @@ public interface ReadOnlySheet extends Serializable {
     SheetImpl copySheet();
      boolean cellInLayout(String cellID);
      Map<String, Range> getRanges();
+
+    boolean isExistingRange(String s);
 }
