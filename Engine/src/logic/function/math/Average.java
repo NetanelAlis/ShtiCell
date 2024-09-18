@@ -43,7 +43,7 @@ public class Average implements Function {
             return SpecialValue.NAN;
         }
     }else{
-        throw new IllegalArgumentException("Cannot calculate average of not existing range, " + this.rangeName);
+        return SpecialValue.NAN;
     }
 
 

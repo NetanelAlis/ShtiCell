@@ -1,8 +1,6 @@
 package logic;
 
-import dto.CellDTO;
-import dto.SheetDTO;
-import dto.VersionsChangesDTO;
+import dto.*;
 
 public interface Engine {
 
@@ -17,4 +15,6 @@ public interface Engine {
     void LoadDataFromFile(String path);
     void addRange(String rangeName, String range);
     void deleteRange(String rangeName);
+    RangeDTO getRangesAsDTO(String rangeName);
+    RangesDTO getAllRangesAsDTO();
 }

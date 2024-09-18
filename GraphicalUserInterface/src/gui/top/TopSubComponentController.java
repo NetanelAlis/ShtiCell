@@ -27,6 +27,7 @@ public class TopSubComponentController {
         this.sheetName = new SimpleStringProperty("Sheet Name");
         this.sheetVersion = new SimpleStringProperty("");
     }
+
     @FXML
     public void initialize() {
         if (actionLineController != null) {

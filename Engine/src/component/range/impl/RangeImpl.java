@@ -10,8 +10,10 @@ import java.util.*;
 
 public class RangeImpl implements Range {
     private String name;
-    private Set<Cell> cellsInRange;
+    private List<Cell> cellsInRange;
     private int usage;
+    private String from;
+    private String to;
 
     public RangeImpl(String name, String cellsRange, ReadOnlySheet sheet) {
         this.name = name;
@@ -26,17 +28,26 @@ public class RangeImpl implements Range {
         }
 
         this.usage = 0;
-        this.cellsInRange = this.createRange(edges[0], edges[1], sheet);
+        this.from = edges[0];
+        this.to = edges[1];
+        populateRange(sheet);
+
+        if(cellsInRange.isEmpty()) {
+            throw new IllegalArgumentException("Top Left Boundary  " + this.from + " Must be smaller or equal to Bottom Right Boundary "+this.to );
+        }
 
 
     }
 
-    private Set<Cell> createRange(String from, String end, ReadOnlySheet sheet) {
-        Set<Cell> cells = new HashSet<Cell>();
+    @Override
+    public void populateRange(ReadOnlySheet sheet) {
+        this.cellsInRange = new ArrayList<>();
         char beginCol = from.charAt(0);
+        beginCol = Character.toUpperCase(beginCol);
         int beginRow = Integer.parseInt(from.substring(1));
-        char endCol = end.charAt(0);
-        int endRow = Integer.parseInt(end.substring(1));
+        char endCol = to.charAt(0);
+        endCol = Character.toUpperCase(endCol);
+        int endRow = Integer.parseInt(to.substring(1));
 
         for (char col = beginCol; col <= endCol; col++) {
             for (int row = beginRow; row <= endRow; row++) {
@@ -48,38 +59,36 @@ public class RangeImpl implements Range {
                     sheet.getSheetCells().put(currentCell.getCellId(), currentCell);
                 }
 
-                cells.add(currentCell);
+                cellsInRange.add(currentCell);
             }
         }
-
-        return cells;
     }
-
-
 
     @Override
     public List<Cell> getRangeCells() {
-        return List.of();
+        return this.cellsInRange;
     }
 
     @Override
     public Cell getFrom() {
-        return null;
+        return this.cellsInRange.getFirst();
     }
 
     @Override
     public Cell getTo() {
-        return null;
+        return this.cellsInRange.getLast();
     }
 
     @Override
     public String getName() {
-        return "";
+        return this.name;
     }
 
     @Override
     public void reduceUsage() {
-        this.usage--;
+        if(this.usage > 0) {
+            this.usage--;
+        }
     }
 
     @Override

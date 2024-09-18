@@ -1,13 +1,17 @@
 package gui.main;
 
 import dto.CellDTO;
+import dto.RangeDTO;
 import dto.SheetDTO;
 import gui.Main;
+import gui.ranges.RangesController;
 import gui.action.line.ActionLineController;
 import gui.cell.CellSubComponentController;
 import gui.grid.GridBuilder;
 import gui.grid.MainSheetController;
 import gui.top.TopSubComponentController;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
@@ -24,11 +28,14 @@ import java.util.Objects;
 
 public class MainAppViewController {
     @FXML
-    TopSubComponentController topSubComponentController;
+    private TopSubComponentController topSubComponentController;
+    @FXML
+    private RangesController rangesController;
     private MainSheetController mainSheetController;
     private ActionLineController actionLineController;
     private Map<String, CellSubComponentController> cellSubComponentControllers;
 
+    private BooleanProperty fileNotLoaded;
     private Stage primaryStage;
     private Engine engine;
 
@@ -39,6 +46,16 @@ public class MainAppViewController {
             this.topSubComponentController.setMainAppController(this);
             this.setActionLineController(topSubComponentController.getActionLineController());
         }
+        if (rangesController != null) {
+            this.rangesController.setMainAppController(this);
+        }
+        this.rangesController.bindIsFileLoaded(this.fileNotLoaded);
+        this.actionLineController.bindIsFileLoaded(this.fileNotLoaded);
+
+    }
+
+    public MainAppViewController(){
+        this.fileNotLoaded = new SimpleBooleanProperty(true);
 
     }
 
@@ -81,8 +98,11 @@ public class MainAppViewController {
             this.setCellSubComponentController();
             this.mainSheetController.initializeGridModel(sheetDTO.getActiveCells());
             this.actionLineController.resetCellModel();
-            this.actionLineController.toggleFileLoadedProperty();
+            this.fileNotLoaded.setValue(false);
             this.topSubComponentController.setSheetNameAndVersion(sheetDTO.getSheetName(), sheetDTO.getSheetVersion());
+            this.engine.getAllRangesAsDTO().getRanges().forEach(rangeDTO -> {this.rangesController.showRange(rangeDTO);});
+            this.rangesController.setRangesAreEmptyProperty();
+
         } catch (RuntimeException | IOException e) {
             e.printStackTrace();
         }
@@ -154,5 +174,29 @@ public class MainAppViewController {
         } catch (RuntimeException | IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void addRange(String rangeName, String from, String to) {
+        try {
+            this.engine.addRange(rangeName, from + ".." + to);
+            this.rangesController.showRange(this.engine.getRangesAsDTO(rangeName));
+        }catch (RuntimeException e){
+            this.rangesController.setErrorMessageFromSaveButton(e.getMessage());
+        }
+
+    }
+
+    public void deleteRange(RangeDTO selectedRange) {
+        try{
+        this.engine.deleteRange(selectedRange.getName());
+        this.rangesController.unShowRange(selectedRange);
+        }catch (RuntimeException e){
+            this.rangesController.setErrorMessageFromDeleteButton(e.getMessage());
+        }
+
+    }
+
+    public void showSelectedRange(RangeDTO newValue, RangeDTO oldValue) {
+        this.mainSheetController.showSelectedRange(newValue, oldValue);
     }
 }

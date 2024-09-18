@@ -72,3 +72,9 @@
     -fx-border-color: #94d82d; /* blue border color */
     -fx-border-width: 2px;
 }
+
+.selected-range{
+    -fx-background-color: #f4fce3; /* Change background color on hover */
+    -fx-border-color: #ffd43b; /* blue border color */
+    -fx-border-width: 2px;
+}

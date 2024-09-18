@@ -1,12 +1,12 @@
 package gui.grid;
 
 import dto.CellDTO;
+import dto.RangeDTO;
 import gui.cell.CellModel;
 import gui.cell.CellSubComponentController;
 import gui.cell.DependenciesCellModel;
 import gui.main.MainAppViewController;
 import javafx.beans.property.StringProperty;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import logic.function.returnable.Returnable;
 import java.util.*;
@@ -87,6 +87,19 @@ public class MainSheetController {
         }
 
         this.cellModel.setSelectedCell(cellDTO.getCellId());
+    }
+
+    public void showSelectedRange(RangeDTO selectedRange, RangeDTO previousSelectedRange) {
+        if (previousSelectedRange != null) {
+            previousSelectedRange.getCellsInRangeIDs().forEach((cellID) -> {
+                this.cellControllers.get(cellID).deselect("selected-range");
+            });
+        }
+
+        if (selectedRange != null)
+        selectedRange.getCellsInRangeIDs().forEach((cellID) -> {
+            this.cellControllers.get(cellID).select("selected-range");
+        });
     }
 
 

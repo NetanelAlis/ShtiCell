@@ -22,4 +22,5 @@ public class GridModel {
     public StringProperty getCellTextProperty(String cellID){// add Exception?
         return this.cellProperties.get(cellID);
     }
+
 }

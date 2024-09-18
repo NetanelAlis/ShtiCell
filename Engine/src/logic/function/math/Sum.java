@@ -6,6 +6,7 @@ import component.sheet.api.ReadOnlySheet;
 import logic.function.Function;
 import logic.function.returnable.Returnable;
 import logic.function.returnable.ReturnableImpl;
+import logic.function.returnable.SpecialValue;
 
 public class Sum implements Function {
     private final String name = "SUM";
@@ -21,7 +22,6 @@ public class Sum implements Function {
 
     @Override
     public Returnable invoke(ReadOnlySheet sheet) {
-
         double sum = 0;
         if (sheet.isExistingRange(rangeName)) {
             Range range = sheet.getRanges().get(rangeName);
@@ -32,7 +32,7 @@ public class Sum implements Function {
 
             return new ReturnableImpl(sum, CellType.NUMERIC);
         } else {
-            throw new IllegalArgumentException("Cannot calculate sum of not existing range, " + this.rangeName);
+           return SpecialValue.NAN;
         }
     }
 

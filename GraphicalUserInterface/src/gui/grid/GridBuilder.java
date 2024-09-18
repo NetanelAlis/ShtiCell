@@ -85,7 +85,7 @@ public class GridBuilder {
         firstColumn.setPrefWidth(35.0);
         columnConstraintsList.add(firstColumn);
 
-        for (int i = 0; i < this.col - 1; i++) {
+        for (int i = 0; i < this.col ; i++) {
             ColumnConstraints colConstraints = new ColumnConstraints();
             colConstraints.setHgrow(Priority.ALWAYS);
             colConstraints.setMaxWidth(Double.MAX_VALUE);
@@ -103,10 +103,12 @@ public class GridBuilder {
         RowConstraints firstRow = new RowConstraints();
 
         firstRow.setVgrow(Priority.ALWAYS);
-        firstRow.setMaxHeight(Double.MAX_VALUE);
+        firstRow.setMaxHeight(35);
+        firstRow.setPrefHeight(35);
+        firstRow.setMinHeight(35);
         rowConstraintsList.add(firstRow);
 
-        for (int i = 0; i < this.row - 1; i++) {
+        for (int i = 0; i < this.row ; i++) {
             RowConstraints rowConstraints = new RowConstraints();
 
             rowConstraints.setVgrow(Priority.ALWAYS);

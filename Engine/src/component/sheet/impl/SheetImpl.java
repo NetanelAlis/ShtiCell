@@ -2,6 +2,8 @@ package component.sheet.impl;
 
 import component.cell.api.Cell;
 import component.range.api.Range;
+import component.range.impl.RangeImpl;
+import component.sheet.SheetNotChangedException;
 import component.sheet.api.Sheet;
 import component.sheet.topological.order.TopologicalOrder;
 import jaxb.generated.STLSheet;
@@ -144,6 +146,10 @@ public class SheetImpl implements Sheet {
                         .filter(Cell::calculateEffectiveValue)
                         .toList();
 
+        if(cellsThatHaveChanged.isEmpty()){
+            return this;
+        }
+
         // successful calculation. update sheet and relevant cells version
          int newVersion = newSheetVersion.increaseVersion();
          cellsThatHaveChanged.forEach(cell -> cell.updateVersion(newVersion));
@@ -160,6 +166,15 @@ public class SheetImpl implements Sheet {
         }
         else{
             throw new IllegalArgumentException("range " + rangeName + " is in use");
+        }
+    }
+
+    @Override
+    public void createRange(String rangeName, String range) {
+        if(!this.getRanges().containsKey(rangeName)) {
+            this.getRanges().put(rangeName, new RangeImpl(rangeName, range, this));
+        }else{
+            throw new IllegalArgumentException("The Range " + rangeName + " already exists");
         }
     }
 

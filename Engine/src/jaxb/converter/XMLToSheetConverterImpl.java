@@ -7,6 +7,7 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 import jaxb.generated.STLCell;
+import jaxb.generated.STLRange;
 import jaxb.generated.STLSheet;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -22,7 +23,12 @@ public class XMLToSheetConverterImpl implements XMLToSheetConverter {
 
     private Sheet STLSheetToSheet(STLSheet stlSheet) {
         SheetImpl sheet = new SheetImpl(stlSheet);
+        stlSheet.getSTLRanges().getSTLRange().forEach(stlRange -> this.createNewRange(stlRange, sheet));
         stlSheet.getSTLCells().getSTLCell().forEach(stlCell -> this.createNewCell(stlCell, sheet));
+        sheet.getRanges().forEach((rangeName, range) -> {
+            range.populateRange(sheet);
+        });
+
         return sheet.updateSheet(sheet);
     }
 
@@ -46,6 +52,21 @@ public class XMLToSheetConverterImpl implements XMLToSheetConverter {
 
     private String createCellID(int row, String col){
         return col + row;
+    }
+
+    private void createNewRange(STLRange stlRange, Sheet sheet){
+        String from = stlRange.getSTLBoundaries().getFrom();
+        String to = stlRange.getSTLBoundaries().getTo();
+
+        if (!sheet.cellInLayout(from) || !sheet.cellInLayout(to)){
+            String format = String.format("""
+                    File contains Range exceeding Sheet layout.
+                    Sheet layout: %d rows, %d columns
+                    Range: %s""", sheet.getLayout().getNumberOfRows(), sheet.getLayout().getNumberOfColumns(), stlRange.getName());
+            throw new IllegalArgumentException(format);
+        }
+
+        sheet.createRange(stlRange.getName(), from + ".." + to);
     }
 
 

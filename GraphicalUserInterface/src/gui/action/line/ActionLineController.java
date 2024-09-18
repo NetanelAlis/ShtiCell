@@ -15,38 +15,32 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 public class ActionLineController {
-    private TopSubComponentController topSubComponentController;
-    private MainAppViewController mainAppViewController;
-    private ActionLineCellModel actionLineCellModel;
     @FXML
     private Label cellIDLabel;
-
     @FXML
     private Label lastUpdatedCellValueVersionLabel;
-
     @FXML
     private TextField originalValueTextField;
-
     @FXML
     private Button updateValueButton;
 
+    private TopSubComponentController topSubComponentController;
+    private MainAppViewController mainAppViewController;
+    private ActionLineCellModel actionLineCellModel;
     private BooleanProperty fileNotLoaded;
 
+
     public ActionLineController() {
-        fileNotLoaded = new SimpleBooleanProperty(true);
-        actionLineCellModel = new CellModel();
+        this.actionLineCellModel = new CellModel();
+        this.fileNotLoaded = new SimpleBooleanProperty(true);
     }
 
     @FXML
     public void initialize(){
-        this.updateValueButton.disableProperty().bind(Bindings.or(this.fileNotLoaded, this.cellIDLabel.textProperty().isEqualTo("Cell ID ")));
-        this.originalValueTextField.disableProperty().bind(Bindings.or(this.fileNotLoaded, this.cellIDLabel.textProperty().isEqualTo("Cell ID ")));
+        this.updateValueButton.disableProperty().bind(Bindings.or(fileNotLoaded, this.cellIDLabel.textProperty().isEqualTo("Cell ID ")));
+        this.originalValueTextField.disableProperty().bind(Bindings.or(fileNotLoaded, this.cellIDLabel.textProperty().isEqualTo("Cell ID ")));
         actionLineCellModel.bind(this.cellIDLabel.textProperty(), this.lastUpdatedCellValueVersionLabel.textProperty());
 
-    }
-
-    public void toggleFileLoadedProperty() {
-        fileNotLoaded.setValue(false);
     }
 
     @FXML
@@ -75,4 +69,7 @@ public class ActionLineController {
         this.actionLineCellModel.getLastVersionProperty().set("");
     }
 
+    public void bindIsFileLoaded(BooleanProperty fileNotLoaded) {
+        this.fileNotLoaded.bind(fileNotLoaded);
+    }
 }

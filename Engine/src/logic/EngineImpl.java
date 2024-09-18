@@ -8,9 +8,7 @@ import component.range.api.Range;
 import component.range.impl.RangeImpl;
 import component.sheet.api.Sheet;
 import component.sheet.impl.SheetImpl;
-import dto.CellDTO;
-import dto.SheetDTO;
-import dto.VersionsChangesDTO;
+import dto.*;
 import jakarta.xml.bind.JAXBException;
 import jaxb.converter.XMLToSheetConverter;
 import java.io.FileNotFoundException;
@@ -49,16 +47,19 @@ public class EngineImpl implements Engine {
         Cell cellToUpdate = this.sheet.getCell(cellId);
 
         boolean originalAndCellAreEmpty = (cellToUpdate == null) && Objects.equals(value, "");
-        boolean originalAndCellAreNotEmptyButTheSame = cellToUpdate != null && cellToUpdate.getOriginalValue().equals(value);
+//        boolean originalAndCellAreNotEmptyButTheSame = cellToUpdate != null && cellToUpdate.getOriginalValue().equals(value);
 
-        if(originalAndCellAreEmpty || originalAndCellAreNotEmptyButTheSame) {
+        if(originalAndCellAreEmpty) {
             return;
         }
 
         SheetImpl newSheetVersion = this.sheet.copySheet();
         updateCell(cellId, value, newSheetVersion);
-        this.sheet = this.sheet.updateSheet(newSheetVersion);
-        this.archive.storeInArchive(this.sheet.copySheet());
+        Sheet tempSheet = this.sheet.updateSheet(newSheetVersion);
+        if(!tempSheet.equals(this.sheet)) {
+            this.sheet = tempSheet;
+            this.archive.storeInArchive(this.sheet.copySheet());
+        }
 }
 
     @Override
@@ -71,7 +72,7 @@ public class EngineImpl implements Engine {
     if(updatedCell != null){
         updatedCell.getUsedRanges()
                 .forEach(rangeName -> {
-                    Range currentRange = this.sheet.getRanges().get(rangeName);
+                    Range currentRange = newSheetVersion.getRanges().get(rangeName);
                     currentRange.reduceUsage();
                 });
         updatedCell.setOriginalValue(value, newSheetVersion.getVersion() + 1);
@@ -105,16 +106,22 @@ public class EngineImpl implements Engine {
 
     @Override
     public void addRange(String rangeName, String range){
-        if(!sheet.getRanges().containsKey(rangeName)) {
-            this.sheet.getRanges().put(rangeName, new RangeImpl(rangeName, range, this.sheet));
-        }else{
-            throw new IllegalArgumentException("The Range " + rangeName + " already exists");
-        }
+        this.sheet.createRange(rangeName, range);
     }
 
     @Override
     public void deleteRange(String rangeName) {
         this.sheet.deleteRange(rangeName);
+    }
+
+    @Override
+    public RangeDTO getRangesAsDTO(String rangeName) {
+        return new RangeDTO(this.sheet.getRanges().get(rangeName));
+    }
+
+    @Override
+    public RangesDTO getAllRangesAsDTO() {
+        return new RangesDTO(this.sheet.getRanges());
     }
 
 }

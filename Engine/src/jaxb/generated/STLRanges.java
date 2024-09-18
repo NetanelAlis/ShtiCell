@@ -5,7 +5,7 @@
 //
 
 
-package jaxb.generatedv2;
+package jaxb.generated;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -7,14 +7,11 @@ import component.sheet.api.Sheet;
 import logic.parser.FunctionParser;
 import logic.function.returnable.Returnable;
 import logic.parser.OriginalValueParser;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static logic.parser.OriginalValueParser.REF;
 
 public class CellImpl implements Cell {
 
@@ -53,18 +50,6 @@ public class CellImpl implements Cell {
 
     }
 
-    private void setDependenciesFromRangeAndIncreaseUsage(){
-        Set<String> cellsInRangeIDs = OriginalValueParser.SUM.extract(originalValue);
-        cellsInRangeIDs.addAll(OriginalValueParser.AVERAGE.extract(originalValue));
-
-        cellsInRangeIDs.forEach(rangeName -> {
-            Range range = this.sheet.getRanges().get(rangeName);
-            range.getRangeCells().forEach((dependentCellID -> setDependentAndInfluencingCells(dependentCellID.getCellId())));
-            range.increaseUsage();
-        });
-
-    }
-
     private void setDependencies(){
         Set<String> dependencies = this.getDependenciesRanges();
 
@@ -88,7 +73,7 @@ public class CellImpl implements Cell {
 
         this.getUsedRanges()
                 .stream()
-                .filter(this.sheet::isExistingRange)
+                    .filter(this.sheet::isExistingRange)
                 .forEach(rangeName -> {
                     Range currentRange = this.sheet.getRanges().get(rangeName);
                     currentRange.increaseUsage();
