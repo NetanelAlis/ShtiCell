@@ -157,7 +157,4 @@ public class CellImpl implements Cell {
         return rangeNames;
 
     }
-
-
-
 }

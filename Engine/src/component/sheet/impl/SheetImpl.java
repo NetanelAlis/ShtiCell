@@ -139,14 +139,14 @@ public class SheetImpl implements Sheet {
     }
 
     @Override
-    public Sheet updateSheet(SheetImpl newSheetVersion) {
+    public Sheet updateSheet(SheetImpl newSheetVersion, boolean isOriginalValueChanged) {
         List<Cell> cellsThatHaveChanged =
                 TopologicalOrder.SORT.topologicalSort(newSheetVersion.getSheetCells())
                         .stream()
                         .filter(Cell::calculateEffectiveValue)
                         .toList();
 
-        if(cellsThatHaveChanged.isEmpty()){
+        if(cellsThatHaveChanged.isEmpty() && !isOriginalValueChanged){
             return this;
         }
 

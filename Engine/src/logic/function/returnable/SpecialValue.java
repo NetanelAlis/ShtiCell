@@ -7,7 +7,7 @@ public enum SpecialValue implements Returnable {
     UNDEFINED(){
         @Override
         public Object getValue() {
-            return "!UNDEFINED!";
+            return "UNDEFINED";
         }
     },
 
@@ -22,6 +22,11 @@ public enum SpecialValue implements Returnable {
         @Override
         public Object getValue() {
             return  "";
+        }
+    },
+    UNKNOWN{
+        @Override public Object getValue(){
+            return "UNKNOWN";
         }
     };
 

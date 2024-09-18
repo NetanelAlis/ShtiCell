@@ -46,8 +46,8 @@ public class EngineImpl implements Engine {
     public void updateSingleCellData(String cellId, String value) {
         Cell cellToUpdate = this.sheet.getCell(cellId);
 
-        boolean originalAndCellAreEmpty = (cellToUpdate == null) && Objects.equals(value, "");
-//        boolean originalAndCellAreNotEmptyButTheSame = cellToUpdate != null && cellToUpdate.getOriginalValue().equals(value);
+        boolean originalAndCellAreEmpty = (cellToUpdate == null) && value.isEmpty();
+        boolean isOriginalValueChanged = cellToUpdate != null && !cellToUpdate.getOriginalValue().equals(value);
 
         if(originalAndCellAreEmpty) {
             return;
@@ -55,7 +55,7 @@ public class EngineImpl implements Engine {
 
         SheetImpl newSheetVersion = this.sheet.copySheet();
         updateCell(cellId, value, newSheetVersion);
-        Sheet tempSheet = this.sheet.updateSheet(newSheetVersion);
+        Sheet tempSheet = this.sheet.updateSheet(newSheetVersion, isOriginalValueChanged);
         if(!tempSheet.equals(this.sheet)) {
             this.sheet = tempSheet;
             this.archive.storeInArchive(this.sheet.copySheet());

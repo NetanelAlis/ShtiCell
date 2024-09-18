@@ -29,7 +29,7 @@ public class XMLToSheetConverterImpl implements XMLToSheetConverter {
             range.populateRange(sheet);
         });
 
-        return sheet.updateSheet(sheet);
+        return sheet.updateSheet(sheet, true);
     }
 
     private void createNewCell(STLCell STLcell, Sheet sheet){
