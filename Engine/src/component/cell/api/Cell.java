@@ -1,5 +1,7 @@
 package component.cell.api;
 
+import component.cell.impl.SerializableColor;
+import javafx.scene.paint.Color;
 import logic.function.returnable.Returnable;
 import java.io.Serializable;
 import java.util.List;
@@ -16,4 +18,9 @@ public interface Cell extends Serializable{
     boolean calculateEffectiveValue();
     void updateVersion(int sheetUpdatedVersion);
     Set<String> getUsedRanges();
+    SerializableColor getBackgroundColor();
+    SerializableColor getTextColor();
+    void setBackgroundColor(Color color);
+    void setTextColor(Color color);
+    void updateCellID(String cellID);
 }

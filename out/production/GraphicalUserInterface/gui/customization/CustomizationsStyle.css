@@ -1,0 +1,136 @@
+/* ------------- SCROLL PANE ---------------*/
+.scroll-pane .scroll-bar .track-background {
+    -fx-background-color: #f5f5ff;
+}
+
+.scroll-pane .scroll-bar .thumb {
+    -fx-background-color: #dbe4ff;
+    -fx-cursor: hand;
+}
+
+.scroll-pane .scroll-bar .thumb:hover {
+    -fx-background-color: #bac8ff;
+}
+
+.scroll-pane .scroll-bar .thumb:pressed {
+    -fx-background-color: #bac8ff;
+}
+
+.scroll-pane:fitToWidth:fitToHeight .scroll-bar:vertical .decrement-button .decrement-arrow {
+    -fx-background-color: #bac8ff;
+}
+
+.scroll-pane:fitToWidth:fitToHeight .scroll-bar:vertical .increment-button .increment-arrow {
+    -fx-background-color: #bac8ff;
+}
+
+.customizations-grid {
+    -fx-background-color: #f5f5ff;
+}
+
+.customizations-grid:vertical{
+    -fx-background-color: white;
+}
+
+
+/*------------------ BUTTON ------------------*/
+.button {
+    /* padding */
+    -fx-font-size: 12px; /* font size */
+    -fx-font-weight: Bold;
+    -fx-text-fill: #91a7ff; /* text color */
+    -fx-background-color: #f5f5ff; /* background color */
+    -fx-border-color: #91a7ff; /* blue border color */
+    -fx-border-width: 3px; /* border thickness */
+    -fx-cursor: hand; /* cursor style */
+    -fx-border-radius: 20%; /* rounded border */
+    -fx-background-radius: 50px;
+}
+.button:hover {
+    -fx-background-color: #91a7ff; /* Change background color on hover */
+    -fx-text-fill: white;
+    -fx-font-weight: Bold;/* text color change on hover, set to black by default */
+    -fx-border-color: #91a7ff; /* blue border color */
+}
+
+/* ------------- TEXT FIELD ---------------*/
+.text-field {
+    -fx-background-color: white;
+    -fx-border-width: 0px;
+    -fx-border-color: #91a7ff;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.separator:vertical .line {
+    -fx-margin: 10px 5px 10px 5px;
+}
+
+.label .text {
+    -fx-font-family: Arial;
+    -fx-font-weight: bold;
+}
+
+.header .text{
+    -fx-font-size: 14;
+}
+
+/*-------------- SEPERATOR -------------*/
+.separator:vertical .line {
+    -fx-margin: 10px 5px 10px 5px;
+}
+
+/*------------------ GRID -------------------------*/
+.customizations-grid {
+    -fx-background-color: #f5f5ff;
+}
+
+.sub-header{
+    -fx-font-size: 13px;
+}
+
+.main-separator{
+    -fx-background-color: #91a7ff;
+}
+
+/*.spinner .increment-arrow-button{*/
+/*    -fx-background-color: transparent;*/
+/*    -fx-cursor: hand;*/
+/*}*/
+
+/*.spinner .increment-arrow-button{*/
+/*    -fx-background-color: transparent;*/
+/*    -fx-cursor: hand;*/
+/*}*/
+
+/*.spinner .decrement-arrow-button .decrement-arrow{*/
+/*    -fx-text-fill: #91a7ff;*/
+/*}*/
+
+/*.spinner .decrement-arrow-button .decrement-arrow{*/
+/*    -fx-text-fill: #91a7ff;*/
+.reset-button {
+    -fx-padding: 5px 10px;
+    -fx-font-size: 12px; /* font size */
+    -fx-font-weight: Bold;
+    -fx-background-color: #748ffc; /* Change background color on hover */
+    -fx-text-fill: #f5f5ff;
+    -fx-border-color: #748ffc; /* blue border color */
+    -fx-border-width: 3px; /* border thickness */
+    -fx-cursor: hand; /* cursor style */
+    -fx-border-radius: 12px; /* rounded border */
+    -fx-background-radius: 12px;
+}
+.reset-button:hover {
+    -fx-font-weight: Bold;/* text color change on hover, set to black by default */
+    -fx-text-fill: #f5f5ff; /* text color */
+    -fx-background-color: #5c7cfa; /* background color */
+    -fx-border-color: #5c7cfa;
+}
+
+.reset-button:pressed {
+    -fx-font-weight: Bold;/* text color change on hover, set to black by default */
+    -fx-text-fill: #748ffc; /* text color */
+    -fx-background-color: #bac8ff; /* background color */
+    -fx-border-color: #748ffc;
+}

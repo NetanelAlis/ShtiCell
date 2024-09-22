@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ContextMenu?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuItem?>
@@ -12,4 +13,7 @@
         </items>
       </ContextMenu>
    </contextMenu>
+   <padding>
+      <Insets left="5.0" right="5.0" />
+   </padding>
 </Label>

@@ -12,8 +12,6 @@ public class CellModel implements ActionLineCellModel, DependenciesCellModel {
     private List<String> dependsOnPropertyList;
     private List<String> influencingOnPropertyList;
     private String selectedCellD;
-    private StringProperty originalValueProperty;
-
 
     public CellModel() {
         this.cellIDProperty = new SimpleStringProperty("");

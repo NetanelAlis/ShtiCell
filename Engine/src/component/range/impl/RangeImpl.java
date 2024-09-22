@@ -6,14 +6,16 @@ import component.range.api.Range;
 import component.sheet.api.ReadOnlySheet;
 import component.sheet.api.Sheet;
 
+import java.io.*;
 import java.util.*;
 
-public class RangeImpl implements Range {
+public class RangeImpl implements Range, Serializable {
     private String name;
     private List<Cell> cellsInRange;
     private int usage;
     private String from;
     private String to;
+    private List<String> columnsInRange = new ArrayList<>();
 
     public RangeImpl(String name, String cellsRange, ReadOnlySheet sheet) {
         this.name = name;
@@ -50,6 +52,7 @@ public class RangeImpl implements Range {
         int endRow = Integer.parseInt(to.substring(1));
 
         for (char col = beginCol; col <= endCol; col++) {
+            this.columnsInRange.add("" + col);
             for (int row = beginRow; row <= endRow; row++) {
                 String currentCellID = "" + col + row;
                 Cell currentCell = sheet.getCell(currentCellID);
@@ -61,6 +64,31 @@ public class RangeImpl implements Range {
 
                 cellsInRange.add(currentCell);
             }
+        }
+    }
+
+    @Override
+    public List<String> getColumnsInRange() {
+        return this.columnsInRange;
+    }
+
+    @Override
+    public Range copyRange() {
+        try {
+            // Serialize this object to a byte array
+            ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
+            ObjectOutputStream outStream = new ObjectOutputStream(byteOutStream);
+            outStream.writeObject(this);
+            outStream.flush();
+            outStream.close();
+
+            // Deserialize the byte array to a new object
+            ByteArrayInputStream byteInStream = new ByteArrayInputStream(byteOutStream.toByteArray());
+            ObjectInputStream inStream = new ObjectInputStream(byteInStream);
+            return (RangeImpl) inStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;  // Return null if deep copy fails
         }
     }
 
@@ -101,4 +129,7 @@ public class RangeImpl implements Range {
     public boolean inUse() {
         return this.usage > 0;
     }
+
+
+
 }

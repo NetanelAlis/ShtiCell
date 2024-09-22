@@ -8,7 +8,6 @@
     -fx-cursor: hand; /* cursor style */
 }
 .label:hover {
-    -fx-background-color: #f5f5ff;
     -fx-border-color: #4c6ef5;
     -fx-border-width: 2px;
 }
@@ -19,62 +18,27 @@
 }
 
 .old-version:hover {
-    -fx-background-color: white;
     -fx-border-color: #797979;
     -fx-border-width: 1px; /* border thickness */
     -fx-cursor: normal;
 }
 
-/* ------------- SCROLL PANE ---------------*/
-.scroll-pane .scroll-bar .track-background {
-    -fx-background-color: white;
-}
-
-.scroll-pane .scroll-bar .thumb {
-    -fx-background-color: #dbe4ff;
-    -fx-cursor: hand;
-}
-
-.scroll-pane .scroll-bar .thumb:hover {
-    -fx-background-color: #bac8ff;
-}
-
-.scroll-pane:fitToWidth:fitToHeight .corner {
-    -fx-background-color: white;
-}
-
-.scroll-pane .scroll-bar .thumb:pressed {
-    -fx-background-color: #bac8ff;
-}
-
-.scroll-pane:fitToWidth:fitToHeight .scroll-bar .decrement-button .decrement-arrow {
-    -fx-background-color: white;
-}
-
-.scroll-pane:fitToWidth:fitToHeight .scroll-bar .increment-button .increment-arrow {
-    -fx-background-color: white;
-}
-
 .selected-cell {
-    -fx-background-color: #f5f5ff; /* Change background color on hover */
     -fx-border-color: #214fff; /* blue border color */
-    -fx-border-width: 2px;
+    -fx-border-width: 3px;
 }
 
 .depending-cell {
-    -fx-background-color: #fff5f5; /* Change background color on hover */
-    -fx-border-color: #fa5252; /* blue border color */
-    -fx-border-width: 2px;
+    -fx-border-color: #66d9e8;
+    -fx-border-width: 3px;
 }
 
 .influencing-cell {
-    -fx-background-color: #f4fce3; /* Change background color on hover */
-    -fx-border-color: #94d82d; /* blue border color */
-    -fx-border-width: 2px;
+    -fx-border-color: #94d82d;
+    -fx-border-width: 3px;
 }
 
 .selected-range{
-    -fx-background-color: #f4fce3; /* Change background color on hover */
-    -fx-border-color: #ffd43b; /* blue border color */
-    -fx-border-width: 2px;
+    -fx-border-color: #ffd43b;
+    -fx-border-width: 3px;
 }

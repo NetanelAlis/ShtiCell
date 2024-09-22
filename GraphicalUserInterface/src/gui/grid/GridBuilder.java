@@ -42,6 +42,7 @@ public class GridBuilder {
         ObservableList<Node> children = addColumnsAndRowIndexesToGrid(gridPane);
         buildCellsComponents(children);
 
+        this.mainSheetController.initialize();
         scrollPane.setContent(gridPane);
 
         return scrollPane;
@@ -88,7 +89,7 @@ public class GridBuilder {
         for (int i = 0; i < this.col ; i++) {
             ColumnConstraints colConstraints = new ColumnConstraints();
             colConstraints.setHgrow(Priority.ALWAYS);
-            colConstraints.setMaxWidth(Double.MAX_VALUE);
+            colConstraints.setMaxWidth(this.colSpan);
             colConstraints.setMinWidth(this.colSpan);
             colConstraints.setPrefWidth(this.colSpan);
             columnConstraintsList.add(colConstraints);
@@ -112,7 +113,7 @@ public class GridBuilder {
             RowConstraints rowConstraints = new RowConstraints();
 
             rowConstraints.setVgrow(Priority.ALWAYS);
-            rowConstraints.setMaxHeight(Double.MAX_VALUE);
+            rowConstraints.setMaxHeight(this.rowSpan);
             rowConstraints.setPrefHeight(this.rowSpan);
             rowConstraints.setMinHeight(this.rowSpan);
             rowConstraintsList.add(rowConstraints);
@@ -127,7 +128,7 @@ public class GridBuilder {
         // Creating buttons with specified properties
         ObservableList<Node> children = gridPane.getChildren();
 
-        for (int i = 1; i < this.col ; i++) {
+        for (int i = 1; i < this.col+1 ; i++) {
             Button col = createRowAndColumnIndexButton((char) ('A' + (i - 1)) + "", i, 0);
             children.add(col);
             this.mainSheetController.addColumnHeader(col);

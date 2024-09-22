@@ -57,3 +57,19 @@
 .scroll-pane:fitToWidth:fitToHeight .scroll-bar .increment-button .increment-arrow {
     -fx-background-color: white;
 }
+
+.selected-row{
+    -fx-background-color: #adb5bd;
+}
+
+.selected-column{
+    -fx-background-color: #adb5bd;
+}
+
+.selected-row:hover{
+    -fx-background-color: #adb5bd;
+}
+
+.selected-column:hover{
+    -fx-background-color: #adb5bd;
+}

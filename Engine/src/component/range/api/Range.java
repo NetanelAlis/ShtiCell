@@ -15,4 +15,6 @@ public interface Range extends Serializable {
     void increaseUsage();
     boolean inUse();
     void populateRange(ReadOnlySheet sheet);
+    List<String> getColumnsInRange();
+    Range copyRange();
 }

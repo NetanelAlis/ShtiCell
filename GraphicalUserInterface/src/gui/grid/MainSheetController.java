@@ -15,9 +15,35 @@ public class MainSheetController {
     private MainAppViewController mainAppViewController;
     private List<Button> columnsHeaders = new ArrayList<Button>();
     private List<Button> rowsHeaders = new ArrayList<Button>();
+    private Button selectedCol;
+    private Button selectedRow;
     private Map<String, CellSubComponentController> cellControllers = new HashMap<String, CellSubComponentController>();
     private GridModel gridModel;
     private DependenciesCellModel cellModel = new CellModel();
+
+    public void initialize(){
+        this.columnsHeaders.forEach(button -> {
+            button.setOnAction(event -> {
+              this.mainAppViewController.setSelectedColumn(button.getText());
+              if(this.selectedCol != null){
+                  this.selectedCol.getStyleClass().remove("selected-column");
+              }
+              button.getStyleClass().add("selected-column");
+              this.selectedCol = button;
+            });
+        });
+
+        this.rowsHeaders.forEach(button -> {
+            button.setOnAction(event -> {
+                this.mainAppViewController.setSelectedRow(button.getText());
+                if(this.selectedRow != null){
+                    this.selectedRow.getStyleClass().remove("selected-row");
+                }
+                button.getStyleClass().add("selected-row");
+                this.selectedRow = button;
+            });
+        });
+    }
 
     public void setMainAppController(MainAppViewController mainAppViewController) {
         this.mainAppViewController = mainAppViewController;
@@ -96,12 +122,12 @@ public class MainSheetController {
             });
         }
 
-        if (selectedRange != null)
-        selectedRange.getCellsInRangeIDs().forEach((cellID) -> {
-            this.cellControllers.get(cellID).select("selected-range");
-        });
+        if (selectedRange != null) {
+            selectedRange.getCellsInRangeIDs().forEach((cellID) -> {
+                this.cellControllers.get(cellID).select("selected-range");
+            });
+        }
+
     }
-
-
 }
 

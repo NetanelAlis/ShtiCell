@@ -1,6 +1,8 @@
 package dto;
 
 import component.cell.api.Cell;
+import component.cell.impl.SerializableColor;
+import javafx.scene.paint.Color;
 import logic.function.returnable.Returnable;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +16,12 @@ public class CellDTO {
     private final List<String> dependingOnCellsID;
     private final List<String> influencingCellsID;
     private final boolean isActive;
+    private SerializableColor backgroundColor;
+    private SerializableColor textColor;
 
     public CellDTO(Cell cell, String cellID){
+        this.backgroundColor = new SerializableColor(Color.WHITE);
+        this.textColor = new SerializableColor(Color.BLACK);
 
         if(cell != null){
             this.cellID = cell.getCellId();
@@ -25,7 +31,6 @@ public class CellDTO {
             this.isActive = true;
             this.dependingOnCellsID = new ArrayList<>();
             this.influencingCellsID = new ArrayList<>();
-
             for(Cell dependantCell : cell.getDependsOn()){
                 this.dependingOnCellsID.add(dependantCell.getCellId());
             }
@@ -41,7 +46,7 @@ public class CellDTO {
             this.version = 0;
             this.isActive = false;
             this.dependingOnCellsID = null;
-            this.influencingCellsID = null;
+            this.influencingCellsID = null;;
         }
     }
 
@@ -72,5 +77,8 @@ public class CellDTO {
     public boolean isActive(){
         return this.isActive;
     }
+
+    public SerializableColor getBackgroundColor() {return this.backgroundColor;}
+    public SerializableColor getTextColor() {return this.textColor;}
 
 }

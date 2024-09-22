@@ -1,6 +1,5 @@
 package gui;
 
-import gui.grid.GridBuilder;
 import gui.main.MainAppViewController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

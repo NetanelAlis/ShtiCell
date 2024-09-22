@@ -15,7 +15,16 @@
     <left>
         <Accordion BorderPane.alignment="CENTER">
             <panes>
-                <TitledPane animated="false" text="Commands" />
+            <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="270.0" text="Commands">
+               <content>
+                  <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                     <children>
+                        <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" layoutX="9.6" layoutY="9.6" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vbarPolicy="NEVER" AnchorPane.bottomAnchor="-10.0" AnchorPane.leftAnchor="-10.0" AnchorPane.rightAnchor="-10.0" AnchorPane.topAnchor="-10.0" />
+                        <fx:include fx:id="command" source="../commands/Command.fxml" AnchorPane.bottomAnchor="-10.0" AnchorPane.leftAnchor="-10.0" AnchorPane.rightAnchor="-10.0" AnchorPane.topAnchor="-10.0" />
+                     </children>
+                  </AnchorPane>
+               </content>
+            </TitledPane>
                 <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="270.0" text="Ranges">
                <content>
                   <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
@@ -28,6 +37,16 @@
                      </children>
                   </AnchorPane>
                </content></TitledPane>
+            <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="270.0" text="Customize">
+               <content>
+                  <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                     <children>
+                        <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" layoutX="9.6" layoutY="9.6" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vbarPolicy="NEVER" AnchorPane.bottomAnchor="-10.0" AnchorPane.leftAnchor="-10.0" AnchorPane.rightAnchor="-10.0" AnchorPane.topAnchor="-10.0" />
+                        <fx:include fx:id="customization" source="../customization/CustomizationsSubComponent.fxml" AnchorPane.bottomAnchor="-10.0" AnchorPane.leftAnchor="-10.0" AnchorPane.rightAnchor="-10.0" AnchorPane.topAnchor="-10.0" />
+                     </children>
+                  </AnchorPane>
+               </content>
+            </TitledPane>
             </panes>
             <effect>
                 <DropShadow />

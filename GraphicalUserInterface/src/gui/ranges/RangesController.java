@@ -116,14 +116,15 @@ public class RangesController {
 
     public void showRange(RangeDTO rangeDTO) {
         this.rangeModel.addRange(rangeDTO);
-        this.setErrorMessageFromSaveButton("");
+        this.setErrorMessageToSaveButton("");
+        this.resetController();
     }
 
-    public void setErrorMessageFromSaveButton(String errorMessage) {
+    public void setErrorMessageToSaveButton(String errorMessage) {
         this.errorLabel.setText(errorMessage);
     }
 
-    public void setErrorMessageFromDeleteButton(String errorMessage) {
+    public void setErrorMessageToDeleteButton(String errorMessage) {
         this.errorLabelFromDelete.setText(errorMessage);
     }
 
@@ -135,6 +136,13 @@ public class RangesController {
         this.rangeModel.removeRange(this.rangeModel.getSelectedRange());
         this.rangeModel.setListViewItemNotSelectedProperty(true);
         this.setRangesAreEmptyProperty();
-        this.setErrorMessageFromDeleteButton("");
+        this.setErrorMessageToDeleteButton("");
+        this.resetController();
+    }
+
+    public void resetController(){
+        this.rangeNameTextField.setText("");
+        this.topRightBounderyTextField.setText("");
+        this.buttomLeftBounderyTextField.setText("");
     }
 }

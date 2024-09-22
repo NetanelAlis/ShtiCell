@@ -4,6 +4,7 @@ import component.cell.api.Cell;
 import component.range.api.Range;
 import component.sheet.api.ReadOnlySheet;
 import component.sheet.api.Sheet;
+import javafx.scene.paint.Color;
 import logic.parser.FunctionParser;
 import logic.function.returnable.Returnable;
 import logic.parser.OriginalValueParser;
@@ -15,13 +16,15 @@ import java.util.stream.Collectors;
 
 public class CellImpl implements Cell {
 
-    private final String cellID;;
+    private String cellID;;
     private String originalValue;
     private Returnable effectiveValue;
     private int version;
     List<Cell> dependingOnCells;
     List<Cell> influencingCells;
     ReadOnlySheet sheet;
+    private SerializableColor backgroundColor;
+    private SerializableColor textColor;
 
     public CellImpl(String cellID, String originalValue, int version, ReadOnlySheet sheet){
         this.cellID =  Character.toUpperCase(cellID.charAt(0)) + cellID.substring(1);
@@ -30,6 +33,8 @@ public class CellImpl implements Cell {
         this.version = version;
         this.dependingOnCells = new ArrayList<>();
         this.influencingCells = new ArrayList<>();
+        this.backgroundColor = new SerializableColor(Color.WHITE);
+        this.textColor = new SerializableColor(Color.BLACK);
 
         getInfluencingCellsFromDummy();
         this.setDependencies();
@@ -157,4 +162,30 @@ public class CellImpl implements Cell {
         return rangeNames;
 
     }
+
+    @Override
+    public SerializableColor getBackgroundColor() {
+        return this.backgroundColor;
+    }
+
+    @Override
+    public SerializableColor getTextColor() {
+        return this.textColor;
+    }
+
+    @Override
+    public void setBackgroundColor(Color color) {
+        this.backgroundColor = new SerializableColor(color);
+    }
+
+    @Override
+    public void setTextColor(Color color) {
+        this.textColor = new SerializableColor(color);
+    }
+
+    @Override
+    public void updateCellID(String cellID) {
+        this.cellID = cellID;
+    }
+
 }
