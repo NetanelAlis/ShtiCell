@@ -16,13 +16,8 @@ public class CellDTO {
     private final List<String> dependingOnCellsID;
     private final List<String> influencingCellsID;
     private final boolean isActive;
-    private SerializableColor backgroundColor;
-    private SerializableColor textColor;
 
     public CellDTO(Cell cell, String cellID){
-        this.backgroundColor = new SerializableColor(Color.WHITE);
-        this.textColor = new SerializableColor(Color.BLACK);
-
         if(cell != null){
             this.cellID = cell.getCellId();
             this.originalValue = cell.getOriginalValue();
@@ -77,8 +72,4 @@ public class CellDTO {
     public boolean isActive(){
         return this.isActive;
     }
-
-    public SerializableColor getBackgroundColor() {return this.backgroundColor;}
-    public SerializableColor getTextColor() {return this.textColor;}
-
 }

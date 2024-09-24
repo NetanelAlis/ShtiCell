@@ -67,7 +67,7 @@ public class CommandController {
         this.filterColumnChoiceBox.getSelectionModel().selectFirst();
 
         this.sortColumnTextField.disableProperty().bind(
-                Bindings.or(this.isFileLoadedProperty.not(),
+                Bindings.or(this.isFileLoadedProperty,
                         Bindings.or(this.bottomLeftBoundaryTextField.textProperty().isEmpty(),
                                 this.topRightBoundaryTextField.textProperty().isEmpty())));
 
@@ -148,7 +148,7 @@ public class CommandController {
     void onSortClicked(ActionEvent event) {
         List<String> columnsToSortBy = this.parsUserColumnsToFilterBy();
 
-        if (this.mainAppViewController.sortRange(this.topRightBoundaryTextField.getText(), this.bottomLeftBoundaryTextField.getText(),
+        if (!this.mainAppViewController.tryToSortRange(this.topRightBoundaryTextField.getText(), this.bottomLeftBoundaryTextField.getText(),
                 columnsToSortBy)) {
             this.setErrorMessageToSortButton("");
             this.resetRange();
@@ -179,11 +179,6 @@ public class CommandController {
         this.sortColumnTextField.textProperty().set("");
         this.sortErrorProperty.set("");
     }
-
-    public void updateSortErrorLabel(String message) {
-        this.sortErrorProperty.set(message);
-    }
-
        public void setErrorMessageToSortButton(String message) {
      this.sortErrorLabel.setText(message);
    }
@@ -197,5 +192,8 @@ public class CommandController {
         this.isFileLoadedProperty.bind(fileNotLoaded);
     }
 
+    public void setErrorMessageToFilterButton(String message) {
+        filterErrorLabel.setText(message);
+    }
 }
 

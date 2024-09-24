@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Main-Class: gui.Main
+Class-Path: Engine.jar angus-activation.jar jakarta.activation-api.jar jakarta.xml.bind-api.jar jaxb-core.jar jaxb-impl.jar jaxb-jxc.jar jaxb-xjc.jar
+ javaFx/javafx.base.jar javaFx/javafx.controls.jar javaFx/javafx.fxml.jar javaFx/javafx.graphics.jar javaFx/javafx.media.jar javaFx/javafx.swing.jar javaFx/javafx.web.jar javaFx/javafx-swt.jar
+
+
+
+
+
+
+

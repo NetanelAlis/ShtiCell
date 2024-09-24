@@ -5,17 +5,21 @@ import dto.CellDTO;
 import dto.RangeDTO;
 import dto.SheetDTO;
 import gui.Main;
+import gui.cell.CellSubComponentController;
 import gui.commands.CommandController;
 import gui.customization.CustomizationController;
+import gui.file.upload.FileUploadController;
 import gui.ranges.RangesController;
 import gui.action.line.ActionLineController;
-import gui.cell.CellSubComponentController;
 import gui.grid.GridBuilder;
 import gui.grid.MainSheetController;
 import gui.top.TopSubComponentController;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
@@ -23,11 +27,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import logic.Engine;
 import logic.EngineImpl;
 import logic.function.returnable.Returnable;
-
+import gui.tasks.FileLoadingTask;
 import java.io.File;
 import java.io.IOException;
 import java.math.RoundingMode;
@@ -82,7 +87,7 @@ public class MainAppViewController {
 
     }
 
-    public void setMainSheetController(MainSheetController mainSheetController) {
+    private void setMainSheetController(MainSheetController mainSheetController) {
         this.mainSheetController = mainSheetController;
         this.mainSheetController.setMainAppController(this);
     }
@@ -108,13 +113,24 @@ public class MainAppViewController {
     }
 
     public void loadNewSheetFromXmlFile(String absolutePath) {
-        try {
-            this.engine.LoadDataFromXML(absolutePath);
+        FileUploadController fileUploadController = this.openFileUploadWindow();
+        Task<Boolean> fileLoadingTask = new FileLoadingTask(absolutePath, this.engine);
+
+       this.bindFileLoadingTaskToUIComponents(fileUploadController,fileLoadingTask);
+        new Thread(fileLoadingTask).start();
+    }
+
+
+    private void bindFileLoadingTaskToUIComponents(FileUploadController fileUploadController, Task<Boolean> fileLoadingTask) {
+        fileUploadController.bindProgressComponents(fileLoadingTask, this::initializeSheetLayoutAndControllers);
+    }
+
+    private void initializeSheetLayoutAndControllers() {
+        try{
             SheetDTO sheetDTO = this.engine.getSheetAsDTO();
             SheetDTO.LayoutDTO sheetDTOLayout = sheetDTO.getLayout();
             GridBuilder gridBuilder = new GridBuilder(sheetDTOLayout.getNumberOfRows(), sheetDTOLayout.getNumberOfColumns(),
                     sheetDTOLayout.getRowHeight(), sheetDTOLayout.getColumnWidth());
-
             BorderPane root = (BorderPane) primaryStage.getScene().getRoot();
             root.setCenter(gridBuilder.build());
             this.setMainSheetController(gridBuilder.getController());
@@ -132,7 +148,35 @@ public class MainAppViewController {
         } catch (RuntimeException | IOException e) {
             e.printStackTrace();
         }
+    }
 
+
+    public FileUploadController openFileUploadWindow() {
+        FileUploadController fileUploadController = null;
+        try {
+            // Load the FileUploadController and FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/file/upload/fileUploadComponent.fxml"));
+            Parent root = loader.load();
+
+            fileUploadController = loader.getController();
+
+            // Set the scene and content
+            Stage popUpStage = new Stage();
+            Scene scene = new Scene(root);
+            popUpStage.setScene(scene);
+            fileUploadController.setStage(popUpStage);
+
+            // Make the window modal (blocks interactions with the main window)
+            popUpStage.initModality(Modality.APPLICATION_MODAL);
+
+            // Show the window
+            popUpStage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return fileUploadController;
     }
 
     public void showCellDetails(String cellID) {
@@ -195,7 +239,7 @@ public class MainAppViewController {
 
             popupStage.getIcons().add(
                     new Image(Objects.requireNonNull(
-                            Main.class.getResourceAsStream("/gui/style/imgs/ShtiCell-icon.png"))));
+                            Main.class.getResourceAsStream("/gui/ShtiCell-icon.png"))));
 
             ScrollPane popupGrid = gridBuilder.build();
             popupGrid.getStyleClass().add("grid-popup");
@@ -293,14 +337,14 @@ public class MainAppViewController {
         this.cellSubComponentControllers.get(cellID).updateCellDesign(backgroundColor,textColor);
     }
 
-    public boolean sortRange(String from, String to, List<String> columnsToSortBy) {
+    public boolean tryToSortRange(String from, String to, List<String> columnsToSortBy) {
         try{
             SheetDTO sortedSheetByRange = this.engine.sortRangeCells(from + ".." + to,columnsToSortBy);
             this.showUnTouchableSheetInNewPopUp(sortedSheetByRange);
         }catch (ClassCastException e){
             this.commandController.setErrorMessageToSortButton("The column to sort by should contain numbers only");
             return false;
-        }catch (IllegalArgumentException e){
+        }catch (RuntimeException e){
             this.commandController.setErrorMessageToSortButton(e.getMessage());
             return false;
         }
@@ -318,9 +362,13 @@ public class MainAppViewController {
     }
 
     public void filterSheet(String range,List<Integer> itemsToFilterByIndexes, String colToSortBy) {
-        SheetDTO filteredSheetDTO = this.engine.getFilterSheet(range, itemsToFilterByIndexes, colToSortBy);
+        try{
+            SheetDTO filteredSheetDTO = this.engine.getFilterSheet(range, itemsToFilterByIndexes, colToSortBy);
+            this.showUnTouchableSheetInNewPopUp(filteredSheetDTO);
+        }catch (IllegalArgumentException e){
+            this.commandController.setErrorMessageToFilterButton(e.getMessage());
+        }
 
-        this.showUnTouchableSheetInNewPopUp(filteredSheetDTO);
     }
 
     public static String effectiveValueFormatter(Returnable effectiveValue){

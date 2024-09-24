@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="GraphicalUserInterFace">
+    <output-path>$PROJECT_DIR$/out/artifacts/GraphicalUserInterFace</output-path>
+    <root id="archive" name="GraphicalUserInterFace.jar">
+      <element id="module-output" name="GraphicalUserInterface" />
+    </root>
+  </artifact>
+</component>

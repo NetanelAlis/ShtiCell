@@ -1,0 +1,44 @@
+.root{
+    -fx-background-color: white;
+}
+
+.label .text {
+    -fx-font-family: Arial;
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+}
+
+/* Style for the ProgressBar */
+/* Style for the ProgressBar */
+.progress-bar {
+    -fx-background-color: transparent; /* Transparent background */
+    -fx-accent: linear-gradient(to right, red, yellow, green); /* Gradient from red to yellow to green */
+}
+
+/* Style the bar (filled portion) */
+.progress-bar .bar {
+    -fx-background-color: linear-gradient(to right, red, yellow, green); /* Gradient for the filled bar */
+    -fx-background-radius: 10px; /* Rounded corners for the bar */
+    -fx-padding: 5px; /* Padding inside the bar */
+}
+
+/* Style the track (empty portion) */
+.progress-bar .track {
+    -fx-border-color: #adb5bd;
+    -fx-padding: 5px; /* Padding inside the track */
+    -fx-border-width: 3px; /* border thickness */
+    -fx-cursor: hand; /* cursor style */
+    -fx-border-radius: 12px; /* rounded border */
+    -fx-background-radius: 12px;
+}
+
+/* Style the track (empty portion) */
+.progress-bar .track {
+    -fx-background-color: white; /* Set the color of the track */
+    -fx-background-radius: 10px; /* Rounded corners for the track */
+    -fx-padding: 5px; /* Padding inside the track */
+}
+
+.loading-label{
+   -fx-text-fill: #91a7ff;
+}

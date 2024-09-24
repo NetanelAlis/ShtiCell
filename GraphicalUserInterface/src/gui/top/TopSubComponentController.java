@@ -42,6 +42,7 @@ public class TopSubComponentController {
     private void onLoadXMLPressed(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select Sheet file");
+
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("xml files", "*.xml"));
         File selectedFile = this.mainAppViewController.getFilePath(fileChooser);
         if (selectedFile == null) {
@@ -49,7 +50,7 @@ public class TopSubComponentController {
         }
 
         String absolutePath = selectedFile.getAbsolutePath();
-        this.fileName.set(absolutePath); // add bind
+        this.fileName.set(absolutePath);
         this.mainAppViewController.loadNewSheetFromXmlFile(absolutePath);
     }
 
