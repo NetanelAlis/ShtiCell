@@ -1,6 +1,7 @@
 package gui.ranges;
 
 import dto.RangeDTO;
+import dto.RangesDTO;
 import gui.main.MainAppViewController;
 import javafx.animation.PauseTransition;
 import javafx.beans.binding.Bindings;
@@ -13,6 +14,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.util.Duration;
+
+import java.util.List;
 
 public class RangesController {
     @FXML
@@ -40,7 +43,6 @@ public class RangesController {
     private RangeModel rangeModel;
 
     public RangesController() {
-        this.rangeModel = new RangeModel();
         this.fileNotLoaded = new SimpleBooleanProperty(true);
         this.rangeAreEmptyProperty = new SimpleBooleanProperty(true);
         this.listViewItemNotSelectedProperty = new SimpleBooleanProperty(true);
@@ -49,6 +51,7 @@ public class RangesController {
 
     @FXML
     public void initialize() {
+        this.deleteButton.disableProperty().set(true);
         saveButton.disableProperty().bind(
                 Bindings.or(
                         Bindings.or(
@@ -63,7 +66,6 @@ public class RangesController {
 
         );
 
-        this.rangeModel.bind(this.rangeListView, this.rangeAreEmptyProperty, this.listViewItemNotSelectedProperty);
 
         this.rangeListView.setOnMouseClicked((event) -> {
             if (this.rangeListView.getSelectionModel().getSelectedItem() != null) {
@@ -91,7 +93,6 @@ public class RangesController {
             }
         });
 
-        deleteButton.disableProperty().bind(Bindings.or(this.rangeModel.getListViewItemNotSelectedProperty(), this.rangeModel.getRangesAreEmptyProperty()));
     }
 
     @FXML
@@ -145,4 +146,12 @@ public class RangesController {
         this.topRightBounderyTextField.setText("");
         this.buttomLeftBounderyTextField.setText("");
     }
+
+    public void initializeRangesModel(){
+        this.rangeModel = new RangeModel();
+        this.rangeModel.bindAll(this.rangeListView, this.rangeAreEmptyProperty, this.listViewItemNotSelectedProperty);
+        deleteButton.disableProperty().bind(Bindings.or(this.rangeModel.getListViewItemNotSelectedProperty(), this.rangeModel.getRangesAreEmptyProperty()));
+
+    }
+
 }

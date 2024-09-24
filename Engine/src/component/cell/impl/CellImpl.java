@@ -160,7 +160,6 @@ public class CellImpl implements Cell {
         Set<String> rangeNames = OriginalValueParser.SUM.extract(this.originalValue);
         rangeNames.addAll(OriginalValueParser.AVERAGE.extract(this.originalValue));
         return rangeNames;
-
     }
 
     @Override

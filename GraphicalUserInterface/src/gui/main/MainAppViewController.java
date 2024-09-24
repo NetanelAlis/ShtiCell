@@ -139,6 +139,7 @@ public class MainAppViewController {
             this.actionLineController.resetCellModel();
             this.fileNotLoaded.setValue(false);
             this.rangesController.resetController();
+            this.rangesController.initializeRangesModel();
             this.customizationController.resetController();
             this.commandController.resetController();
             this.topSubComponentController.setSheetNameAndVersion(sheetDTO.getSheetName(), sheetDTO.getSheetVersion());
@@ -151,7 +152,7 @@ public class MainAppViewController {
     }
 
 
-    public FileUploadController openFileUploadWindow() {
+    private FileUploadController openFileUploadWindow() {
         FileUploadController fileUploadController = null;
         try {
             // Load the FileUploadController and FXML
@@ -164,7 +165,9 @@ public class MainAppViewController {
             Stage popUpStage = new Stage();
             Scene scene = new Scene(root);
             popUpStage.setScene(scene);
-            fileUploadController.setStage(popUpStage);
+            popUpStage.getIcons().add(
+                    new Image(Objects.requireNonNull(
+                            Main.class.getResourceAsStream("/gui/style/imgs/ShtiCell-icon.png"))));            fileUploadController.setStage(popUpStage);
 
             // Make the window modal (blocks interactions with the main window)
             popUpStage.initModality(Modality.APPLICATION_MODAL);
@@ -239,7 +242,7 @@ public class MainAppViewController {
 
             popupStage.getIcons().add(
                     new Image(Objects.requireNonNull(
-                            Main.class.getResourceAsStream("/gui/ShtiCell-icon.png"))));
+                            Main.class.getResourceAsStream("/gui/style/imgs/ShtiCell-icon.png"))));
 
             ScrollPane popupGrid = gridBuilder.build();
             popupGrid.getStyleClass().add("grid-popup");

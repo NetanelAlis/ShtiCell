@@ -16,7 +16,6 @@ import logic.filter.Filter;
 import logic.function.returnable.Returnable;
 import logic.sort.Sorter;
 import java.io.FileNotFoundException;
-import java.security.Key;
 import java.util.*;
 
 public class EngineImpl implements Engine {

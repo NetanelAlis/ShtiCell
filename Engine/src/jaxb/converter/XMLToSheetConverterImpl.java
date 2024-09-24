@@ -1,5 +1,6 @@
 package jaxb.converter;
 
+import component.cell.api.Cell;
 import component.cell.impl.CellImpl;
 import component.sheet.api.Sheet;
 import component.sheet.impl.SheetImpl;
@@ -9,9 +10,12 @@ import jakarta.xml.bind.Unmarshaller;
 import jaxb.generated.STLCell;
 import jaxb.generated.STLRange;
 import jaxb.generated.STLSheet;
+import logic.parser.OriginalValueParser;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Set;
 
 public class XMLToSheetConverterImpl implements XMLToSheetConverter {
 
@@ -32,10 +36,9 @@ public class XMLToSheetConverterImpl implements XMLToSheetConverter {
         return sheet.updateSheet(sheet, true);
     }
 
-    private void createNewCell(STLCell STLcell, Sheet sheet){
-        String cellID = this.createCellID(STLcell.getRow(), STLcell.getColumn());
+    private void createNewCell(STLCell stlCell, Sheet sheet){
+        String cellID = createCellID(stlCell.getRow(), stlCell.getColumn());
 
-        cellID = Character.toUpperCase(cellID.charAt(0)) + cellID.substring(1);
         if (!sheet.cellInLayout(cellID)){
             String format = String.format("""
                     File contains Cell outside of Sheet layout.
@@ -44,21 +47,32 @@ public class XMLToSheetConverterImpl implements XMLToSheetConverter {
             throw new IllegalArgumentException(format);
         }
 
-        CellImpl cell = new CellImpl(cellID, STLcell.getSTLOriginalValue(),
-                1, sheet);
+        Set<String> rangeNames = OriginalValueParser.SUM.extract(stlCell.getSTLOriginalValue());
+        rangeNames.addAll(OriginalValueParser.AVERAGE.extract(stlCell.getSTLOriginalValue()));
 
+        rangeNames.forEach(rangeName -> {
+            if (!sheet.getRanges().containsKey(rangeName)) {
+                String format = String.format("""
+                    File contains a Range Function for a non-existing range.
+                    Range Name: %s
+                    Cell ID: %s""", rangeName, cellID);
+                throw new IllegalArgumentException(format);
+            }
+        });
+
+        Cell cell = new CellImpl(cellID, stlCell.getSTLOriginalValue(), 1, sheet);
         sheet.getSheetCells().put(cell.getCellId(), cell);
     }
 
-    private String createCellID(int row, String col){
+    private String createCellID(int row, String col) {
         return col + row;
     }
 
-    private void createNewRange(STLRange stlRange, Sheet sheet){
+    private void createNewRange(STLRange stlRange, Sheet sheet) {
         String from = stlRange.getSTLBoundaries().getFrom();
         String to = stlRange.getSTLBoundaries().getTo();
 
-        if (!sheet.cellInLayout(from) || !sheet.cellInLayout(to)){
+        if (!sheet.cellInLayout(from) || !sheet.cellInLayout(to)) {
             String format = String.format("""
                     File contains Range exceeding Sheet layout.
                     Sheet layout: %d rows, %d columns
@@ -76,4 +90,5 @@ public class XMLToSheetConverterImpl implements XMLToSheetConverter {
         Unmarshaller u = jc.createUnmarshaller();
         return (STLSheet) u.unmarshal(in);
     }
+
 }

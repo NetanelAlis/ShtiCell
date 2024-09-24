@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="200" prefWidth="400" spacing="15" style="-fx-border-radius: 10; -fx-border-color: #0078d7; -fx-border-width: 2;" stylesheets="@FileUpload.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.file.upload.FileUploadController">
+<VBox alignment="CENTER" spacing="15" stylesheets="@FileUpload.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.file.upload.FileUploadController">
 
                 <!-- Instruction Label -->
     <Label styleClass="loading-label" text="Loading..." wrapText="true">
@@ -17,7 +17,7 @@
     </Label>
 
     <!-- Status Label (optional) -->
-    <Label fx:id="progressPercentLabel" style="-fx-text-fill: #0078d7;" wrapText="true">
+    <Label id="percent-label" fx:id="progressPercentLabel" wrapText="true">
         <font>
             <Font name="Arial" size="14" />
         </font>
@@ -25,9 +25,11 @@
 
     <!-- Progress Bar -->
     <ProgressBar fx:id="progressBar" prefHeight="20" prefWidth="350" />
-
-    <!-- Cancel Button -->
-    <Button fx:id="cancelButton" prefWidth="100" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-border-radius: 5;" text="Cancel" />
+   <Button fx:id="cancelButton" mnemonicParsing="false" text="Cancel">
+      <VBox.margin>
+         <Insets bottom="10.0" />
+      </VBox.margin>
+   </Button>
 
     <!-- Padding for spacing -->
     <VBox.margin>

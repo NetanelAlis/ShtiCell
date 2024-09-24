@@ -1,11 +1,14 @@
 package gui.ranges;
 
 import dto.RangeDTO;
+import dto.RangesDTO;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
+
+import java.util.List;
 
 public class RangeModel {
     private ObservableList<RangeDTO> rangesPropertiesDTO;
@@ -21,8 +24,8 @@ public class RangeModel {
 
     }
 
-    public void bind(ListView<RangeDTO> listView, BooleanProperty rangesAreEmptyProperty,
-                     BooleanProperty listViewItemSelectedProperty){
+    public void bindAll(ListView<RangeDTO> listView, BooleanProperty rangesAreEmptyProperty,
+                        BooleanProperty listViewItemSelectedProperty){
         listView.setItems(rangesPropertiesDTO);
         rangesAreEmptyProperty.bind(this.rangesAreEmptyProperty);
         listViewItemSelectedProperty.bind(this.listViewItemNotSelectedProperty);;
@@ -64,4 +67,12 @@ public class RangeModel {
          int getSelectedRangesSize(){
         return this.rangesPropertiesDTO.size();
          }
-}
+
+         public void initModel(ListView<RangeDTO> ranges, RangesDTO rangesDTO) {
+            this.rangesPropertiesDTO.clear();
+            this.rangesPropertiesDTO.addAll(rangesDTO.getRanges());
+            ranges.setItems(rangesPropertiesDTO);
+             this.rangesAreEmptyProperty.setValue(true);
+             this.selectedRange = null;
+         }
+ }

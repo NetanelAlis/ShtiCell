@@ -15,7 +15,7 @@ public class FileLoadingTask extends Task<Boolean> {
     @Override
     protected Boolean call() {
         try{
-            sleepForAWhile(100);
+            sleepForAWhile(1000);
             updateProgress(0,100);
             this.engine.LoadDataFromXML(this.filePath);
 

@@ -22,7 +22,9 @@ public class Main extends Application {
 
         Scene scene = new Scene(root, 800, 600);
         stage.setTitle("ShtiCell");
-        stage.getIcons().add(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("style/imgs/ShtiCell-icon.png"))));
+        stage.getIcons().add(
+                new Image(Objects.requireNonNull(
+                        Main.class.getResourceAsStream("/gui/style/imgs/ShtiCell-icon.png"))));
         stage.setScene(scene);
         mainAppViewController.setPrimaryStage(stage);
         stage.show();
