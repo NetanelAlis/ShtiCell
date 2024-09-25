@@ -8,6 +8,7 @@ import gui.Main;
 import gui.cell.CellSubComponentController;
 import gui.commands.CommandController;
 import gui.customization.CustomizationController;
+import gui.exception.ExceptionWindowController;
 import gui.file.upload.FileUploadController;
 import gui.ranges.RangesController;
 import gui.action.line.ActionLineController;
@@ -21,6 +22,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
@@ -71,7 +73,7 @@ public class MainAppViewController {
         if (customizationController != null) {
             this.customizationController.setMainAppController(this);
         }
-        if(commandController != null) {
+        if (commandController != null) {
             this.commandController.setMainController(this);
         }
 
@@ -82,7 +84,7 @@ public class MainAppViewController {
 
     }
 
-    public MainAppViewController(){
+    public MainAppViewController() {
         this.fileNotLoaded = new SimpleBooleanProperty(true);
 
     }
@@ -114,11 +116,12 @@ public class MainAppViewController {
 
     public void loadNewSheetFromXmlFile(String absolutePath) {
         FileUploadController fileUploadController = this.openFileUploadWindow();
-        Task<Boolean> fileLoadingTask = new FileLoadingTask(absolutePath, this.engine);
+        Task<Boolean> fileLoadingTask = new FileLoadingTask(absolutePath, this.engine, this::openExceptionPopup);
 
-       this.bindFileLoadingTaskToUIComponents(fileUploadController,fileLoadingTask);
+        this.bindFileLoadingTaskToUIComponents(fileUploadController, fileLoadingTask);
         new Thread(fileLoadingTask).start();
     }
+
 
 
     private void bindFileLoadingTaskToUIComponents(FileUploadController fileUploadController, Task<Boolean> fileLoadingTask) {
@@ -126,7 +129,7 @@ public class MainAppViewController {
     }
 
     private void initializeSheetLayoutAndControllers() {
-        try{
+        try {
             SheetDTO sheetDTO = this.engine.getSheetAsDTO();
             SheetDTO.LayoutDTO sheetDTOLayout = sheetDTO.getLayout();
             GridBuilder gridBuilder = new GridBuilder(sheetDTOLayout.getNumberOfRows(), sheetDTOLayout.getNumberOfColumns(),
@@ -143,11 +146,13 @@ public class MainAppViewController {
             this.customizationController.resetController();
             this.commandController.resetController();
             this.topSubComponentController.setSheetNameAndVersion(sheetDTO.getSheetName(), sheetDTO.getSheetVersion());
-            this.engine.getAllRangesAsDTO().getRanges().forEach(rangeDTO -> {this.rangesController.showRange(rangeDTO);});
+            this.engine.getAllRangesAsDTO().getRanges().forEach(rangeDTO -> {
+                this.rangesController.showRange(rangeDTO);
+            });
             this.rangesController.setRangesAreEmptyProperty();
 
         } catch (RuntimeException | IOException e) {
-            e.printStackTrace();
+            this.openExceptionPopup(e.getMessage());
         }
     }
 
@@ -167,7 +172,8 @@ public class MainAppViewController {
             popUpStage.setScene(scene);
             popUpStage.getIcons().add(
                     new Image(Objects.requireNonNull(
-                            Main.class.getResourceAsStream("/gui/style/imgs/ShtiCell-icon.png"))));            fileUploadController.setStage(popUpStage);
+                            Main.class.getResourceAsStream("/gui/style/imgs/ShtiCell-icon.png"))));
+            fileUploadController.setStage(popUpStage);
 
             // Make the window modal (blocks interactions with the main window)
             popUpStage.initModality(Modality.APPLICATION_MODAL);
@@ -203,7 +209,7 @@ public class MainAppViewController {
             }
 
         } catch (RuntimeException e) {
-            e.printStackTrace();
+           this.openExceptionPopup(e.getMessage());
         }
 
     }
@@ -238,7 +244,7 @@ public class MainAppViewController {
         try {
             // Create a new Stage (pop-up window)
             Stage popupStage = new Stage();
-                popupStage.setTitle(sheetName + " - version " + version);
+            popupStage.setTitle(sheetName + " - version " + version);
 
             popupStage.getIcons().add(
                     new Image(Objects.requireNonNull(
@@ -258,7 +264,7 @@ public class MainAppViewController {
         }
     }
 
-    private void initSheetForPopUpWindow(GridBuilder gridBuilder, SheetDTO sheetDTO){
+    private void initSheetForPopUpWindow(GridBuilder gridBuilder, SheetDTO sheetDTO) {
         MainSheetController gridPopupController = gridBuilder.getController();
         gridPopupController.initializeGridModel(sheetDTO.getActiveCells());
         gridPopupController.getCellsControllers().forEach((cellID, cellController) -> {
@@ -272,7 +278,7 @@ public class MainAppViewController {
         try {
             this.engine.addRange(rangeName, from + ".." + to);
             this.rangesController.showRange(this.engine.getRangesAsDTO(rangeName));
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             this.rangesController.setErrorMessageToSaveButton(e.getMessage());
         }
 
@@ -280,10 +286,10 @@ public class MainAppViewController {
 
 
     public void deleteRange(RangeDTO selectedRange) {
-        try{
-        this.engine.deleteRange(selectedRange.getName());
-        this.rangesController.unShowRange(selectedRange);
-        }catch (RuntimeException e){
+        try {
+            this.engine.deleteRange(selectedRange.getName());
+            this.rangesController.unShowRange(selectedRange);
+        } catch (RuntimeException e) {
             this.rangesController.setErrorMessageToDeleteButton(e.getMessage());
         }
 
@@ -293,7 +299,7 @@ public class MainAppViewController {
         this.mainSheetController.showSelectedRange(newValue, oldValue);
     }
 
-    public void updateColWidth(Integer newColWidth, int colIndex){
+    public void updateColWidth(Integer newColWidth, int colIndex) {
         GridPane gridPane = getGridPane();
         gridPane.getColumnConstraints().get(colIndex).setMinWidth(newColWidth);
         gridPane.getColumnConstraints().get(colIndex).setMaxWidth(newColWidth);
@@ -301,53 +307,53 @@ public class MainAppViewController {
 
     }
 
-    public void updateRowHeight(Integer newRowHeight, int rowIndex){
+    public void updateRowHeight(Integer newRowHeight, int rowIndex) {
         GridPane gridPane = getGridPane();
         gridPane.getRowConstraints().get(rowIndex).setMinHeight(newRowHeight);
         gridPane.getRowConstraints().get(rowIndex).setMaxHeight(newRowHeight);
         gridPane.getRowConstraints().get(rowIndex).setPrefHeight(newRowHeight);
     }
 
-    private GridPane getGridPane(){
+    private GridPane getGridPane() {
         BorderPane root = (BorderPane) primaryStage.getScene().getRoot();
         ScrollPane scrollPane = (ScrollPane) root.getCenter();
-       return (GridPane) scrollPane.getContent();
+        return (GridPane) scrollPane.getContent();
     }
-    
+
     public void setSelectedColumn(String columnName) {
         GridPane gridPane = this.getGridPane();
-        int colWidth = (int)gridPane.getColumnConstraints().get(columnName.charAt(0) - 'A' + 1).getPrefWidth();
+        int colWidth = (int) gridPane.getColumnConstraints().get(columnName.charAt(0) - 'A' + 1).getPrefWidth();
         this.customizationController.showColumn(columnName, colWidth);
     }
 
     public void setSelectedRow(String rowName) {
         GridPane gridPane = this.getGridPane();
-        int rowHeight = (int)gridPane.getRowConstraints().get(Integer.parseInt(rowName)).getPrefHeight();
-        this.customizationController.showRow(rowName,rowHeight);
+        int rowHeight = (int) gridPane.getRowConstraints().get(Integer.parseInt(rowName)).getPrefHeight();
+        this.customizationController.showRow(rowName, rowHeight);
     }
 
     public void setColTextAlignment(String colIndex, String alignment) {
         this.cellSubComponentControllers.forEach((cellID, cellController) -> {
-            if(cellID.contains(colIndex)) {
+            if (cellID.contains(colIndex)) {
                 cellController.setAlignment(alignment);
             }
         });
     }
 
     public void setCellDesign(Color backgroundColor, String cellID, Color textColor) {
-        this.engine.updateBackgroundColor(backgroundColor,cellID);
+        this.engine.updateBackgroundColor(backgroundColor, cellID);
         this.engine.updateTextColor(textColor, cellID);
-        this.cellSubComponentControllers.get(cellID).updateCellDesign(backgroundColor,textColor);
+        this.cellSubComponentControllers.get(cellID).updateCellDesign(backgroundColor, textColor);
     }
 
     public boolean tryToSortRange(String from, String to, List<String> columnsToSortBy) {
-        try{
-            SheetDTO sortedSheetByRange = this.engine.sortRangeCells(from + ".." + to,columnsToSortBy);
+        try {
+            SheetDTO sortedSheetByRange = this.engine.sortRangeCells(from + ".." + to, columnsToSortBy);
             this.showUnTouchableSheetInNewPopUp(sortedSheetByRange);
-        }catch (ClassCastException e){
+        } catch (ClassCastException e) {
             this.commandController.setErrorMessageToSortButton("The column to sort by should contain numbers only");
             return false;
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             this.commandController.setErrorMessageToSortButton(e.getMessage());
             return false;
         }
@@ -360,21 +366,21 @@ public class MainAppViewController {
         return this.engine.getColumnsToSortBy(range);
     }
 
-    public List<Returnable> getItemsToFilterBy(String colToFilterBy,String range) {
-        return this.engine.getItemsToFilterBy(colToFilterBy,range);
+    public List<Returnable> getItemsToFilterBy(String colToFilterBy, String range) {
+        return this.engine.getItemsToFilterBy(colToFilterBy, range);
     }
 
-    public void filterSheet(String range,List<Integer> itemsToFilterByIndexes, String colToSortBy) {
-        try{
+    public void filterSheet(String range, List<Integer> itemsToFilterByIndexes, String colToSortBy) {
+        try {
             SheetDTO filteredSheetDTO = this.engine.getFilterSheet(range, itemsToFilterByIndexes, colToSortBy);
             this.showUnTouchableSheetInNewPopUp(filteredSheetDTO);
-        }catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             this.commandController.setErrorMessageToFilterButton(e.getMessage());
         }
 
     }
 
-    public static String effectiveValueFormatter(Returnable effectiveValue){
+    public static String effectiveValueFormatter(Returnable effectiveValue) {
         CellType type = effectiveValue.getCellType();
         String valueToPrint = effectiveValue.getValue().toString();
         if (type.equals(CellType.BOOLEAN)) {
@@ -387,8 +393,8 @@ public class MainAppViewController {
     }
 
     private static String numberFormatter(String valueToPrint) {
-        try{
-            double  number = Double.parseDouble(valueToPrint);
+        try {
+            double number = Double.parseDouble(valueToPrint);
             DecimalFormat formatter = new DecimalFormat("#,###.##");
             formatter.setRoundingMode(RoundingMode.DOWN);
             return formatter.format(number);
@@ -400,4 +406,27 @@ public class MainAppViewController {
     public static String booleanFormatter(String valueToPrint) {
         return valueToPrint.toUpperCase();
     }
+
+    private void openExceptionPopup(String errorMessage) {
+        // Load the FXML for the exception window
+        try{
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/exception/ExceptionWindow.fxml"));
+        Parent root = loader.load();
+
+        // Get the controller and pass the error message to the label
+        ExceptionWindowController controller = loader.getController();
+        controller.setMessage(errorMessage); // Set the error message dynamically
+
+        // Create a new stage (window) for the popup
+        Stage popupStage = new Stage();
+        popupStage.setTitle("Error");
+        popupStage.setScene(new Scene(root));
+        popupStage.initModality(Modality.APPLICATION_MODAL); // Block interaction with other windows
+        Button closeButton = controller.getCloseButton();
+        closeButton.setOnAction(event -> popupStage.close());
+        popupStage.showAndWait(); // Show the pop-up window and wait for it to be closed
+    } catch (IOException e) {
+        e.printStackTrace();}
+    }
+
 }

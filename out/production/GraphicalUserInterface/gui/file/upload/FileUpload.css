@@ -47,16 +47,17 @@
 
 }
 
-.button {
+.button{
     /* Padding to give the button a nice size */
     -fx-font-size: 12px;     /* Set the font size */
-    -fx-font-weight: 600;   /* Make the text bold */
+    -fx-font-weight: bold;   /* Make the text bold */
     -fx-border: none;        /* Remove default borders */
-    -fx-border-radius: 5px;  /* Rounded corners */
+    -fx-border-radius: 8px;  /* Rounded corners */
     -fx-cursor: hand;     /* Pointer cursor on hover */
     -fx-transition: background-color 0.3s, transform 0.2s; /* Smooth hover effect */
     -fx-text-align: center;  /* Center text */
     -fx-outline: none;       /* Remove outline when clicked */
-    -fx-background-color: #e74c3c; /* Red background */
+    /*-fx-background-color: #e74c3c; !* Red background *!*/
     -fx-text-fill: white;
+    -fx-background-color: #748ffc;
 }

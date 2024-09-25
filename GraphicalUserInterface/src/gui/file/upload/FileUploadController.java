@@ -1,6 +1,5 @@
 package gui.file.upload;
 
-import gui.main.MainAppViewController;
 import javafx.beans.binding.Bindings;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -48,8 +47,8 @@ public class FileUploadController {
             }
         });
 
-     cancelButton.setOnAction(event -> this.onTaskClosed(aTask));
-     fileUploadStage.setOnCloseRequest(event -> onTaskClosed(aTask));
+        cancelButton.setOnAction(event -> this.onTaskClosed(aTask));
+        fileUploadStage.setOnCloseRequest(event -> onTaskClosed(aTask));
     }
 
     private void onTaskFinished(Optional<Runnable> onFinish) {

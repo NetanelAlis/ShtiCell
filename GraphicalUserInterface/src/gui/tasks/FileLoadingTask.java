@@ -1,22 +1,26 @@
 package gui.tasks;
 
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import logic.Engine;
+import java.util.function.Consumer;
 
 public class FileLoadingTask extends Task<Boolean> {
     private String filePath;
     private Engine engine;
+    private Consumer<String> errorHandler;  // Consumer to handle errors
 
-    public FileLoadingTask(String filePath, Engine engine) {
+    public FileLoadingTask(String filePath, Engine engine, Consumer<String> errorHandler) {
         this.filePath = filePath;
         this.engine = engine;
+        this.errorHandler = errorHandler;  // Assign the passed consumer
     }
 
     @Override
     protected Boolean call() {
-        try{
+        try {
             sleepForAWhile(1000);
-            updateProgress(0,100);
+            updateProgress(0, 100);
             this.engine.LoadDataFromXML(this.filePath);
 
             // Total time for the loading process (in milliseconds)
@@ -35,23 +39,19 @@ public class FileLoadingTask extends Task<Boolean> {
                 // Sleep for the calculated time per step
                 sleepForAWhile(timePerStep);
             }
-
-
-
-        } catch (RuntimeException e){ // check where to catch it is not here!
-            e.printStackTrace();
+        } catch (RuntimeException e) {
+            Platform.runLater(() -> errorHandler.accept(e.getMessage()));  // Pass the exception message to the consumer
             return Boolean.FALSE;
         }
 
         return Boolean.TRUE;
     }
 
-   private void sleepForAWhile(long sleepTime) {
+    private void sleepForAWhile(long sleepTime) {
         if (sleepTime != 0) {
             try {
                 Thread.sleep(sleepTime);
             } catch (InterruptedException ignored) {
-
             }
         }
     }
