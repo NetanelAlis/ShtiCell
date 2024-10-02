@@ -6,20 +6,17 @@ import java.io.*;
 import java.util.List;
 
 public interface Archive extends Serializable {
-    void storeInArchive(Sheet sheet);
-    Sheet retrieveFromArchive(int version);
-    List<Integer> getAllVersionsChanges();
-    void saveToFile(String path);
-    public static Archive loadFromFile(String path) {
-        try (ObjectInputStream in =
-                     new ObjectInputStream(
-                             new FileInputStream(path))) {
-            // Deserialize the object from the file and cast it to Archive
+    static Archive loadFromFile(String path) {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(path))) {
             return (Archive) in.readObject();
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (ClassNotFoundException | IOException e) {
             throw new RuntimeException(e);
         }
     }
-    Sheet retrieveLastSheetVersionFromArchive();
-}
 
+    void storeInArchive(Sheet sheet);
+    Sheet retrieveVersion(int version);
+    Sheet retrieveLatestVersion();
+    List<Integer> getAllVersionsChangesList();
+    void saveToFile(String filePath);
+}

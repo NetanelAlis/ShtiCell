@@ -1,18 +1,17 @@
 package logic.function.system;
 
-import component.api.CellType;
+import component.cell.api.CellType;
 import component.sheet.api.ReadOnlySheet;
 import logic.function.Function;
-import logic.function.returnable.Returnable;
-import logic.function.returnable.SpecialValue;
+import logic.function.returnable.api.Returnable;
+import logic.function.returnable.impl.SpecialValues;
 
 public class Ref implements Function {
-
-    private final java.lang.String name = "REF";
-    private String cellID;
+    private final String name = "REF";
+    private String CellID;
 
     public Ref(String cellID) {
-        this.cellID = cellID;
+        this.CellID = cellID;
     }
 
     @Override
@@ -22,14 +21,13 @@ public class Ref implements Function {
 
     @Override
     public Returnable invoke(ReadOnlySheet sheet) {
-        return sheet.getCell(this.cellID).getEffectiveValue().getCellType().equals(CellType.NO_VALUE) ?
-                SpecialValue.EMPTY :
-                sheet.getCell(this.cellID).getEffectiveValue();
+        return sheet.getCell(this.CellID).getEffectiveValue().getCellType().equals(CellType.NO_VALUE) ?
+                SpecialValues.EMPTY :
+                sheet.getCell(this.CellID).getEffectiveValue();
     }
 
     @Override
     public CellType getReturnType() {
-    return CellType.UNKNOWN;
+        return CellType.UNKNOWN;
     }
-
 }

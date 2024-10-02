@@ -1,0 +1,63 @@
+.root{
+    -fx-background-color: white;
+}
+
+.loading-label .text{
+    -fx-font-family: Arial;
+    -fx-font-weight: 700;
+    -fx-font-size: 18px;
+    -fx-fill: #adb5bd;
+}
+
+/* Style for the ProgressBar */
+/* Style for the ProgressBar */
+.progress-bar {
+    -fx-background-color: transparent; /* Transparent background */
+    -fx-accent: linear-gradient(to right, #bac8ff, #91a7ff, #748ffc);
+}
+
+/* Style the bar (filled portion) */
+.progress-bar .bar {
+    -fx-background-color: linear-gradient(to right, #bac8ff, #91a7ff, #748ffc);
+    -fx-background-radius: 10px; /* Rounded corners for the bar */
+    -fx-padding: 5px; /* Padding inside the bar */
+}
+
+/* Style the track (empty portion) */
+.progress-bar .track {
+    -fx-border-color: #adb5bd;
+    -fx-padding: 5px; /* Padding inside the track */
+    -fx-border-width: 3px; /* border thickness */
+    -fx-cursor: hand; /* cursor style */
+    -fx-border-radius: 12px; /* rounded border */
+    -fx-background-radius: 12px;
+}
+
+/* Style the track (empty portion) */
+.progress-bar .track {
+    -fx-background-color: white; /* Set the color of the track */
+    -fx-background-radius: 10px; /* Rounded corners for the track */
+    -fx-padding: 5px; /* Padding inside the track */
+}
+
+#percent-label{
+    -fx-font-size: 16px;
+    -fx-text-fill: #748ffc;
+    -fx-font-weight: 600;
+
+}
+
+.button{
+    /* Padding to give the button a nice size */
+    -fx-font-size: 12px;     /* Set the font size */
+    -fx-font-weight: bold;   /* Make the text bold */
+    -fx-border: none;        /* Remove default borders */
+    -fx-border-radius: 8px;  /* Rounded corners */
+    -fx-cursor: hand;     /* Pointer cursor on hover */
+    -fx-transition: background-color 0.3s, transform 0.2s; /* Smooth hover effect */
+    -fx-text-align: center;  /* Center text */
+    -fx-outline: none;       /* Remove outline when clicked */
+    /*-fx-background-color: #e74c3c; !* Red background *!*/
+    -fx-text-fill: white;
+    -fx-background-color: #748ffc;
+}

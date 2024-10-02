@@ -1,6 +1,7 @@
 package component.sheet.topological.order;
 
 import component.cell.api.Cell;
+
 import java.util.*;
 
 public enum TopologicalOrder {
@@ -14,8 +15,8 @@ public enum TopologicalOrder {
         for (String cellID : graph.keySet()) {
             if (!visited.contains(cellID)) {
                 if (dfs(graph, cellID, visited, visiting, result)) {
-                    throw new IllegalArgumentException("Found Circular Reference in the sheet" +
-                            " containing cell - " + cellID);
+                    throw new IllegalArgumentException("Found Circular Reference in the Sheet" +
+                            " containing Cell - " + cellID);
                 }
             }
         }
@@ -35,7 +36,7 @@ public enum TopologicalOrder {
 
         visiting.add(cellID);
 
-        List<Cell> neighbors = graph.get(cellID).getInfluecningOn();
+        List<Cell> neighbors = graph.get(cellID).getInfluencedCells();
         if (neighbors != null) {
             for (Cell neighbor : neighbors) {
                 if (dfs(graph, neighbor.getCellId(), visited, visiting, result)) {
@@ -49,5 +50,4 @@ public enum TopologicalOrder {
         result.add(graph.get(cellID));
         return false;
     }
-
 }

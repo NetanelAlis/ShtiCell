@@ -1,27 +1,26 @@
 package logic.function;
 
 import component.sheet.api.ReadOnlySheet;
-import logic.function.returnable.Returnable;
+import logic.function.returnable.api.Returnable;
 
 public abstract class BinaryFunction implements Function {
-    private Function firstArgument;
-    private Function secondArgument;
+    private Function argument1;
+    private Function argument2;
 
-    public BinaryFunction(Function firstArgument, Function secondArgument) {
-        this.firstArgument = firstArgument;
-        this.secondArgument = secondArgument;
-    }
-
-    public boolean areInstancesOf(Returnable obj1, Returnable obj2, Class<?> clazz) {
-        return clazz.isInstance(obj1) && clazz.isInstance(obj2);
+    public BinaryFunction(Function argument1, Function argument2) {
+        this.argument1 = argument1;
+        this.argument2 = argument2;
     }
 
     @Override
     public Returnable invoke(ReadOnlySheet sheet) {
-        return calculate(firstArgument.invoke(sheet), secondArgument.invoke(sheet));
+        return calculate(this.argument1.invoke(sheet), this.argument2.invoke(sheet));
     }
 
-    // Abstract method to be implemented by subclasses
-    abstract protected Returnable calculate(Returnable result1, Returnable result2);
+    @Override
+    public String toString() {
+        return "{" + this.getFunctionName() + "," + this.argument1 + "," + this.argument2 + "}";
+    }
 
+    abstract protected Returnable calculate(Returnable argument1, Returnable argument2);
 }

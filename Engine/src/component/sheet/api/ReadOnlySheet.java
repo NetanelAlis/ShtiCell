@@ -1,17 +1,22 @@
 package component.sheet.api;
 
 import component.cell.api.Cell;
+import component.range.api.Range;
 import component.sheet.impl.SheetImpl;
+
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Random;
 
 public interface ReadOnlySheet extends Serializable {
     int getVersion();
-    Cell getCell(String cellID);
-    String getName();
+    Cell getCell(String cellId);
     SheetImpl.Layout getLayout();
-    int getNumberOfCellsThatHaveChanged();
-    Map<String, Cell> getSheetCells();
+    String getSheetName();
+    Map<String, Cell> getCells();
+    Map<String, Range> getRanges();
+    boolean isExistingRange(String range);
+    int getNumOfCellsUpdated();
     SheetImpl copySheet();
-     boolean cellInLayout(String cellID);
+    boolean cellInLayout(String cellId);
 }

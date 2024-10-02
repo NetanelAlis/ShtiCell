@@ -3,80 +3,77 @@ package dto;
 import component.cell.api.Cell;
 import component.sheet.api.Sheet;
 import component.sheet.impl.SheetImpl;
-import logic.function.returnable.Returnable;
+import logic.function.returnable.api.Returnable;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 public class SheetDTO {
     private final String sheetName;
-    private final LayoutDTO layout;
-    private final int sheetVersion;
-    private final int numberOfCellsThatHaveChanged;
-    private final Map<String, Returnable> activeCells;
+    private final SheetDTO.LayoutDTO layout;
+    private final Map<String, Returnable> cells;
+    private final int version;
+    private final int numOfCellsUpdated;
 
-    public SheetDTO(Sheet sheet) {
-        this.sheetName = sheet.getName();
-        this.layout = new LayoutDTO(sheet.getLayout());
-        this.sheetVersion = sheet.getVersion();
-        this.numberOfCellsThatHaveChanged = sheet.getNumberOfCellsThatHaveChanged();
-        this.activeCells = new HashMap<>();
-
-        for (Cell cell : sheet.getSheetCells().values()) {
-            this.activeCells.put(cell.getCellId(), cell.getEffectiveValue());
-        }
-    }
-
-    public class LayoutDTO implements Serializable {
-        private int numberOfrows;
-        private int numberOfcolumn;
-        private int rowHeight;
-        private int columnWidth;
+    public class LayoutDTO {
+        private final int row;
+        private final int column;
+        private final int rowHeight;
+        private final int columnWidth;
 
         public LayoutDTO(SheetImpl.Layout layout) {
-            this.numberOfrows = layout.getNumberOfRows();
-            this.numberOfcolumn = layout.getNumberOfColumns();
+            this.row = layout.getRow();
+            this.column = layout.getColumn();
             this.rowHeight = layout.getRowHeight();
             this.columnWidth = layout.getColumnWidth();
         }
 
-            public int getNumberOfRows () {
-                return this.numberOfrows;
-            }
-
-            public int getNumberOfColumns () {
-                return this.numberOfcolumn;
-            }
-
-            public int getRowHeight () {
-            return this.rowHeight;
-            }
-
-            public int getColumnWidth () {
-            return this.columnWidth;
-            }
+        public int getRow() {
+            return row;
         }
 
+        public int getColumn() {
+            return column;
+        }
+
+        public int getRowHeight() {
+            return rowHeight;
+        }
+
+        public int getColumnWidth() {
+            return columnWidth;
+        }
+    }
+
+    public SheetDTO(Sheet sheet) {
+        this.sheetName = sheet.getSheetName();
+        this.layout = new LayoutDTO(sheet.getLayout());
+        this.version = sheet.getVersion();
+        this.numOfCellsUpdated = sheet.getNumOfCellsUpdated();
+        this.cells = new HashMap<>();
+
+        for (Cell cell : sheet.getCells().values()) {
+            this.cells.put(cell.getCellId(), cell.getEffectiveValue());
+        }
+    }
+
     public String getSheetName() {
-        return this.sheetName;
+        return sheetName;
     }
 
-    public LayoutDTO getLayout() {
-        return this.layout;
+    public SheetDTO.LayoutDTO getLayout() {
+        return layout;
     }
 
-    public int getSheetVersion() {
-        return this.sheetVersion;
+    public Map<String, Returnable> getCells() {
+        return cells;
     }
 
-    public int getNumberOfCellsThatHaveChanged() {
-        return this.numberOfCellsThatHaveChanged;
+    public int getVersion() {
+        return version;
     }
 
-    public Map<String, Returnable> getActiveCells() {
-        return this.activeCells;
+    public int getNumOfCellsUpdated() {
+        return numOfCellsUpdated;
     }
-
 }
-

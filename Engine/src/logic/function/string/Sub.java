@@ -1,53 +1,56 @@
 package logic.function.string;
 
-import component.api.CellType;
+import component.cell.api.CellType;
 import logic.function.Function;
-import logic.function.TernaryFunction;
-import logic.function.returnable.SpecialValue;
-import logic.function.returnable.Returnable;
-import logic.function.returnable.ReturnableImpl;
+import logic.function.TrinaryFunction;
+import logic.function.returnable.api.Returnable;
+import logic.function.returnable.impl.SpecialValues;
+import logic.function.returnable.impl.ReturnableImpl;
 
-public class Sub extends TernaryFunction {
-    private final java.lang.String name = "SUB";
+public class Sub extends TrinaryFunction {
+    private final String name = "CONCAT";
 
     public Sub(Function argument1, Function argument2, Function argument3) {
         super(argument1, argument2, argument3);
     }
 
     @Override
-    public Returnable calculate(Returnable source, Returnable i_StartIndex, Returnable i_EndIndex) {
+    public Returnable calculate(Returnable source, Returnable i_StartIndex, Returnable i_IndIndex) {
         try {
-            String sourceString = source.tryConvertTo(String.class);
-            double startIndex = i_StartIndex.tryConvertTo(Double.class);
-            double endIndex = i_EndIndex.tryConvertTo(Double.class);
+            double startIndex, endIndex;
+            String original = source.tryConvertTo(String.class);
+            startIndex = i_StartIndex.tryConvertTo(Double.class);
+            endIndex = i_IndIndex.tryConvertTo(Double.class);
 
-            return this.isIndexesValid(startIndex, endIndex, sourceString.length()) ?
-             new ReturnableImpl(sourceString.substring((int) startIndex, (int) endIndex), CellType.STRING):
-             SpecialValue.UNDEFINED;
-        } catch (ClassCastException e) {
-            return SpecialValue.UNDEFINED;
+            return validateIndices(original, startIndex, endIndex) ?
+                    new ReturnableImpl(original.substring((int)startIndex, (int)endIndex), CellType.STRING) :
+                    SpecialValues.UNDEFINED;
+
+        } catch (ClassCastException | UnsupportedOperationException e) {
+            return SpecialValues.UNDEFINED;
         }
     }
 
+    private boolean validateIndices(String source, double start, double end) {
+        return isNaturalNumber(start)
+                && isNaturalNumber(end)
+                && start >= 0
+                && end <= source.length()
+                && start <= end;
+    }
+
+    public boolean isNaturalNumber(double value) {
+        return value - (double)((int) value) == 0;
+    }
+
     @Override
-    public java.lang.String getFunctionName() {
+    public String getFunctionName() {
         return this.name;
     }
 
     @Override
     public CellType getReturnType() {
-        return CellType.STRING;
+        return CellType.NUMERIC;
     }
-
-    boolean isIndexesValid(double startIndex, double endIndex, int stringLength) {
-          return startIndex >= 0 &&
-          endIndex <= stringLength &&
-          isNaturalNumber(startIndex) &&
-          isNaturalNumber(endIndex);
-    }
-
-    public boolean isNaturalNumber(double value){
-        return value - (double)(int)value == 0;
-    }
-
 }
+
