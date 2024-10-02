@@ -3,128 +3,173 @@ package component.sheet.impl;
 import component.cell.api.Cell;
 import component.range.api.Range;
 import component.range.impl.RangeImpl;
-import component.sheet.SheetNotChangedException;
 import component.sheet.api.Sheet;
 import component.sheet.topological.order.TopologicalOrder;
 import jaxb.generated.STLSheet;
+
 import java.io.*;
 import java.util.*;
 
-
 public class SheetImpl implements Sheet {
-
-    private String sheetName;
-    private Layout  layout;
+    private final String sheetName;
+    private final Layout layout;
+    private final Map<String, Cell> cells;
+    private final Map<String, Range> ranges;
     private int version;
-    private Map<String, Cell> activeCells;
-    private int numberOfCellsThatHaveChanged;
-    private Map <String, Range> ranges;
-
+    private int numOfCellsUpdated;
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SheetImpl sheet = (SheetImpl) o;
+        return version == sheet.version && numOfCellsUpdated == sheet.numOfCellsUpdated && Objects.equals(sheetName, sheet.sheetName) && Objects.equals(layout, sheet.layout) && Objects.equals(cells, sheet.cells) && Objects.equals(ranges, sheet.ranges);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(sheetName, layout, cells, ranges, version, numOfCellsUpdated);
+    }
+    
     public class Layout implements Serializable {
         private final static int MAX_NUM_OF_ROWS = 50;
         private final static int MAX_NUM_OF_COLUMNS = 20;
-        private int numberOfrows;
-        private int numberOfcolumn;
-        private int rowHeight;
-        private int columnWidth;
-
-        public Layout(int numberOfrows, int numberOfcolumn, int rowHeight, int columnWidth) {
-            this.numberOfrows = numberOfrows;
-            this.numberOfcolumn = numberOfcolumn;
+        private final int row;
+        private final int column;
+        private final int rowHeight;
+        private final int columnWidth;
+        
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Layout layout = (Layout) o;
+            return row == layout.row && column == layout.column && rowHeight == layout.rowHeight && columnWidth == layout.columnWidth;
+        }
+        
+        @Override
+        public int hashCode() {
+            return Objects.hash(row, column, rowHeight, columnWidth);
+        }
+        
+        public Layout(int row, int column, int rowHeight, int columnWidth) {
+            this.row = row;
+            this.column = column;
             this.rowHeight = rowHeight;
             this.columnWidth = columnWidth;
 
-            if (numberOfrows > MAX_NUM_OF_ROWS || numberOfrows <= 0 || numberOfcolumn > MAX_NUM_OF_COLUMNS || numberOfcolumn <= 0) {
-                throw new IllegalArgumentException("the sheet layout is not valid.\n got row = " + numberOfrows + " and columns " + numberOfcolumn
-                +"\n but expected rows 1 - " + MAX_NUM_OF_ROWS + " and columns 1 - " + MAX_NUM_OF_COLUMNS);
+            if (row > MAX_NUM_OF_ROWS || column > MAX_NUM_OF_COLUMNS || row <= 0 || column <= 0) {
+                throw new IllegalArgumentException("Row or column are out of range,\n" +
+                        "expected rows: (1-" + MAX_NUM_OF_ROWS + ") and columns: (1-" + MAX_NUM_OF_COLUMNS +
+                        ")\nbut got rows=" + row + " and columns=" + column);
             }
         }
-        public int getNumberOfRows(){
-            return this.numberOfrows;
-        }
-        public int getNumberOfColumns(){
-            return this.numberOfcolumn;
+
+        public int getRow() {
+            return row;
         }
 
-        public int getRowHeight(){
-            return this.rowHeight;
+        public int getColumn() {
+            return column;
         }
 
-        public int getColumnWidth(){
-            return this.columnWidth;
+        public int getRowHeight() {
+            return rowHeight;
         }
 
+        public int getColumnWidth() {
+            return columnWidth;
+        }
     }
-
-    public SheetImpl(STLSheet sheet) {
-        this.sheetName = sheet.getName();
-        this.layout = new Layout(sheet.getSTLLayout().getRows(),
-                sheet.getSTLLayout().getColumns(),
-                sheet.getSTLLayout().getSTLSize().getRowsHeightUnits(),
-                sheet.getSTLLayout().getSTLSize().getColumnWidthUnits());
-        this.version = 0;
-        this.activeCells = new HashMap<>();
-        this.numberOfCellsThatHaveChanged = 0;
+    
+    public SheetImpl(STLSheet stlSheet) {
+        this.sheetName = stlSheet.getName();
+        this.cells = new HashMap<>();
         this.ranges = new HashMap<>();
-
+        this.version = 0;
+        this.numOfCellsUpdated = 0;
+        this.layout = new Layout(stlSheet.getSTLLayout().getRows(),
+                stlSheet.getSTLLayout().getColumns(),
+                stlSheet.getSTLLayout().getSTLSize().getRowsHeightUnits(),
+                stlSheet.getSTLLayout().getSTLSize().getColumnWidthUnits());
     }
-
+    
     @Override
-    public int getVersion() {
-        return this.version;
-    }
+    public Cell getCell(String cellId) {
+        cellId = Character.toUpperCase(cellId.charAt(0)) + cellId.substring(1);
 
-    @Override
-    public Cell getCell(String cellID) {
-        cellID = Character.toUpperCase(cellID.charAt(0)) + cellID.substring(1);
-        if(cellInLayout(cellID)){
-            return activeCells.get(cellID);
+        if (cellInLayout(cellId)){
+            return this.cells.get(cellId);
         }
-            throw new IllegalArgumentException("the Sheet size is " + this.layout.getNumberOfRows() + "row and " +
-                     this.layout.getNumberOfColumns() + "columns, the entered cell ID (" + cellID +") is " +
-                    "out of bounds.");
-    }
 
+        throw new IllegalArgumentException("The sheet size is " + this.layout.getRow() + " rows and " +
+                this.layout.getColumn() + " columns, The Cell or Referenced Cell " + cellId + " is out of bounds.");
+    }
+    
     @Override
-    public String getName() {
-        return this.sheetName;
-    }
+    public boolean cellInLayout(String cellId) {
+        int row = this.parseCellIdRow(cellId);
+        int column = this.parseCellIdColumn(cellId);
 
+        return row <= this.layout.getRow()
+                && row >= 0
+                && column <= this.layout.getColumn()
+                && column >= 0;
+    }
+    
+    private int parseCellIdRow(String cellId) {
+        return Integer.parseInt(cellId.substring(1)) - 1;
+    }
+    
+    private int parseCellIdColumn(String cellId) {
+        return Character.toUpperCase(cellId.charAt(0)) - 'A';
+    }
+    
     @Override
-    public Layout getLayout() {
-        return this.layout;
-    }
+    public Sheet updateSheet(SheetImpl newSheetVersion, boolean isOriginalValueChanged) {
+        List<Cell> cellsThatHaveChanged =
+                TopologicalOrder.SORT.topologicalSort(newSheetVersion.getCells())
+                        .stream()
+                        .filter(Cell::calculateEffectiveValue)
+                        .toList();
+        
+        if (cellsThatHaveChanged.isEmpty() && !isOriginalValueChanged) {
+            return this;
+        }
 
+        // successful calculation. update sheet and relevant cells version
+        int newVersion = newSheetVersion.increaseVersion();
+        cellsThatHaveChanged.forEach(cell -> cell.updateVersion(newVersion));
+        newSheetVersion.numOfCellsUpdated = cellsThatHaveChanged.size();
+
+        return newSheetVersion;
+    }
+    
     @Override
-    public Map<String, Cell>getSheetCells(){
-        return this.activeCells;
+    public void createRange(String rangeName, String range) {
+        if(!this.getRanges().containsKey(rangeName)) {
+            this.getRanges().put(rangeName, new RangeImpl(rangeName, range, this));
+        } else {
+            throw new IllegalArgumentException("The Range " + rangeName + " already exists");
+        }
     }
-
+    
     @Override
-    public int getNumberOfCellsThatHaveChanged(){
-        return this.numberOfCellsThatHaveChanged;
+    public void deleteRange(String rangeName) {
+        if (this.ranges.get(rangeName).isInUse()) {
+            throw new IllegalArgumentException("Cannot Delete Range " + rangeName + " while it is in use");
+        } else {
+            this.ranges.remove(rangeName);
+        }
     }
-
-    private int parseCellIDRow(String cellID) {
-        return Integer.parseInt(cellID.substring(1)) - 1;
+    
+    private int increaseVersion() {
+         return ++this.version;
     }
-
-    private int parseCellIDCol(String cellID){
-        char colLetter = Character.toUpperCase(cellID.charAt(0));
-        return colLetter - 'A';
-    }
-
-    public boolean cellInLayout(String cellID){
-        int row = parseCellIDRow(cellID);
-        int col = parseCellIDCol(cellID);
-        boolean rowValid = (row >= 0 && row <= this.layout.getNumberOfRows());
-        boolean colValid = (col >= 0 && col <= this.layout.getNumberOfColumns());
-
-        return rowValid && colValid;
-    }
-
+    
     @Override
     public SheetImpl copySheet() {
+
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos);
@@ -134,63 +179,44 @@ public class SheetImpl implements Sheet {
             ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
             return (SheetImpl) ois.readObject();
         } catch (Exception e) {
+            // deal with the runtime error that was discovered as part of invocation
+            // CATCH IN THE UI
             throw new RuntimeException(e);
         }
     }
-
+    
     @Override
-    public Sheet updateSheet(SheetImpl newSheetVersion, boolean isOriginalValueChanged) {
-        List<Cell> cellsThatHaveChanged =
-                TopologicalOrder.SORT.topologicalSort(newSheetVersion.getSheetCells())
-                        .stream()
-                        .filter(Cell::calculateEffectiveValue)
-                        .toList();
-
-        if(cellsThatHaveChanged.isEmpty() && !isOriginalValueChanged){
-            return this;
-        }
-
-        // successful calculation. update sheet and relevant cells version
-         int newVersion = newSheetVersion.increaseVersion();
-         cellsThatHaveChanged.forEach(cell -> cell.updateVersion(newVersion));
-         newSheetVersion.numberOfCellsThatHaveChanged = cellsThatHaveChanged.size();
-
-        return newSheetVersion;
-
+    public Layout getLayout() {
+        return layout;
     }
-
+    
     @Override
-    public void deleteRange(String rangeName) {
-        if(!this.ranges.get(rangeName).inUse()){
-            this.ranges.remove(rangeName);
-        }
-        else{
-            throw new IllegalArgumentException("range " + rangeName + " is in use");
-        }
+    public int getVersion() {
+        return this.version;
     }
-
+    
     @Override
-    public void createRange(String rangeName, String range) {
-        if(!this.getRanges().containsKey(rangeName)) {
-            this.getRanges().put(rangeName, new RangeImpl(rangeName, range, this));
-        }else{
-            throw new IllegalArgumentException("The Range " + rangeName + " already exists");
-        }
+    public String getSheetName(){
+        return this.sheetName;
     }
-
-    private int increaseVersion(){
-        return ++this.version;
+    
+    @Override
+    public Map<String, Cell> getCells(){
+        return this.cells;
     }
-
+    
     @Override
     public Map<String, Range> getRanges() {
         return this.ranges;
     }
-
+    
     @Override
-    public boolean isExistingRange(String rangeName) {
-        return ranges.containsKey(rangeName);
+    public boolean isExistingRange(String range) {
+        return this.getRanges().containsKey(range);
     }
-
+    
+    @Override
+    public int getNumOfCellsUpdated(){
+        return this.numOfCellsUpdated;
+    }
 }
-

@@ -3,41 +3,52 @@ package dto;
 import component.cell.api.Cell;
 import component.cell.impl.SerializableColor;
 import javafx.scene.paint.Color;
-import logic.function.returnable.Returnable;
+import logic.function.returnable.api.Returnable;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class ColoredCellDTO{
-
-    private final String cellID;
+public class ColoredCellDTO {
+    private final String cellId;
     private final Returnable effectiveValue;
-    private final boolean isActive;
     private SerializableColor backgroundColor;
     private SerializableColor textColor;
-
-    public ColoredCellDTO(Cell cell, String cellID){
-        this.backgroundColor = new SerializableColor(Color.WHITE);
-        this.textColor = new SerializableColor(Color.BLACK);
-
-        if(cell != null){
-            this.cellID = cell.getCellId();
+    private final boolean isActive;
+    
+    
+    public ColoredCellDTO(Cell cell, String cellID) {
+        if (cell != null) {
+            this.cellId = cell.getCellId();
             this.effectiveValue = cell.getEffectiveValue();
+            this.backgroundColor = cell.getBackgroundColor();
+            this.textColor = cell.getTextColor();
             this.isActive = true;
-        }
-        else{
-            this.cellID = cellID;
+        } else {
+            this.cellId = cellID;
             this.effectiveValue = null;
             this.isActive = false;
+            this.backgroundColor = new SerializableColor(Color.WHITE);
+            this.textColor = new SerializableColor(Color.BLACK);
         }
     }
-
-    public String getCellId() {
-        return this.cellID;
+    
+    public boolean isActive() {
+        return this.isActive;
     }
+    
+    public String getCellId() {
+        return this.cellId;
+    }
+    
     public Returnable getEffectiveValue() {
         return this.effectiveValue;
     }
-    public SerializableColor getBackgroundColor() {return this.backgroundColor;}
-    public SerializableColor getTextColor() {return this.textColor;}
-
+    
+    public Color getBackgroundColor() {
+        return this.backgroundColor.getColor();
+    }
+    
+    public Color getTextColor() {
+        return this.textColor.getColor();
+    }
 }

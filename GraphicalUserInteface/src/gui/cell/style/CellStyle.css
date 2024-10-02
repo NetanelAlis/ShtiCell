@@ -1,0 +1,49 @@
+.label {
+    -fx-background-color: white; /* background color */
+    -fx-border-color: #bbbbbb; /* blue border color */
+    -fx-border-width: 1px; /* border thickness */
+    -fx-cursor: hand; /* cursor style */
+}
+
+.label .text {
+    -fx-font-size: 12px; /* font size */
+    -fx-font-weight: Bold;
+    -fx-fill: black; /* text color */
+}
+
+.label:hover {
+    -fx-border-color: #5c7cfa; /* blue border color */
+    -fx-border-width: 3px;
+}
+
+.in-old-version:hover {
+    -fx-border-color: #bbbbbb; /* blue border color */
+    -fx-border-width: 1px; /* border thickness */
+    -fx-cursor: normal;
+}
+
+.selected-cell {
+    -fx-border-color: #5c7cfa; /* blue border color */
+    -fx-border-width: 3px;
+}
+
+.depending-cell {
+    -fx-border-color: #66d9e8; /* blue border color */
+    -fx-border-width: 3px;
+}
+
+.influencing-cell {
+    -fx-border-color: #c0eb75; /* blue border color */
+    -fx-border-width: 3px;
+}
+
+.selected-range {
+    -fx-border-color: #fab005; /* blue border color */
+    -fx-border-width: 3px;
+}
+
+:focused {
+    -fx-focus-color: #4b55df;
+    -fx-faint-focus-color: transparent;
+}
+

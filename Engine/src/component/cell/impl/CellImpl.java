@@ -2,102 +2,115 @@ package component.cell.impl;
 
 import component.cell.api.Cell;
 import component.range.api.Range;
-import component.sheet.api.ReadOnlySheet;
+import component.sheet.api.ReadonlySheet;
 import component.sheet.api.Sheet;
 import javafx.scene.paint.Color;
-import logic.parser.FunctionParser;
-import logic.function.returnable.Returnable;
-import logic.parser.OriginalValueParser;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import logic.function.parser.FunctionParser;
+import logic.function.parser.OriginalValueParser;
+import logic.function.returnable.api.Returnable;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CellImpl implements Cell {
-
-    private String cellID;;
+    private final ReadonlySheet sheet;
+    private String cellId;
     private String originalValue;
     private Returnable effectiveValue;
     private int version;
-    List<Cell> dependingOnCells;
-    List<Cell> influencingCells;
-    ReadOnlySheet sheet;
     private SerializableColor backgroundColor;
     private SerializableColor textColor;
+    private final List<Cell> dependingOn;
+    private final List<Cell> influencingOn;
 
-    public CellImpl(String cellID, String originalValue, int version, ReadOnlySheet sheet){
-        this.cellID =  Character.toUpperCase(cellID.charAt(0)) + cellID.substring(1);
+    public CellImpl(String cellID, String originalValue, int version, ReadonlySheet sheet) {
+        this.cellId = Character.toUpperCase(cellID.charAt(0)) + cellID.substring(1);
         this.originalValue = originalValue;
-        this.sheet = sheet;
         this.version = version;
-        this.dependingOnCells = new ArrayList<>();
-        this.influencingCells = new ArrayList<>();
         this.backgroundColor = new SerializableColor(Color.WHITE);
         this.textColor = new SerializableColor(Color.BLACK);
+        this.dependingOn = new ArrayList<>();
+        this.influencingOn = new ArrayList<>();
+        this.sheet = sheet;
+        
 
-        getInfluencingCellsFromDummy();
+        this.getInfluencingCellsFromDummy();
         this.setDependencies();
-
-    }
-
-    private void setDependentAndInfluencingCells(String dependentCellID){
-        Cell dependentCell = sheet.getCell(dependentCellID);
-
-        if(dependentCell == null){
-            dependentCell = new CellImpl(dependentCellID,"", version, sheet);
-            this.sheet.getSheetCells().put(dependentCell.getCellId(), dependentCell);
-
-        }
-
-        this.dependingOnCells.add(dependentCell);
-        dependentCell.getInfluecningOn().add(this);
-
-    }
-
-    private void setDependencies(){
-        Set<String> dependencies = this.getDependenciesRanges();
-
-        dependencies.addAll(this.getDependenciesFromRef());
-        dependencies.forEach(this::setDependentAndInfluencingCells);
-
-    }
-
-    private Set<String> getDependenciesFromRef(){
-       Set<String> dependencies =
-        OriginalValueParser.REF.extract(originalValue)
-                .stream()
-               .filter(Sheet::isValidCellID)
-               .collect(Collectors.toSet());
-
-            return dependencies;
-    }
-
-    private Set<String> getDependenciesRanges() {
-        Set<String> dependencies = new HashSet<>();
-
-        this.getUsedRanges()
-                .stream()
-                    .filter(this.sheet::isExistingRange)
-                .forEach(rangeName -> {
-                    Range currentRange = this.sheet.getRanges().get(rangeName);
-                    currentRange.increaseUsage();
-                    currentRange.getRangeCells().forEach((cell -> dependencies.add(cell.getCellId())));
-                });
-
-        return dependencies;
     }
 
     private void getInfluencingCellsFromDummy(){
-        Cell dummyCell = this.sheet.getCell(this.cellID);
+        Cell dummyCell = this.sheet.getCell(this.cellId);
         if(dummyCell != null){
-            this.influencingCells.addAll(dummyCell.getInfluecningOn());
+            this.influencingOn.addAll(dummyCell.getInfluencedCells());
+        }
+    }
+
+    private void setDependantAndInfluencedCells(String dependantCellID) {
+        Cell dependantCell = this.sheet.getCell(dependantCellID);
+
+        if (dependantCell == null) {
+            dependantCell = new CellImpl(dependantCellID, "", this.version, this.sheet);
+            this.sheet.getCells().put(dependantCell.getCellId(), dependantCell);
+        }
+
+        this.dependingOn.add(dependantCell);
+        dependantCell.getInfluencedCells().add(this);
+    }
+
+    private void setDependencies(){
+        Set<String> dependencies = new HashSet<>(this.getRefDependencies());
+        dependencies.addAll(this.getRangesDependencies());
+        
+        dependencies.forEach(this::setDependantAndInfluencedCells);
+    }
+    
+    private Set<String> getRangesDependencies() {
+        Set<String> dependencies = new HashSet<>();
+        
+        this.getUsedRanges()
+                .stream()
+                .filter(this.sheet::isExistingRange)
+                .forEach((rangeName) -> {
+                    Range currentRange = this.sheet.getRanges().get(rangeName);
+                    currentRange.addUsage();
+                    currentRange.getRangeCells().forEach(cell -> dependencies.add(cell.getCellId()));
+                });
+        
+        return dependencies;
+    }
+    
+    private Set<String> getRefDependencies() {
+        return OriginalValueParser.REF.extract(this.originalValue).stream()
+                .filter(Sheet::isValidCellID)
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public boolean calculateEffectiveValue() {
+        Returnable newEffectiveValue = FunctionParser.parseFunction(this.originalValue).invoke(this.sheet);
+
+        if (newEffectiveValue.equals(effectiveValue)) {
+            return false;
+        } else {
+            this.effectiveValue = newEffectiveValue;
+            return true;
         }
     }
 
     @Override
+    public void setOriginalValue(String value, int newVersion) {
+        this.originalValue = value;
+        
+        this.dependingOn.forEach(cell -> cell.getInfluencedCells().remove(this));
+        this.dependingOn.clear();
+        this.setDependencies();
+        
+        this.version = newVersion;
+    }
+
+    @Override
     public String getCellId() {
-        return this.cellID;
+        return this.cellId;
     }
 
     @Override
@@ -106,85 +119,73 @@ public class CellImpl implements Cell {
     }
 
     @Override
-    public int getVersion() {
-        return this.version;
-    }
-
-    @Override
-    public List<Cell> getDependsOn() {
-        return this.dependingOnCells;
-    }
-
-    @Override
-    public List<Cell> getInfluecningOn() {
-        return this.influencingCells;
-    }
-
-    @Override
-    public void setOriginalValue(String value, int newSheetVersion) {
-        this.originalValue = value;
-
-        this.dependingOnCells.forEach(cell -> cell.getInfluecningOn().remove(this));
-
-        this.dependingOnCells.clear();
-        this.setDependencies();
-        this.version = newSheetVersion;
-    }
-
-@Override
     public Returnable getEffectiveValue() {
         return this.effectiveValue;
     }
 
     @Override
-    public boolean calculateEffectiveValue(){
-        Returnable newEffectiveValue = FunctionParser.parseFunction(this.originalValue).invoke(this.sheet);
-
-        if(newEffectiveValue.equals(this.effectiveValue)){
-            return false;
-        }
-
-        else{
-            this.effectiveValue = newEffectiveValue;
-            return true;
-        }
+    public int getVersion() {
+        return this.version;
     }
-
-    @Override
-    public void updateVersion(int sheetUpdatedVersion) {
-        this.version = sheetUpdatedVersion;
-    }
-
-    @Override
-    public Set<String> getUsedRanges() {
-        Set<String> rangeNames = OriginalValueParser.SUM.extract(this.originalValue);
-        rangeNames.addAll(OriginalValueParser.AVERAGE.extract(this.originalValue));
-        return rangeNames;
-    }
-
+    
     @Override
     public SerializableColor getBackgroundColor() {
         return this.backgroundColor;
     }
-
+    
     @Override
     public SerializableColor getTextColor() {
         return this.textColor;
     }
+    
+    @Override
+    public List<Cell> getDependentCells() {
+        return this.dependingOn;
+    }
 
+    @Override
+    public List<Cell> getInfluencedCells() {
+        return this.influencingOn;
+    }
+
+    @Override
+    public void updateVersion(int newVersion) {
+        this.version = newVersion;
+    }
+    
+    @Override
+    public Set<String> getUsedRanges() {
+        Set<String> usedRanges = OriginalValueParser.SUM.extract(this.originalValue);
+        usedRanges.addAll(OriginalValueParser.AVERAGE.extract(this.originalValue));
+        return usedRanges;
+    }
+    
+    @Override
+    public void updateCellID(String newID) {
+        this.cellId = newID;
+    }
+    
     @Override
     public void setBackgroundColor(Color color) {
         this.backgroundColor = new SerializableColor(color);
     }
-
+    
     @Override
     public void setTextColor(Color color) {
         this.textColor = new SerializableColor(color);
+        
     }
-
+    
     @Override
-    public void updateCellID(String cellID) {
-        this.cellID = cellID;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CellImpl cell = (CellImpl) o;
+        return version == cell.version && Objects.equals(sheet, cell.sheet) && Objects.equals(cellId, cell.cellId) && Objects.equals(originalValue, cell.originalValue) && Objects.equals(effectiveValue, cell.effectiveValue) && Objects.equals(backgroundColor, cell.backgroundColor) && Objects.equals(textColor, cell.textColor) && Objects.equals(dependingOn, cell.dependingOn) && Objects.equals(influencingOn, cell.influencingOn);
     }
-
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(cellId, originalValue, effectiveValue, version, backgroundColor, textColor);
+    }
 }

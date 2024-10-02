@@ -1,44 +1,38 @@
 package logic.function.bool;
 
-import component.api.CellType;
+import component.cell.api.CellType;
 import logic.function.Function;
-import logic.function.TernaryFunction;
-import logic.function.returnable.SpecialValue;
-import logic.function.returnable.Returnable;
-import logic.function.returnable.ReturnableImpl;
+import logic.function.TrinaryFunction;
+import logic.function.returnable.api.Returnable;
+import logic.function.returnable.impl.SpecialValues;
 
-public class If extends TernaryFunction {
-    private final java.lang.String name = "IF";
-
+public class If extends TrinaryFunction {
+    private final String name = "CONCAT";
+    
     public If(Function argument1, Function argument2, Function argument3) {
         super(argument1, argument2, argument3);
     }
-
+    
     @Override
-    public Returnable calculate(Returnable i_Condition, Returnable i_Than, Returnable i_Else) {
+    public Returnable calculate(Returnable condition, Returnable i_Then, Returnable i_Else) {
         try {
-             if(this.typeEqual(i_Than, i_Else)){
-                 return i_Condition.tryConvertTo(Boolean.class) ? i_Than : i_Else;
-             } else{
-                 return SpecialValue.UNKNOWN;
-             }
-
-        }  catch (ClassCastException | UnsupportedOperationException e)  {
-            return SpecialValue.UNKNOWN;
+            if (i_Then.getCellType().equals(i_Else.getCellType())) {
+                return condition.tryConvertTo(Boolean.class) ? i_Then : i_Else;
+            } else {
+                return SpecialValues.UNKNOWN;
+            }
+        } catch (ClassCastException | UnsupportedOperationException e) {
+            return SpecialValues.UNKNOWN;
         }
     }
-
+    
     @Override
-    public java.lang.String getFunctionName() {
+    public String getFunctionName() {
         return this.name;
     }
-
+    
     @Override
     public CellType getReturnType() {
         return CellType.UNKNOWN;
-    }
-
-    boolean typeEqual(Returnable i_Then, Returnable i_Else) {
-        return i_Then.getCellType().equals(i_Else.getCellType());
     }
 }

@@ -9,52 +9,49 @@ import java.io.ObjectOutputStream;
 import java.util.*;
 
 public class ArchiveImpl implements Archive {
+    private final Map<Integer, Sheet> storedSheets = new HashMap<>();
     private final List<Integer> changesPerVersion = new LinkedList<>();
-    private final Map <Integer, Sheet> storedSheet = new HashMap<>();
 
     @Override
     public void storeInArchive(Sheet sheet) {
-        this.storedSheet.put(sheet.getVersion(), sheet);
-        this.changesPerVersion.add(sheet.getNumberOfCellsThatHaveChanged());
+        this.storedSheets.put(sheet.getVersion(), sheet);
+        this.changesPerVersion.add(sheet.getNumOfCellsUpdated());
     }
 
     @Override
-    public Sheet retrieveFromArchive(int version) {
-            Sheet restoredSheet = this.storedSheet.get(version);
+    public Sheet retrieveVersion(int version) {
+        Sheet restoredSheet = this.storedSheets.get(version);
 
-            if(restoredSheet == null) {
-                throw new IllegalArgumentException("Version " + version + " does not exist in the current Sheet");
-            }
+        if (restoredSheet == null) {
+            throw new IllegalArgumentException("Version " + version + " does not exist.");
+        }
 
-            return restoredSheet;
+        return restoredSheet;
     }
 
     @Override
-    public List<Integer> getAllVersionsChanges() {
+    public Sheet retrieveLatestVersion() {
+        return this.retrieveVersion(this.storedSheets.size());
+    }
+
+    @Override
+    public List<Integer> getAllVersionsChangesList() {
         return this.changesPerVersion;
     }
 
     @Override
     public void saveToFile(String filePath) {
-        try (ObjectOutputStream out =
-                     new ObjectOutputStream(
-                             new FileOutputStream(filePath))) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filePath))) {
             out.writeObject(this);
             out.flush();
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    @Override
-    public Sheet retrieveLastSheetVersionFromArchive() {
-       return this.retrieveFromArchive(this.storedSheet.size());
-    }
-
     public static boolean isValidVersion(String version) {
         try {
-            Double.parseDouble(version);
+            Integer.parseInt(version);
             return true;
         } catch (NumberFormatException e) {
             return false;

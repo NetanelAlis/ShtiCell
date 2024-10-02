@@ -1,37 +1,37 @@
 package logic.function.bool;
 
-import component.api.CellType;
-import logic.function.Function;
-import logic.function.returnable.Returnable;
+import component.cell.api.CellType;
 import logic.function.BinaryFunction;
-import logic.function.returnable.ReturnableImpl;
-import logic.function.returnable.SpecialValue;
-
+import logic.function.Function;
+import logic.function.returnable.api.Returnable;
+import logic.function.returnable.impl.ReturnableImpl;
+import logic.function.returnable.impl.SpecialValues;
 
 public class And extends BinaryFunction {
     private final String name = "AND";
-
+    
     public And(Function argument1, Function argument2) {
         super(argument1, argument2);
     }
-
+    
     @Override
     protected Returnable calculate(Returnable argument1, Returnable argument2) {
         try {
-            return new ReturnableImpl(argument1.tryConvertTo(Boolean.class) && argument2.tryConvertTo(Boolean.class), CellType.BOOLEAN);
+            return new ReturnableImpl(
+                    argument1.tryConvertTo(Boolean.class) && argument2.tryConvertTo(Boolean.class),
+                    CellType.BOOLEAN);
         } catch (ClassCastException | UnsupportedOperationException e) {
-            return SpecialValue.UNKNOWN;
+            return SpecialValues.UNKNOWN;
         }
     }
-
-    @Override
-    public String getFunctionName() {
-        return this.name;
-    }
-
+    
     @Override
     public CellType getReturnType() {
         return CellType.BOOLEAN;
     }
-
+    
+    @Override
+    public String getFunctionName() {
+        return this.name;
+    }
 }

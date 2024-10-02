@@ -7,24 +7,24 @@ import java.util.List;
 
 public class RangeDTO {
     private String name;
-    private List<String> cellsInRangeIDs;
-
+    private List<String> cells;
+    
     public RangeDTO(Range range) {
         this.name = range.getName();
-        cellsInRangeIDs = new ArrayList<>();
-        range.getRangeCells().forEach(cell -> this.cellsInRangeIDs.add(cell.getCellId()));
+        this.cells = new ArrayList<>();
+        range.getRangeCells().forEach(cell -> this.cells.add(cell.getCellId()));
     }
-
+    
+    public String getName() {
+        return this.name;
+    }
+    
+    public List<String> getCells() {
+        return this.cells;
+    }
+    
     @Override
     public String toString() {
-        return this.name + " " + this.cellsInRangeIDs.getFirst() + ".." + this.cellsInRangeIDs.getLast();
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public List<String> getCellsInRangeIDs() {
-        return cellsInRangeIDs;
+        return name + " " + cells.getFirst() + ".." + cells.getLast();
     }
 }

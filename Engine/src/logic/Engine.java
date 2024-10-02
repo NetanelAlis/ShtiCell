@@ -2,29 +2,30 @@ package logic;
 
 import dto.*;
 import javafx.scene.paint.Color;
-import logic.function.returnable.Returnable;
+import logic.function.returnable.api.Returnable;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
 
 public interface Engine {
-
-    void LoadDataFromXML(String filePath);
+    void loadData(String path);
     SheetDTO getSheetAsDTO();
-    CellDTO geCellAsDTO(String cellId);
-    void updateSingleCellData(String cellId, String value);
+    CellDTO getSingleCellData(String cellID);
+    void updateSingleCellData(String cellID, String value);
+    VersionChangesDTO showVersions();
+    ColoredSheetDTO getSheetVersionAsDTO(int version);
     boolean isSheetLoaded();
-    VersionsChangesDTO getVersionsChangesAsDTO();
-    SheetDTO getSheetVersionsAsDTO(int version);
-    void saveToFile(String input);
-    void LoadDataFromFile(String path);
-    void addRange(String rangeName, String range);
-    void deleteRange(String rangeName);
-    RangeDTO getRangesAsDTO(String rangeName);
-    RangesDTO getAllRangesAsDTO();
-    void updateBackgroundColor(Color color, String cellID);
-    void updateTextColor(Color color, String cellID);
-    SheetDTO sortRangeCells(String rangeName, List<String> colsToSortBy);
-    List<String> getColumnsToSortBy(String cellsInRange);
-    List<Returnable> getItemsToFilterBy(String colToFilterBy,String cellsInRange);
-    SheetDTO getFilterSheet(String cellsInRange, List<Integer> itemsToFilterByIndexes, String col);
+    void loadFromFile(String path);
+    void saveToFile(String path);
+    RangeDTO addRange(String rangeName, String range);
+    void removeRange(String rangeName);
+    RangesDTO getAllRanges();
+    void updateCellStyle(String cellID, Color backgroundColor, Color textColor);
+    ColoredSheetDTO sortRangeOfCells(String range, List<String> columnsToSortBy);
+    ColoredSheetDTO filterRangeOfCells(String rangeToFilterBy, String columnToFilterBy, List<Integer> itemsToFilterBy);
+    List<String> getColumnsListOfRange(String rangeToFilter);
+    List<Returnable> getUniqueItemsToFilterBy(String columnToFilterBy, String rangeToFilter);
+
+    LinkedHashMap<Returnable, LinkedHashMap<Returnable, Returnable>> getGraphFromRange(String rangeToBuildGraphFrom);
 }
