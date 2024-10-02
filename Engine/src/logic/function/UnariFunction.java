@@ -1,6 +1,6 @@
 package logic.function;
 
-import component.sheet.api.ReadonlySheet;
+import component.sheet.api.ReadOnlySheet;
 import logic.function.returnable.api.Returnable;
 
 abstract public class UnariFunction implements Function{
@@ -15,7 +15,7 @@ abstract public class UnariFunction implements Function{
     }
 
     @Override
-    public Returnable invoke(ReadonlySheet sheet) {
+    public Returnable invoke(ReadOnlySheet sheet) {
         return calculate(this.argument.invoke(sheet));
     }
 

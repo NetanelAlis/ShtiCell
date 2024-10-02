@@ -2,7 +2,7 @@ package logic.function.math;
 
 import component.cell.api.CellType;
 import component.range.api.Range;
-import component.sheet.api.ReadonlySheet;
+import component.sheet.api.ReadOnlySheet;
 import logic.function.Function;
 import logic.function.returnable.api.Returnable;
 import logic.function.returnable.impl.ReturnableImpl;
@@ -22,7 +22,7 @@ public class Sum implements Function {
     }
     
     @Override
-    public Returnable invoke(ReadonlySheet sheet) {
+    public Returnable invoke(ReadOnlySheet sheet) {
         double sumResult = 0;
         
         if (sheet.isExistingRange(this.rangeName)) {

@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Random;
 
-public interface ReadonlySheet extends Serializable {
+public interface ReadOnlySheet extends Serializable {
     int getVersion();
     Cell getCell(String cellId);
     SheetImpl.Layout getLayout();

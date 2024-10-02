@@ -1,13 +1,13 @@
 package component.range.api;
 
 import component.cell.api.Cell;
-import component.sheet.api.ReadonlySheet;
+import component.sheet.api.ReadOnlySheet;
 
 import java.io.Serializable;
 import java.util.List;
 
 public interface Range extends Serializable {
-    void populateRange(ReadonlySheet sheet);
+    void populateRange(ReadOnlySheet sheet);
     List<Cell> getRangeCells();
     Cell getFrom();
     Cell getTo();

@@ -1,6 +1,6 @@
 package logic.function;
 
-import component.sheet.api.ReadonlySheet;
+import component.sheet.api.ReadOnlySheet;
 import logic.function.returnable.api.Returnable;
 
 public abstract class BinaryFunction implements Function {
@@ -13,7 +13,7 @@ public abstract class BinaryFunction implements Function {
     }
 
     @Override
-    public Returnable invoke(ReadonlySheet sheet) {
+    public Returnable invoke(ReadOnlySheet sheet) {
         return calculate(this.argument1.invoke(sheet), this.argument2.invoke(sheet));
     }
 

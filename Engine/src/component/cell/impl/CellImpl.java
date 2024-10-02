@@ -2,7 +2,7 @@ package component.cell.impl;
 
 import component.cell.api.Cell;
 import component.range.api.Range;
-import component.sheet.api.ReadonlySheet;
+import component.sheet.api.ReadOnlySheet;
 import component.sheet.api.Sheet;
 import javafx.scene.paint.Color;
 import logic.function.parser.FunctionParser;
@@ -13,7 +13,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class CellImpl implements Cell {
-    private final ReadonlySheet sheet;
+    private final ReadOnlySheet sheet;
     private String cellId;
     private String originalValue;
     private Returnable effectiveValue;
@@ -23,7 +23,7 @@ public class CellImpl implements Cell {
     private final List<Cell> dependingOn;
     private final List<Cell> influencingOn;
 
-    public CellImpl(String cellID, String originalValue, int version, ReadonlySheet sheet) {
+    public CellImpl(String cellID, String originalValue, int version, ReadOnlySheet sheet) {
         this.cellId = Character.toUpperCase(cellID.charAt(0)) + cellID.substring(1);
         this.originalValue = originalValue;
         this.version = version;

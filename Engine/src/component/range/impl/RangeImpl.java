@@ -3,7 +3,7 @@ package component.range.impl;
 import component.cell.api.Cell;
 import component.cell.impl.CellImpl;
 import component.range.api.Range;
-import component.sheet.api.ReadonlySheet;
+import component.sheet.api.ReadOnlySheet;
 import component.sheet.api.Sheet;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public class RangeImpl implements Range {
     private int numOfUsages;
     
     
-    public RangeImpl(String name, String range, ReadonlySheet sheet) {
+    public RangeImpl(String name, String range, ReadOnlySheet sheet) {
         this.name = name;
         this.numOfUsages = 0;
         String[] edges = range.split("\\.\\.");
@@ -44,7 +44,7 @@ public class RangeImpl implements Range {
     }
     
     @Override
-    public void populateRange(ReadonlySheet sheet) {
+    public void populateRange(ReadOnlySheet sheet) {
         this.cells = new ArrayList<>();
         int fromRow = Integer.parseInt(this.from.substring(1));
         int toRow = Integer.parseInt(this.to.substring(1));
