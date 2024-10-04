@@ -8,7 +8,6 @@ import javafx.scene.paint.Color;
 import logic.function.parser.FunctionParser;
 import logic.function.parser.OriginalValueParser;
 import logic.function.returnable.api.Returnable;
-
 import java.util.*;
 import java.util.stream.Collectors;
 

@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Engine/Engine.iml" filepath="$PROJECT_DIR$/Engine/Engine.iml" />
       <module fileurl="file://$PROJECT_DIR$/GraphicalUserInteface/GraphicalUserInteface.iml" filepath="$PROJECT_DIR$/GraphicalUserInteface/GraphicalUserInteface.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ShtiCellDTO/ShtiCellDTO.iml" filepath="$PROJECT_DIR$/ShtiCellDTO/ShtiCellDTO.iml" />
       <module fileurl="file://$PROJECT_DIR$/Shticell.iml" filepath="$PROJECT_DIR$/Shticell.iml" />
       <module fileurl="file://$PROJECT_DIR$/UserInteface/UserInteface.iml" filepath="$PROJECT_DIR$/UserInteface/UserInteface.iml" />
     </modules>

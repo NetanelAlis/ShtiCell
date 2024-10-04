@@ -3,14 +3,13 @@ package dto;
 import component.cell.api.Cell;
 import component.sheet.api.Sheet;
 import component.sheet.impl.SheetImpl;
-import logic.function.returnable.api.Returnable;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ColoredSheetDTO {
     private final String sheetName;
-    private final ColoredSheetDTO.ColoredLayoutDTO layout;
+    private final ColoredLayoutDTO layout;
     private final Map<String, ColoredCellDTO> cells;
     private final int version;
     private final int numOfCellsUpdated;
@@ -61,7 +60,7 @@ public class ColoredSheetDTO {
         return sheetName;
     }
     
-    public ColoredSheetDTO.ColoredLayoutDTO getLayout() {
+    public ColoredLayoutDTO getLayout() {
         return layout;
     }
     

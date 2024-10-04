@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class SheetDTO {
     private final String sheetName;
-    private final SheetDTO.LayoutDTO layout;
+    private final LayoutDTO layout;
     private final Map<String, Returnable> cells;
     private final int version;
     private final int numOfCellsUpdated;
@@ -61,7 +61,7 @@ public class SheetDTO {
         return sheetName;
     }
 
-    public SheetDTO.LayoutDTO getLayout() {
+    public LayoutDTO getLayout() {
         return layout;
     }
 

@@ -9,5 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Engine" />
     <orderEntry type="library" name="javafx.base" level="project" />
+    <orderEntry type="module" module-name="ShtiCellDTO" />
   </component>
 </module>

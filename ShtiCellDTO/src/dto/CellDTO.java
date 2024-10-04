@@ -4,7 +4,6 @@ import component.cell.api.Cell;
 import component.cell.impl.SerializableColor;
 import javafx.scene.paint.Color;
 import logic.function.returnable.api.Returnable;
-
 import java.util.ArrayList;
 import java.util.List;
 

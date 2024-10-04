@@ -5,9 +5,6 @@ import component.cell.impl.SerializableColor;
 import javafx.scene.paint.Color;
 import logic.function.returnable.api.Returnable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ColoredCellDTO {
     private final String cellId;
     private final Returnable effectiveValue;
