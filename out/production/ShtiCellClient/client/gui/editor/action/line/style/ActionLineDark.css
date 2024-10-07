@@ -1,0 +1,55 @@
+.button {
+    -fx-padding: 5px 10px;
+    -fx-font-size: 12px; /* font size */
+    -fx-font-weight: Bold;
+    -fx-background-color: #444444;
+    -fx-text-fill: #ffffff; /* Light text for dark mode */
+    -fx-border-color: #666666;
+    -fx-border-width: 3px; /* border thickness */
+    -fx-cursor: hand; /* cursor style */
+    -fx-border-radius: 12px; /* rounded border */
+    -fx-background-radius: 12px;
+}
+
+.button:hover {
+    -fx-text-fill: #ffffff;
+    -fx-background-color: #555555;
+    -fx-border-color: #777777;
+}
+
+.button:pressed {
+    -fx-text-fill: #aaaaaa;
+    -fx-background-color: #666666;
+    -fx-border-color: #888888;
+}
+
+.label .text {
+    -fx-fill: white;
+    -fx-font-family: Inter;
+    -fx-font-weight: bold;
+}
+
+.hbox-action-line {
+    -fx-background-color: #222222; /* Dark background */;
+    -fx-background-radius: 15px ;
+}
+
+.text-field {
+    -fx-background-color: #333333; /* Dark background */
+    -fx-border-width: 0px;
+    -fx-border-color: #555555;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-text-fill: white;
+}
+
+.text-field .text {
+    -fx-fill: white;
+}
+
+.separator:vertical .line {
+    -fx-border-width: 1px;
+    -fx-fill: transparent;
+    -fx-border-color: #464646;
+    -fx-margin: 10px 5px 10px 5px;
+}

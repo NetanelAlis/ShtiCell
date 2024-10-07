@@ -1,0 +1,48 @@
+.label {
+    -fx-background-color: #2b2b2b; /* dark background color */
+    -fx-border-color: #5f5f5f; /* soft gray border color */
+    -fx-border-width: 1px; /* border thickness */
+    -fx-cursor: hand; /* cursor style */
+}
+
+.label .text {
+    -fx-font-size: 12px; /* font size */
+    -fx-font-weight: Bold;
+    -fx-fill: #e0e0e0; /* light text color */
+}
+
+.label:hover {
+    -fx-background-color: #3d3d3d; /* slightly lighter background on hover */
+    -fx-border-color: #748ffc; /* blue border color */
+    -fx-border-width: 2px;
+}
+
+.in-old-version:hover {
+    -fx-background-color: #2b2b2b; /* dark background */
+    -fx-border-color: #5f5f5f; /* gray border */
+    -fx-border-width: 1px;
+    -fx-cursor: normal;
+}
+
+.selected-cell {
+    -fx-background-color: #3d3d3d; /* dark background */
+    -fx-border-color: #748ffc; /* blue border color */
+    -fx-border-width: 2px;
+}
+
+.depending-cell {
+    -fx-background-color: #4a2b2b; /* dark reddish background */
+    -fx-border-color: #fa5252; /* red border color */
+    -fx-border-width: 2px;
+}
+
+.influencing-cell {
+    -fx-background-color: #3d4a2b; /* dark greenish background */
+    -fx-border-color: #94d82d; /* green border color */
+    -fx-border-width: 2px;
+}
+
+:focused {
+    -fx-focus-color: #748ffc; /* blue focus color */
+    -fx-faint-focus-color: transparent;
+}
