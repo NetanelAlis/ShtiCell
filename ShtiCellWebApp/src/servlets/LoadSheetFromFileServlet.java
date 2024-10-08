@@ -1,5 +1,8 @@
 package servlets;
 
+import com.google.gson.Gson;
+import dto.SheetDTO;
+import dto.SheetNameAndSizeDTO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -8,9 +11,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import logic.Engine;
+import logic.EngineImpl;
 import utils.ServletUtils;
-
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 @WebServlet(name = "loadSheetFromFileServlet", urlPatterns = "/loadSheetFromFile")
@@ -20,18 +22,25 @@ public class LoadSheetFromFileServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/xml");
         Part filePart = request.getPart("file");  // "file" is the name of the form field
-        String fileName = filePart.getSubmittedFileName();
-
-        if (fileName.endsWith(".xml")) {
-            fileName = fileName.substring(0, fileName.lastIndexOf(".xml"));
-        }
-
-        Engine engine =  ServletUtils.getEngine(getServletContext(), fileName);
         try{
-        engine.loadDataFromInputStream(filePart.getInputStream());
-        
-    } catch (RuntimeException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            Engine engine = new EngineImpl();
+            engine.loadDataFromInputStream(filePart.getInputStream());
+            String sheetName = engine.getSheetNameAndSizeAsDTO().getSheetName();
+            if(ServletUtils.isEngineExist(getServletContext(), engine, sheetName)){
+                Gson gson = new Gson();
+                String json = gson.toJson(engine.getSheetNameAndSizeAsDTO());
+                response.getWriter().println(json);
+                response.getWriter().close();
+                response.flushBuffer();
+                response.setStatus(HttpServletResponse.SC_OK);
+            }
+            else {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().println("Sheet with the name " + sheetName + " already exists");
+            }
+
+         } catch (RuntimeException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().println(e.getMessage());
         }
     }

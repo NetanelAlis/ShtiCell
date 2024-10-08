@@ -14,9 +14,12 @@ public interface Engine {
     void loadDataFromInputStream(InputStream inputStream);
     SheetDTO getSheetAsDTO();
     CellDTO getSingleCellData(String cellID);
-    void updateSingleCellData(String cellID, String value);
     VersionChangesDTO showVersions();
     ColoredSheetDTO getSheetVersionAsDTO(int version);
+    ColoredSheetDTO sortRangeOfCells(String range, List<String> columnsToSortBy);
+    ColoredSheetDTO filterRangeOfCells(String rangeToFilterBy, String columnToFilterBy, List<Integer> itemsToFilterBy);
+    SheetNameAndSizeDTO getSheetNameAndSizeAsDTO();
+    void updateSingleCellData(String cellID, String value);
     boolean isSheetLoaded();
     void loadFromFile(String path);
     void saveToFile(String path);
@@ -24,10 +27,7 @@ public interface Engine {
     void removeRange(String rangeName);
     RangesDTO getAllRanges();
     void updateCellStyle(String cellID, Color backgroundColor, Color textColor);
-    ColoredSheetDTO sortRangeOfCells(String range, List<String> columnsToSortBy);
-    ColoredSheetDTO filterRangeOfCells(String rangeToFilterBy, String columnToFilterBy, List<Integer> itemsToFilterBy);
     List<String> getColumnsListOfRange(String rangeToFilter);
     List<Returnable> getUniqueItemsToFilterBy(String columnToFilterBy, String rangeToFilter);
-
     LinkedHashMap<Returnable, LinkedHashMap<Returnable, Returnable>> getGraphFromRange(String rangeToBuildGraphFrom);
 }

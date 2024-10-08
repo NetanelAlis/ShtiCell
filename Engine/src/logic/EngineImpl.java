@@ -206,4 +206,9 @@ public class EngineImpl implements Engine{
                 .getRangeCells().forEach(cell -> filteredSheet.getCells().put(cell.getCellId(), cell));
         return new ColoredSheetDTO(filteredSheet);
     }
+
+    @Override
+    public SheetNameAndSizeDTO getSheetNameAndSizeAsDTO() {
+        return new SheetNameAndSizeDTO(sheet.getSheetName(), sheet.getLayout().getColumn(), sheet.getLayout().getRow());
+    }
 }

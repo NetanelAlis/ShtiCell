@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.stage.Stage;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class FileUploadController {
 
@@ -36,27 +37,22 @@ public class FileUploadController {
                         .otherwise("")
         );
 
-//        aTask.setOnSucceeded(event -> {
-//            onTaskFinished(Optional.ofNullable(onFinish));
-//        });
-
         cancelButton.setOnAction(event -> this.onTaskClosed(aTask));
-        fileUploadStage.setOnCloseRequest(event -> onTaskClosed(aTask));
+        fileUploadStage.setOnCloseRequest(event -> this.onTaskClosed(aTask));
     }
 
-    public void onTaskFinished(Optional<Runnable> onFinish) {
+    public void onTaskFinished() {
         this.progressPercentLabel.textProperty().unbind();
         this.progressBar.progressProperty().unbind();
         this.progressPercentLabel.setText("");
         this.progressBar.setProgress(0);
         this.fileUploadStage.close();
-        onFinish.ifPresent(Runnable::run);
     }
 
     private void onTaskClosed(Task<Boolean> aTask) {
         if (aTask.isRunning()) {
             aTask.cancel();
-            onTaskFinished(Optional.empty());
+            onTaskFinished();
         }
     }
 

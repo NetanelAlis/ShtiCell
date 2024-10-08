@@ -5,7 +5,7 @@ import client.gui.home.file.upload.FileUploadController;
 import client.gui.home.permission.table.PermissionTableController;
 import client.gui.home.sheet.table.SheetTableController;
 import client.tasks.FileLoadingTask;
-import javafx.application.Platform;
+import dto.SheetNameAndSizeDTO;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -47,15 +47,10 @@ public class HomeViewController {
 
     private void loadNewSheetFromXML(String absolutePath) {
         FileUploadController fileUploadController = this.openFileUploadWindow();
-        Task<Boolean> fileLoadingTask = new FileLoadingTask(absolutePath, fileUploadController,this::addNewSheet);
+        Task<Boolean> fileLoadingTask = new FileLoadingTask(absolutePath, fileUploadController, this::addNewSheet);
 
         this.bindFileLoadingTaskToUIComponents(fileUploadController, fileLoadingTask);
-//        fileLoadingTask.setOnFailed(event -> {
-//            Platform.runLater(() -> {
-//                fileUploadController.onTaskFinished(Optional.empty());
-//                openExceptionPopup(fileLoadingTask.getException().getMessage());
-//            });
-//        });
+
         new Thread(fileLoadingTask).start();
     }
 
@@ -93,10 +88,11 @@ public class HomeViewController {
         fileUploadController.bindProgressComponents(fileLoadingTask);
     }
 
-    public void addNewSheet() {
+    public void addNewSheet(SheetNameAndSizeDTO sheetNameAndSizeDTO) {
+        this.sheetTableController.updateTable(sheetNameAndSizeDTO.getSheetName(), sheetNameAndSizeDTO.numberOfRows(), sheetNameAndSizeDTO.getNumberOfCols());
     }
 
-    public void setPrimaryStage(Stage stage) {
+    private void setPrimaryStage(Stage stage) {
         this.primaryStage = stage;
     }
 
