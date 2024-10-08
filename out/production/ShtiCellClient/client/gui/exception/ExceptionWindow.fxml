@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="20" style="-fx-background-color: #1E90FF; -fx-padding: 40;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.gui.editor.exception.ExceptionWindowController">
+<VBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="20" style="-fx-background-color: #1E90FF; -fx-padding: 40;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.gui.exception.ExceptionWindowController">
 
     <!-- Error Icon (optional) -->
     <Label style="-fx-text-fill: white;" text="):">

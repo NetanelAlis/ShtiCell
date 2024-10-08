@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" spacing="15" stylesheets="@style/FileUpload.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.gui.editor.file.upload.FileUploadController">
+<VBox alignment="CENTER" spacing="15" stylesheets="@style/FileUpload.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.gui.home.file.upload.FileUploadController">
 
     <!-- Instruction Label -->
     <Label styleClass="loading-label" text="Loading..." wrapText="true">

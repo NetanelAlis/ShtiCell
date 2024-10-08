@@ -1,4 +1,4 @@
-package client.gui.editor.file.upload;
+package client.gui.home.file.upload;
 
 import javafx.beans.binding.Bindings;
 import javafx.concurrent.Task;
@@ -20,7 +20,7 @@ public class FileUploadController {
 
     private Stage fileUploadStage;
 
-    public void bindProgressComponents(Task<Boolean> aTask, Runnable onFinish) {
+    public void bindProgressComponents(Task<Boolean> aTask) {
         // task progress bar
         progressBar.progressProperty().bind(aTask.progressProperty());
 
@@ -36,9 +36,9 @@ public class FileUploadController {
                         .otherwise("")
         );
 
-        aTask.setOnSucceeded(event -> {
-            onTaskFinished(Optional.ofNullable(onFinish));
-        });
+//        aTask.setOnSucceeded(event -> {
+//            onTaskFinished(Optional.ofNullable(onFinish));
+//        });
 
         cancelButton.setOnAction(event -> this.onTaskClosed(aTask));
         fileUploadStage.setOnCloseRequest(event -> onTaskClosed(aTask));

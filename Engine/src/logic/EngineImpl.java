@@ -19,6 +19,7 @@ import logic.graph.GraphSeriesBuilder;
 import logic.sort.Sorter;
 
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.*;
 
 public class EngineImpl implements Engine{
@@ -30,6 +31,18 @@ public class EngineImpl implements Engine{
         try {
             XMLToSheetConverter converter = new XMLToSheetConverterImpl();
             this.sheet = converter.convert(path);
+            this.archive = new ArchiveImpl();
+            this.archive.storeInArchive(this.sheet.copySheet());
+        } catch (JAXBException | FileNotFoundException e ) {
+            throw new RuntimeException("Error loading data from file", e);
+        }
+    }
+
+    @Override
+    public void loadDataFromInputStream(InputStream inputStream) {
+        try {
+            XMLToSheetConverter converter = new XMLToSheetConverterImpl();
+            this.sheet = converter.convertFromStream(inputStream);
             this.archive = new ArchiveImpl();
             this.archive.storeInArchive(this.sheet.copySheet());
         } catch (JAXBException | FileNotFoundException e ) {

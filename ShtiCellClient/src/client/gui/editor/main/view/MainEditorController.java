@@ -7,8 +7,8 @@ import client.gui.editor.action.line.ActionLineController;
 import client.gui.editor.cell.CellSubComponentController;
 import client.gui.editor.command.CommandsController;
 import client.gui.editor.customization.CustomizationController;
-import client.gui.editor.exception.ExceptionWindowController;
-import client.gui.editor.file.upload.FileUploadController;
+import client.gui.exception.ExceptionWindowController;
+import client.gui.home.file.upload.FileUploadController;
 import client.gui.editor.graph.GraphType;
 import client.gui.editor.grid.GridBuilder;
 import client.gui.editor.grid.SheetGridController;
@@ -24,7 +24,6 @@ import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.Chart;
-import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
@@ -42,6 +41,8 @@ import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.*;
+
+import static client.gui.exception.ExceptionWindowController.openExceptionPopup;
 
 public class MainEditorController {
 
@@ -120,25 +121,25 @@ public class MainEditorController {
         return fileChooser.showOpenDialog(this.primaryStage);
     }
 
-    public void loadNewSheetFromXML(String absolutePath) {
-        FileUploadController fileUploadController = this.openFileUploadWindow();
-        Task<Boolean> fileLoadingTask = new FileLoadingTask(absolutePath, this.engine);
+//    public void loadNewSheetFromXML(String absolutePath) {
+//        FileUploadController fileUploadController = this.openFileUploadWindow();
+//        Task<Boolean> fileLoadingTask = new FileLoadingTask(absolutePath, fileUploadController, so);
+//
+//        this.bindFileLoadingTaskToUIComponents(fileUploadController, fileLoadingTask);
+//
+//
+//        fileLoadingTask.setOnFailed(event -> {
+//            Platform.runLater(() -> {
+//                fileUploadController.onTaskFinished(Optional.empty());
+//                openExceptionPopup(fileLoadingTask.getException().getMessage());
+//            });
+//        });
+//        new Thread(fileLoadingTask).start();
+//    }
 
-        this.bindFileLoadingTaskToUIComponents(fileUploadController, fileLoadingTask);
-
-
-        fileLoadingTask.setOnFailed(event -> {
-            Platform.runLater(() -> {
-                fileUploadController.onTaskFinished(Optional.empty());
-                openExceptionPopup(fileLoadingTask.getException().getMessage());
-            });
-        });
-        new Thread(fileLoadingTask).start();
-    }
-
-    private void bindFileLoadingTaskToUIComponents(FileUploadController fileUploadController, Task<Boolean> fileLoadingTask) {
-        fileUploadController.bindProgressComponents(fileLoadingTask, this::initializeSheetLayoutAndControllers);
-    }
+//    private void bindFileLoadingTaskToUIComponents(FileUploadController fileUploadController, Task<Boolean> fileLoadingTask) {
+//        fileUploadController.bindProgressComponents(fileLoadingTask, this::initializeSheetLayoutAndControllers);
+//    }
 
     private void initializeSheetLayoutAndControllers() {
         try {
@@ -163,7 +164,7 @@ public class MainEditorController {
             this.topSubComponentController.setSheetNameAndVersion(sheetDTO.getSheetName(), sheetDTO.getVersion());
 
         } catch (RuntimeException | IOException e) {
-            this.openExceptionPopup(e.getMessage());
+            ExceptionWindowController.openExceptionPopup(e.getMessage());
         }
     }
 
@@ -192,7 +193,7 @@ public class MainEditorController {
             this.sheetGridController.showSelectedCellAndDependencies(cellDTO);
             this.topSubComponentController.updateSheetVersion(sheetDTO.getVersion());
         } catch (RuntimeException e) {
-            this.openExceptionPopup(e.getMessage());
+           ExceptionWindowController.openExceptionPopup(e.getMessage());
         }
     }
 
@@ -232,7 +233,7 @@ public class MainEditorController {
         FileUploadController fileUploadController = null;
         try {
             // Load the FileUploadController and FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/gui/editor/file/upload/FileUploadComponent.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/gui/home/file/upload/FileUploadComponent.fxml"));
             Parent root = loader.load();
 
             fileUploadController = loader.getController();
@@ -257,33 +258,6 @@ public class MainEditorController {
 
         return fileUploadController;
     }
-
-    private void openExceptionPopup(String errorMessage) {
-        // Load the FXML for the exception window
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/gui/editor/exception/ExceptionWindow.fxml"));
-            Parent root = loader.load();
-
-            // Get the controller and pass the error message to the label
-            ExceptionWindowController controller = loader.getController();
-            controller.setMessage(errorMessage); // Set the error message dynamically
-
-            // Create a new stage (window) for the popup
-            Stage popUpStage = new Stage();
-            popUpStage.setTitle("Error");
-            popUpStage.getIcons().add(
-                    new Image(Objects.requireNonNull(
-                            Main.class.getResourceAsStream("/client/gui/resources/shticellLogo.png"))));
-            popUpStage.setScene(new Scene(root));
-            popUpStage.initModality(Modality.APPLICATION_MODAL); // Block interaction with other windows
-            Button closeButton = controller.getCloseButton();
-            closeButton.setOnAction(event -> popUpStage.close());
-            popUpStage.showAndWait(); // Show the pop-up window and wait for it to be closed
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 
     public RangeDTO addNewRange(String rangeName, String from, String to) {
         try {

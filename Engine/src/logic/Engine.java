@@ -4,12 +4,14 @@ import dto.*;
 import javafx.scene.paint.Color;
 import logic.function.returnable.api.Returnable;
 
+import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
 public interface Engine {
     void loadData(String path);
+    void loadDataFromInputStream(InputStream inputStream);
     SheetDTO getSheetAsDTO();
     CellDTO getSingleCellData(String cellID);
     void updateSingleCellData(String cellID, String value);

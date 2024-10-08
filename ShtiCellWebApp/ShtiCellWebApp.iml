@@ -20,5 +20,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="Tomcat 10.1.26" level="application_server_libraries" />
+    <orderEntry type="module" module-name="Engine" />
+    <orderEntry type="library" name="Gson" level="project" />
   </component>
 </module>
