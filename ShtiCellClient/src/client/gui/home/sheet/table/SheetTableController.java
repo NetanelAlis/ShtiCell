@@ -44,7 +44,7 @@ public class SheetTableController implements Closeable {
     }
 
     public void addNewSheet(SheetMetaDataDTO sheetMetaDataDTO) {
-        table.getItems().add(new SheetTableEntry(sheetMetaDataDTO.getUserName(), sheetMetaDataDTO.getSheetName(),sheetMetaDataDTO.numberOfRows() + "x" + sheetMetaDataDTO.getNumberOfCols(), sheetMetaDataDTO.getPermission().getPermission()));
+        table.getItems().add(new SheetTableEntry(sheetMetaDataDTO.getUserName(), sheetMetaDataDTO.getSheetName(),sheetMetaDataDTO.numberOfRows() + "x" + sheetMetaDataDTO.getNumberOfCols(), sheetMetaDataDTO.getPermission().getType()));
     }
 
     public void startSheetTableRefresher() {

@@ -1,15 +1,15 @@
 package dto;
 
-import logic.permission.Permission;
+import user.permission.PermissionType;
 
 public class SheetMetaDataDTO {
     private String sheetName;
     private int numberOfCols;
     private int numberOfRows;
     private String userName;
-    private Permission permission;
+    private PermissionType permission;
 
-    public SheetMetaDataDTO(String sheetName, int numberOfCols, int numberOfRows, String userName, Permission permission) {
+    public SheetMetaDataDTO(String sheetName, int numberOfCols, int numberOfRows, String userName, PermissionType permission) {
         this.sheetName = sheetName;
         this.numberOfCols = numberOfCols;
         this.numberOfRows = numberOfRows;
@@ -28,7 +28,7 @@ public class SheetMetaDataDTO {
     public String getUserName() {
         return this.userName;
     }
-    public Permission getPermission() {
+    public PermissionType getPermission() {
         return this.permission;
     }
 }

@@ -6,7 +6,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import logic.EngineManager;
+import managers.EngineManager;
 import logic.engine.Engine;
 import utils.ServletUtils;
 import utils.SessionUtils;

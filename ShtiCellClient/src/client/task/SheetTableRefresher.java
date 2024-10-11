@@ -38,10 +38,6 @@ public class SheetTableRefresher extends TimerTask {
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody.string();
-//                    if (response.code() != 200) {
-//                        Platform.runLater(() -> {
-//                            ExceptionWindowController.openExceptionPopup(responseBodyString);
-//                        });
                         SheetMetaDataDTO[] sheetMetaDataDTOS = Constants.GSON_INSTANCE.fromJson(responseBodyString, SheetMetaDataDTO[].class);
                         usersListConsumer.accept(Arrays.asList(sheetMetaDataDTOS));
                     }

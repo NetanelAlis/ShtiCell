@@ -8,9 +8,11 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
-import logic.EngineManager;
+import managers.EngineManager;
 import logic.engine.Engine;
 import logic.engine.EngineImpl;
+import managers.UserManager;
+import user.User;
 import utils.Constants;
 import utils.ServletUtils;
 import utils.SessionUtils;
@@ -25,8 +27,18 @@ public class LoadSheetFromFileServlet extends HttpServlet {
         response.setContentType("application/json");
         Part filePart = request.getPart("file");
         EngineManager engineManager = ServletUtils.getEngineManager(getServletContext());
+
+        /////////////////////////////////////////////////////////////
+        UserManager userManager = ServletUtils.getUserManager(getServletContext());
         String userNameParam = request.getParameter(Constants.USERNAME);
         request.getSession(true).setAttribute(Constants.USERNAME, userNameParam);
+        synchronized (this){
+            if(!userManager.isUserExists(userNameParam)){
+                userManager.addUser(userNameParam, new User(userNameParam));
+            }
+        }
+        ////////////////////////////////////////////////////////////
+
         String username = SessionUtils.getUsername(request);
         if (username == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

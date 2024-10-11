@@ -16,22 +16,27 @@ import jaxb.converter.impl.XMLToSheetConverterImpl;
 import logic.filter.Filter;
 import logic.function.returnable.api.Returnable;
 import logic.graph.GraphSeriesBuilder;
-import logic.permission.Permission;
+import user.User;
+import user.permission.PermissionStatus;
+import user.permission.PermissionType;
 import logic.sort.Sorter;
+import user.request.api.PermissionRequestInEngine;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.*;
 
 public class EngineImpl implements Engine{
+    private String owner;
     private String sheetName;
     private Sheet sheet;
     private Archive archive;
-    private Map<String, Permission> usersPermissions;
+    private Map<String, PermissionRequestInEngine> usersPermissions;
 
     public EngineImpl(String owner) {
         this.usersPermissions = new HashMap<>();
-        this.usersPermissions.put(owner, Permission.OWNER);
+        this.owner = owner;
+        usersPermissions.put(owner, PermissionRequestInEngine.createPermissionRequestInEngine(PermissionType.OWNER, PermissionType.OWNER, PermissionStatus.OWNER));
         this.archive = null;
         this.sheet = null;
         this.sheetName = null;
@@ -226,10 +231,21 @@ public class EngineImpl implements Engine{
 
     @Override
     public SheetMetaDataDTO getSheetMetaDataDTO(String userName) {
-        Permission userPermission = this.usersPermissions.get(userName);
-        if(userPermission == null) {
-            userPermission = Permission.NONE;
+        PermissionRequestInEngine userPermissions = this.usersPermissions.get(userName);
+        PermissionType userPermissionType;
+
+        if(userPermissions == null) {
+            userPermissionType = PermissionType.NONE;
         }
-        return new SheetMetaDataDTO(sheet.getSheetName(), sheet.getLayout().getColumn(), sheet.getLayout().getRow(), userName, userPermission);
+        else {
+            userPermissionType = userPermissions.getRequestedPermissionType();
+        }
+        return new SheetMetaDataDTO(sheet.getSheetName(), sheet.getLayout().getColumn(), sheet.getLayout().getRow(), userName, userPermissionType);
     }
+
+//    public requestPermission(String requestedUserName, User ow){
+//
+//        this.owner.addRequest(userName,requestedPermission,this.sheetName);
+//    }
+
 }
