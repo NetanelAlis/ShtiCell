@@ -1,4 +1,4 @@
-package logic;
+package logic.engine;
 
 import dto.*;
 import javafx.scene.paint.Color;
@@ -7,7 +7,6 @@ import logic.function.returnable.api.Returnable;
 import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Set;
 
 public interface Engine {
     void loadData(String path);
@@ -18,7 +17,7 @@ public interface Engine {
     ColoredSheetDTO getSheetVersionAsDTO(int version);
     ColoredSheetDTO sortRangeOfCells(String range, List<String> columnsToSortBy);
     ColoredSheetDTO filterRangeOfCells(String rangeToFilterBy, String columnToFilterBy, List<Integer> itemsToFilterBy);
-    SheetNameAndSizeDTO getSheetNameAndSizeAsDTO();
+    SheetMetaDataDTO getSheetMetaDataDTO(String userName);
     void updateSingleCellData(String cellID, String value);
     boolean isSheetLoaded();
     void loadFromFile(String path);
@@ -30,4 +29,5 @@ public interface Engine {
     List<String> getColumnsListOfRange(String rangeToFilter);
     List<Returnable> getUniqueItemsToFilterBy(String columnToFilterBy, String rangeToFilter);
     LinkedHashMap<Returnable, LinkedHashMap<Returnable, Returnable>> getGraphFromRange(String rangeToBuildGraphFrom);
+    String getSheetName();
 }

@@ -33,8 +33,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import logic.Engine;
-import logic.EngineImpl;
+import logic.engine.Engine;
+import logic.engine.EngineImpl;
 import logic.function.returnable.api.Returnable;
 import tasks.FileLoadingTask;
 

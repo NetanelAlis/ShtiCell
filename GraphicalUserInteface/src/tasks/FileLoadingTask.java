@@ -1,7 +1,7 @@
 package tasks;
 
 import javafx.concurrent.Task;
-import logic.Engine;
+import logic.engine.Engine;
 
 public class FileLoadingTask extends Task<Boolean> {
     private String filePath;

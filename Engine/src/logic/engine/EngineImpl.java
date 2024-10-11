@@ -1,4 +1,4 @@
-package logic;
+package logic.engine;
 
 import component.archive.api.Archive;
 import component.archive.impl.ArchiveImpl;
@@ -16,6 +16,7 @@ import jaxb.converter.impl.XMLToSheetConverterImpl;
 import logic.filter.Filter;
 import logic.function.returnable.api.Returnable;
 import logic.graph.GraphSeriesBuilder;
+import logic.permission.Permission;
 import logic.sort.Sorter;
 
 import java.io.FileNotFoundException;
@@ -23,8 +24,18 @@ import java.io.InputStream;
 import java.util.*;
 
 public class EngineImpl implements Engine{
-    private Sheet sheet = null;
-    private Archive archive = null;
+    private String sheetName;
+    private Sheet sheet;
+    private Archive archive;
+    private Map<String, Permission> usersPermissions;
+
+    public EngineImpl(String owner) {
+        this.usersPermissions = new HashMap<>();
+        this.usersPermissions.put(owner, Permission.OWNER);
+        this.archive = null;
+        this.sheet = null;
+        this.sheetName = null;
+    }
     
     @Override
     public void loadData(String path) {
@@ -43,6 +54,7 @@ public class EngineImpl implements Engine{
         try {
             XMLToSheetConverter converter = new XMLToSheetConverterImpl();
             this.sheet = converter.convertFromStream(inputStream);
+            this.sheetName = this.sheet.getSheetName();
             this.archive = new ArchiveImpl();
             this.archive.storeInArchive(this.sheet.copySheet());
         } catch (JAXBException | FileNotFoundException e ) {
@@ -179,6 +191,11 @@ public class EngineImpl implements Engine{
         return graphSeries.build();
     }
 
+    @Override
+    public String getSheetName() {
+        return this.sheetName;
+    }
+
     private List<Returnable> getUniqueItemsInColumn(String column, Range range) {
         List<Cell> itemsList = range.getRangeCells()
                 .stream()
@@ -208,7 +225,11 @@ public class EngineImpl implements Engine{
     }
 
     @Override
-    public SheetNameAndSizeDTO getSheetNameAndSizeAsDTO() {
-        return new SheetNameAndSizeDTO(sheet.getSheetName(), sheet.getLayout().getColumn(), sheet.getLayout().getRow());
+    public SheetMetaDataDTO getSheetMetaDataDTO(String userName) {
+        Permission userPermission = this.usersPermissions.get(userName);
+        if(userPermission == null) {
+            userPermission = Permission.NONE;
+        }
+        return new SheetMetaDataDTO(sheet.getSheetName(), sheet.getLayout().getColumn(), sheet.getLayout().getRow(), userName, userPermission);
     }
 }

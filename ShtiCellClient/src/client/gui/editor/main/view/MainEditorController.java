@@ -14,10 +14,8 @@ import client.gui.editor.grid.GridBuilder;
 import client.gui.editor.grid.SheetGridController;
 import client.gui.editor.ranges.RangesController;
 import client.gui.editor.top.TopSubComponentController;
-import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -32,17 +30,15 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import logic.Engine;
-import logic.EngineImpl;
+import logic.engine.Engine;
+import logic.engine.EngineImpl;
 import logic.function.returnable.api.Returnable;
-import client.tasks.FileLoadingTask;
+
 import java.io.File;
 import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.*;
-
-import static client.gui.exception.ExceptionWindowController.openExceptionPopup;
 
 public class MainEditorController {
 
@@ -68,7 +64,7 @@ public class MainEditorController {
 
     @FXML
     public void initialize() {
-        this.engine = new EngineImpl();
+        this.engine = new EngineImpl("userName");
 
         if (this.topSubComponentController != null) {
             this.topSubComponentController.setMainController(this);

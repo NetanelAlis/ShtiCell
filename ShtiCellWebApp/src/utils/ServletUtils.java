@@ -1,22 +1,34 @@
 package utils;
 
 import jakarta.servlet.ServletContext;
-import logic.Engine;
+import logic.EngineManager;
+import logic.UserManager;
 
 public class ServletUtils {
 
-	private static final Object engineLock = new Object();
+	private static final String ENGINE_MANAGER_ATTRIBUTE_NAME = "engineManager";
+	private static final String USER_MANAGER_ATTRIBUTE_NAME = "userManager";
 
-	public static Boolean isEngineExist(ServletContext servletContext, Engine engine ,String sheetName) {
-		boolean isEngineExist = false;
+	private static final Object engineManagerLock = new Object();
+	private static final Object userManagerLock = new Object();
 
-		synchronized (engineLock) {
-				if (servletContext.getAttribute(sheetName) == null) {
-					servletContext.setAttribute(sheetName, engine);
-					isEngineExist = true;
-				}
+	public static EngineManager getEngineManager(ServletContext servletContext) {
+
+		synchronized (engineManagerLock) {
+			if (servletContext.getAttribute(ENGINE_MANAGER_ATTRIBUTE_NAME) == null) {
+				servletContext.setAttribute(ENGINE_MANAGER_ATTRIBUTE_NAME, new EngineManager());
 			}
-
-			return isEngineExist;
 		}
+		return (EngineManager) servletContext.getAttribute(ENGINE_MANAGER_ATTRIBUTE_NAME);
 	}
+
+	public static UserManager getUserManager(ServletContext servletContext) {
+
+		synchronized (userManagerLock) {
+			if (servletContext.getAttribute(USER_MANAGER_ATTRIBUTE_NAME) == null) {
+				servletContext.setAttribute(USER_MANAGER_ATTRIBUTE_NAME, new UserManager());
+			}
+		}
+		return (UserManager) servletContext.getAttribute(USER_MANAGER_ATTRIBUTE_NAME);
+	}
+}

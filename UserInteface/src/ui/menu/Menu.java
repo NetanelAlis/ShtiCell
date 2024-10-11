@@ -1,7 +1,7 @@
 package ui.menu;
 
-import logic.Engine;
-import logic.EngineImpl;
+import logic.engine.Engine;
+import logic.engine.EngineImpl;
 import ui.io.ConsoleUtils;
 
 import java.util.InputMismatchException;

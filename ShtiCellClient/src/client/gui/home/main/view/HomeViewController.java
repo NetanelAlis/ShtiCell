@@ -4,8 +4,10 @@ import client.Main;
 import client.gui.home.file.upload.FileUploadController;
 import client.gui.home.permission.table.PermissionTableController;
 import client.gui.home.sheet.table.SheetTableController;
-import client.tasks.FileLoadingTask;
-import dto.SheetNameAndSizeDTO;
+import client.task.FileLoadingTask;
+import dto.SheetMetaDataDTO;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -30,6 +32,23 @@ public class HomeViewController {
     @FXML private SheetTableController sheetTableController;
     @FXML private PermissionTableController permissionTableController;
     private Stage primaryStage;
+    private StringProperty userNameProperty;
+
+    @FXML public void initialize() {
+        if(this.sheetTableController != null) {
+            this.sheetTableController.startSheetTableRefresher();
+        }
+        this.userNameLabel.textProperty().bind(this.userNameProperty);
+
+    }
+
+    public HomeViewController() {
+        this.userNameProperty = new SimpleStringProperty("User1");
+    }
+
+//    public void setUserNameProperty(String userNameProperty){
+//        this.userNameProperty.set(userNameProperty);
+//    }
 
     @FXML
     void onLoadSheetClicked(ActionEvent event) {
@@ -47,7 +66,7 @@ public class HomeViewController {
 
     private void loadNewSheetFromXML(String absolutePath) {
         FileUploadController fileUploadController = this.openFileUploadWindow();
-        Task<Boolean> fileLoadingTask = new FileLoadingTask(absolutePath, fileUploadController, this::addNewSheet);
+        Task<Boolean> fileLoadingTask = new FileLoadingTask(absolutePath, fileUploadController, this::addNewSheet, this.userNameProperty.get());
 
         this.bindFileLoadingTaskToUIComponents(fileUploadController, fileLoadingTask);
 
@@ -88,8 +107,8 @@ public class HomeViewController {
         fileUploadController.bindProgressComponents(fileLoadingTask);
     }
 
-    public void addNewSheet(SheetNameAndSizeDTO sheetNameAndSizeDTO) {
-        this.sheetTableController.updateTable(sheetNameAndSizeDTO.getSheetName(), sheetNameAndSizeDTO.numberOfRows(), sheetNameAndSizeDTO.getNumberOfCols());
+    public void addNewSheet(SheetMetaDataDTO sheetMetaDataDTO) {
+        this.sheetTableController.addNewSheet(sheetMetaDataDTO);
     }
 
     private void setPrimaryStage(Stage stage) {

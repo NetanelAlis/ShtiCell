@@ -1,27 +1,30 @@
-package client.tasks;
+package client.task;
 
 import client.gui.exception.ExceptionWindowController;
 import client.gui.home.file.upload.FileUploadController;
 import client.util.Constants;
 import client.util.http.HttpClientUtil;
-import dto.SheetNameAndSizeDTO;
+import dto.SheetMetaDataDTO;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class FileLoadingTask extends Task<Boolean> {
     private String filePath;
     private FileUploadController fileUploadController;
-    private Consumer<SheetNameAndSizeDTO> onFinished;
+    private Consumer<SheetMetaDataDTO> onFinished;
+    private String ownerName;
 
-    public FileLoadingTask(String filePath, FileUploadController fileUploadController, Consumer<SheetNameAndSizeDTO> sheetNameAndSizeDTOConsumer) {
+    public FileLoadingTask(String filePath, FileUploadController fileUploadController, Consumer<SheetMetaDataDTO> onFinished,String ownerName) {
         this.filePath = filePath;
         this.fileUploadController = fileUploadController;
-        this.onFinished = sheetNameAndSizeDTOConsumer;
+        this.onFinished = onFinished;
+        this.ownerName = ownerName;
     }
 
     @Override
@@ -60,8 +63,13 @@ public class FileLoadingTask extends Task<Boolean> {
                         .addFormDataPart("file", file.getName(), RequestBody.create(file, MediaType.parse("application/xml")))
                         .build();
 
+        HttpUrl url = Objects.requireNonNull(HttpUrl.parse(Constants.UPLOAD_FILE))
+                .newBuilder()
+                .addQueryParameter("username", this.ownerName)
+                .build();
+
         Request request = new Request.Builder()
-                .url(Constants.UPLOAD_FILE)
+                .url(url)
                 .post(body)
                 .build();
 
@@ -82,15 +90,14 @@ public class FileLoadingTask extends Task<Boolean> {
                     if (response.code() != 200) {
                         Platform.runLater(() ->{
                                 fileUploadController.onTaskFinished();
-                        System.out.println(responseBody);
                         ExceptionWindowController.openExceptionPopup(responseBodyString);
                     });
                     }
                     else {
                         Platform.runLater(() -> {
                             fileUploadController.onTaskFinished();
-                            SheetNameAndSizeDTO sheetNameAndSizeDTO = Constants.gson.fromJson(responseBodyString, SheetNameAndSizeDTO.class);
-                            onFinished.accept(sheetNameAndSizeDTO);
+                            SheetMetaDataDTO sheetMetaDataDTO = Constants.GSON_INSTANCE.fromJson(responseBodyString, SheetMetaDataDTO.class);
+                            onFinished.accept(sheetMetaDataDTO);
                         });
                     }
                 }

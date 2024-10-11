@@ -1,11 +1,21 @@
 package client.gui.home.sheet.table;
 
+import client.task.SheetTableRefresher;
+import dto.SheetMetaDataDTO;
+import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import java.io.Closeable;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
-public class SheetTableController {
+import static client.util.Constants.REFRESH_RATE;
+
+public class SheetTableController implements Closeable {
 
     @FXML
     private TableColumn<SheetTableEntry, String> permissionsColumn;
@@ -21,6 +31,8 @@ public class SheetTableController {
 
     @FXML
     private TableView<SheetTableEntry> table;
+    private TimerTask tableRefresher;
+    private Timer timer;
 
 
     @FXML
@@ -31,7 +43,29 @@ public class SheetTableController {
         userNameColumn.setCellValueFactory(new PropertyValueFactory<>("userName"));
     }
 
-    public void updateTable(String sheetName, int numberOfRows, int numberOfCols) {
-        table.getItems().add(new SheetTableEntry("UserName", sheetName, "" + numberOfRows + "x" + numberOfRows, "Owner"));
+    public void addNewSheet(SheetMetaDataDTO sheetMetaDataDTO) {
+        table.getItems().add(new SheetTableEntry(sheetMetaDataDTO.getUserName(), sheetMetaDataDTO.getSheetName(),sheetMetaDataDTO.numberOfRows() + "x" + sheetMetaDataDTO.getNumberOfCols(), sheetMetaDataDTO.getPermission().getPermission()));
+    }
+
+    public void startSheetTableRefresher() {
+        tableRefresher = new SheetTableRefresher(this::updateSheetTable);
+        timer = new Timer();
+        timer.schedule(tableRefresher, 10000, REFRESH_RATE);
+    }
+
+    private void updateSheetTable(List<SheetMetaDataDTO> sheets) {
+        Platform.runLater(() -> {
+            ObservableList<SheetTableEntry> items = table.getItems();
+            items.clear();
+            sheets.forEach(this::addNewSheet);
+        });
+    }
+    @Override
+    public void close() {
+        table.getItems().clear();
+        if (tableRefresher != null && timer != null) {
+            tableRefresher.cancel();
+            timer.cancel();
+        }
     }
 }
