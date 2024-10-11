@@ -1,7 +1,10 @@
 package utils;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+
+import java.io.IOException;
 
 public class SessionUtils {
 
@@ -13,5 +16,19 @@ public class SessionUtils {
 
    public static void clearSession (HttpServletRequest request) {
        request.getSession().invalidate();
+   }
+
+   public static Boolean isSessionExists (HttpServletResponse response, String username) throws IOException {
+        boolean sessionExists = true;
+
+       if (username == null) {
+           response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+           response.getWriter().println("User is not logged in");
+           response.getWriter().flush();
+           sessionExists = false;
+       }
+
+       return sessionExists;
+
    }
 }

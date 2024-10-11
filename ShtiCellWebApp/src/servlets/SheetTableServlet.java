@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import managers.EngineManager;
 import logic.engine.Engine;
+import utils.Constants;
 import utils.ServletUtils;
 import utils.SessionUtils;
 import java.io.IOException;
@@ -20,12 +21,11 @@ public class SheetTableServlet  extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
         try (PrintWriter out = response.getWriter()) {
-            Gson gson = new Gson();
             EngineManager engineManager = ServletUtils.getEngineManager(getServletContext());
             Set<Engine> engineSet = engineManager.getEngines();
             Set<SheetMetaDataDTO> sheetMetaDataDTO = new LinkedHashSet<>();
             engineSet.forEach(engine -> sheetMetaDataDTO.add(engine.getSheetMetaDataDTO(SessionUtils.getUsername(request))));
-            String json = gson.toJson(sheetMetaDataDTO);
+            String json = Constants.GSON_INSTANCE.toJson(sheetMetaDataDTO);
             out.println(json);
             out.flush();
         }

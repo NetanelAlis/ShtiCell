@@ -40,10 +40,7 @@ public class LoadSheetFromFileServlet extends HttpServlet {
         ////////////////////////////////////////////////////////////
 
         String username = SessionUtils.getUsername(request);
-        if (username == null) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().println("User is not logged in");
-            response.getWriter().flush();
+        if(!SessionUtils.isSessionExists(response, username)){
             return;
         }
 
@@ -60,9 +57,8 @@ public class LoadSheetFromFileServlet extends HttpServlet {
                 else {
                     engineManager.addEngine(sheetName, engine);
                 }
-            }
-                Gson gson = new Gson();
-                String json = gson.toJson(engine.getSheetMetaDataDTO(username));
+            };
+                String json = Constants.GSON_INSTANCE.toJson(engine.getSheetMetaDataDTO(username));
                 response.getWriter().println(json);
                 response.getWriter().close();
                 response.flushBuffer();

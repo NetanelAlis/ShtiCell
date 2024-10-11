@@ -16,4 +16,8 @@ public interface PermissionRequestInEngine {
     PermissionStatus getRequestedPermissionStatus();
 
     void setCurrentPermission(PermissionType permissionType);
+
+    void setRequestedPermissionStatus(PermissionStatus permissionStatus);
+
+    void setRequestedPermission(PermissionType permissionType);
 }

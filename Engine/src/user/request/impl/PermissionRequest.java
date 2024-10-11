@@ -20,10 +20,10 @@ public class PermissionRequest implements PermissionRequestInEngine, PermissionR
         this.requesterUserName = null;
     }
 
-    public PermissionRequest(PermissionType currentPermissionType, PermissionType requestedPermissionType, PermissionStatus requestedPermissionStatus, String sheetName, String requesterUserName) {
+    public PermissionRequest(PermissionType requestedPermissionType, String sheetName, String requesterUserName) {
         this.requestedPermissionType = requestedPermissionType;
-        this.requestedStatus = requestedPermissionStatus;
-        this.currentPermissionType = currentPermissionType;
+        this.requestedStatus = null;
+        this.currentPermissionType = null;
         this.sheetName = sheetName;
         this.requesterUserName = requesterUserName;
     }
@@ -35,7 +35,7 @@ public class PermissionRequest implements PermissionRequestInEngine, PermissionR
 
     @Override
     public PermissionType getCurrentPermission() {
-        return null;
+        return this.currentPermissionType;
     }
 
     @Override
@@ -49,6 +49,16 @@ public class PermissionRequest implements PermissionRequestInEngine, PermissionR
     }
 
     @Override
+    public void setRequestedPermissionStatus(PermissionStatus permissionStatus) {
+        this.requestedStatus = permissionStatus;
+    }
+
+    @Override
+    public void setRequestedPermission(PermissionType permissionType) {
+        this.requestedPermissionType = permissionType;
+    }
+
+    @Override
     public String getSheetName() {
         return this.sheetName;
     }
@@ -57,6 +67,7 @@ public class PermissionRequest implements PermissionRequestInEngine, PermissionR
     public String getRequesterUserName() {
         return this.requesterUserName;
     }
+
 
 }
 

@@ -25,4 +25,8 @@ public class EngineManager {
     public synchronized LinkedHashSet<Engine> getEngines() {
         return new LinkedHashSet<>(engineMap.values());
     }
+
+    public synchronized Engine getEngine(String sheetName) {
+        return engineMap.get(sheetName);
+    }
 }

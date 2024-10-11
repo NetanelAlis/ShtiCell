@@ -3,6 +3,7 @@ package logic.engine;
 import dto.*;
 import javafx.scene.paint.Color;
 import logic.function.returnable.api.Returnable;
+import user.permission.PermissionType;
 
 import java.io.InputStream;
 import java.util.LinkedHashMap;
@@ -30,4 +31,6 @@ public interface Engine {
     List<Returnable> getUniqueItemsToFilterBy(String columnToFilterBy, String rangeToFilter);
     LinkedHashMap<Returnable, LinkedHashMap<Returnable, Returnable>> getGraphFromRange(String rangeToBuildGraphFrom);
     String getSheetName();
+
+    void createPermissionRequest(PermissionType requestedPermission, String username);
 }

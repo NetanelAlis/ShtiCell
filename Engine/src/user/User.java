@@ -1,6 +1,5 @@
 package user;
 
-import user.permission.PermissionStatus;
 import user.permission.PermissionType;
 import user.request.api.PermissionRequestInOwner;
 import user.request.impl.PermissionRequest;
@@ -13,10 +12,10 @@ public class User {
 
     public User(String userName) {
         this.userName = userName;
-        permissionsRequests = new ArrayList<PermissionRequestInOwner>();
+        permissionsRequests = new ArrayList<>();
     }
 
-    public void addRequest(PermissionType currentPermission, PermissionType requestedPermission, PermissionStatus currentPermissionStatus,  String sheetName, String requestedUserName) {
-        this.permissionsRequests.add(new PermissionRequest(currentPermission, requestedPermission, currentPermissionStatus, sheetName, requestedUserName));
+    public void createPermissionRequest(PermissionType requestedPermission, String sheetName, String requestedUserName) {
+        this.permissionsRequests.add(new PermissionRequest(requestedPermission, sheetName, requestedUserName));
     }
 }

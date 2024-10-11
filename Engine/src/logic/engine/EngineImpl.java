@@ -21,13 +21,12 @@ import user.permission.PermissionStatus;
 import user.permission.PermissionType;
 import logic.sort.Sorter;
 import user.request.api.PermissionRequestInEngine;
-
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.*;
 
 public class EngineImpl implements Engine{
-    private String owner;
+    private User owner;
     private String sheetName;
     private Sheet sheet;
     private Archive archive;
@@ -35,7 +34,7 @@ public class EngineImpl implements Engine{
 
     public EngineImpl(String owner) {
         this.usersPermissions = new HashMap<>();
-        this.owner = owner;
+        this.owner = new User(owner);
         usersPermissions.put(owner, PermissionRequestInEngine.createPermissionRequestInEngine(PermissionType.OWNER, PermissionType.OWNER, PermissionStatus.OWNER));
         this.archive = null;
         this.sheet = null;
@@ -231,6 +230,30 @@ public class EngineImpl implements Engine{
 
     @Override
     public SheetMetaDataDTO getSheetMetaDataDTO(String userName) {
+        PermissionType userPermissionType = this.getUserPermission(userName);
+
+        return new SheetMetaDataDTO(sheet.getSheetName(), sheet.getLayout().getColumn(), sheet.getLayout().getRow(), userName, userPermissionType);
+    }
+
+    @Override
+    public void createPermissionRequest(PermissionType requestedPermission, String username) {
+        PermissionRequestInEngine userPermissions = this.usersPermissions.get(username);
+        PermissionType currentPermission  = PermissionType.NONE;
+
+        if(userPermissions == null && isNewPermissionIsRequested(requestedPermission, PermissionType.NONE)) {
+            usersPermissions.put(username, PermissionRequestInEngine.createPermissionRequestInEngine(PermissionType.NONE, requestedPermission, PermissionStatus.PENDING));
+        }
+        else if(userPermissions!= null && isNewPermissionIsRequested(requestedPermission, userPermissions.getCurrentPermission())) {
+
+            userPermissions.setRequestedPermissionStatus(PermissionStatus.PENDING);
+            userPermissions.setRequestedPermission(requestedPermission);
+            currentPermission = userPermissions.getCurrentPermission();
+        }
+
+        this.owner.createPermissionRequest(requestedPermission, this.sheetName, username);
+    }
+
+    private PermissionType getUserPermission(String userName){
         PermissionRequestInEngine userPermissions = this.usersPermissions.get(userName);
         PermissionType userPermissionType;
 
@@ -240,12 +263,18 @@ public class EngineImpl implements Engine{
         else {
             userPermissionType = userPermissions.getRequestedPermissionType();
         }
-        return new SheetMetaDataDTO(sheet.getSheetName(), sheet.getLayout().getColumn(), sheet.getLayout().getRow(), userName, userPermissionType);
+
+        return userPermissionType;
     }
 
-//    public requestPermission(String requestedUserName, User ow){
-//
-//        this.owner.addRequest(userName,requestedPermission,this.sheetName);
-//    }
+    private boolean isNewPermissionIsRequested(PermissionType requestedPermission, PermissionType currentPermission){
+        if(requestedPermission.equals(currentPermission)){
+            throw (new IllegalArgumentException("Already has " + requestedPermission.getType() + " permission for sheet " + this.sheetName));
+        }
+        else{
+            return true;
+
+        }
+    }
 
 }
