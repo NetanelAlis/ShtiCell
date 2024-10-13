@@ -47,18 +47,22 @@ public class HomeViewController {
 
     @FXML public void initialize() {
         if(this.sheetTableController != null) {
-            this.sheetTableController.startSheetTableRefresher();
+          this.sheetTableController.startSheetTableRefresher();
         }
 
         if(this.permissionTableController != null) {
+        }
+
+        if(this.commandComponentController != null){
             this.commandComponentController.setHomeViewController(this);
+           this.commandComponentController.startPermissionTableRefresher();
         }
 
         this.userNameLabel.textProperty().bind(this.userNameProperty);
     }
 
     public HomeViewController() {
-        this.userNameProperty = new SimpleStringProperty("User1");
+        this.userNameProperty = new SimpleStringProperty("receiver");
     }
 
 //    public void setUserNameProperty(String userNameProperty){
@@ -130,8 +134,8 @@ public class HomeViewController {
         this.primaryStage = stage;
     }
 
-    public void homeViewControllerSendNewPermissionRequest(String sheetName, String permissionType) {
-        SendRequestDTO sendRequestDTO = new SendRequestDTO(PermissionType.valueOf(permissionType), this.userNameProperty.get(), sheetName);
+    public void sendNewPermissionRequest(String sheetName, String permissionType) {
+        SendRequestDTO sendRequestDTO = new SendRequestDTO(PermissionType.valueOf(permissionType.trim().toUpperCase()), sheetName);
         String json = Constants.GSON_INSTANCE.toJson(sendRequestDTO);
 
         RequestBody body = RequestBody.create(json, MediaType.parse("application/json"));
@@ -153,12 +157,16 @@ public class HomeViewController {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
-                    String responseBodyString = responseBody.string();
                     if (response.code() != 200) {
+                        String responseBodyString = responseBody.string();
                         Platform.runLater(() ->{
-                            ExceptionWindowController.openExceptionPopup(responseBodyString);
+                           commandComponentController.updateErrorLabel(responseBody);
                         });
                     }
+                }else {
+                    Platform.runLater(() ->{
+                        commandComponentController.clearNewPermissionRequest();
+                    })
                 }
             }
         });

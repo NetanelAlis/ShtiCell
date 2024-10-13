@@ -19,11 +19,15 @@ public class UserManager {
         userMap.remove(username);
     }
 
-    public synchronized Map<String, User> getUsers() {
-        return Collections.unmodifiableMap(userMap);
+    public synchronized Set<String> getUsers() {
+        return Collections.unmodifiableSet(userMap.keySet());
     }
 
     public boolean isUserExists(String username) {
         return userMap.containsKey(username);
+    }
+
+    public synchronized User getUser(String username) {
+        return this.userMap.get(username);
     }
 }

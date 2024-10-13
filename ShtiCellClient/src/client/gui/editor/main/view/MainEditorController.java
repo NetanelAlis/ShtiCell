@@ -33,6 +33,7 @@ import javafx.stage.Stage;
 import logic.engine.Engine;
 import logic.engine.EngineImpl;
 import logic.function.returnable.api.Returnable;
+import user.User;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,7 +65,7 @@ public class MainEditorController {
 
     @FXML
     public void initialize() {
-        this.engine = new EngineImpl("userName");
+        this.engine = new EngineImpl(new User("delete"));
 
         if (this.topSubComponentController != null) {
             this.topSubComponentController.setMainController(this);

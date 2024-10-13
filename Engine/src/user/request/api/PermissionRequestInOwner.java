@@ -6,8 +6,8 @@ import user.request.impl.PermissionRequest;
 
 public interface PermissionRequestInOwner {
 
-    static PermissionRequest createPermissionRequestInOwner(PermissionType currentPermission, PermissionType requestedPermission, PermissionStatus permissionStatus, String sheetName, String requesterUserName) {
-        return new PermissionRequest(currentPermission, requestedPermission, permissionStatus, sheetName, requesterUserName);
+    static PermissionRequest createPermissionRequestInOwner(PermissionType requestedPermissionType, String sheetName, String requesterUserName) {
+        return new PermissionRequest(requestedPermissionType, sheetName, requesterUserName);
     }
 
     PermissionType getRequestedPermissionType();

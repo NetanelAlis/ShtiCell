@@ -3,6 +3,7 @@ package ui.menu;
 import logic.engine.Engine;
 import logic.engine.EngineImpl;
 import ui.io.ConsoleUtils;
+import user.User;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -11,7 +12,7 @@ public class Menu {
     private MainMenuOption chosenItem;
 
     public void runMenu(){
-        Engine engine = new EngineImpl();
+        Engine engine = new EngineImpl(new User("delete"));
 
         do {
             ConsoleUtils.printMainMenu();

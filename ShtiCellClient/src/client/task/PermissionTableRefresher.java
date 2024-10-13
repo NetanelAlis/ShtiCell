@@ -3,7 +3,7 @@ package client.task;
 import client.gui.exception.ExceptionWindowController;
 import client.util.Constants;
 import client.util.http.HttpClientUtil;
-import dto.SheetMetaDataDTO;
+import dto.ReceivedRequestDTO;
 import javafx.application.Platform;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
@@ -13,17 +13,17 @@ import java.util.List;
 import java.util.TimerTask;
 import java.util.function.Consumer;
 
-public class SheetTableRefresher extends TimerTask {
-    private final Consumer<List<SheetMetaDataDTO>> addAllSheetsToTableConsumer;
+public class PermissionTableRefresher extends TimerTask {
+    private final Consumer<List<ReceivedRequestDTO>> addAllRequestsToTableConsumer;
 
-    public SheetTableRefresher(Consumer<List<SheetMetaDataDTO>> addAllSheetsToTableConsumer) {
-        this.addAllSheetsToTableConsumer = addAllSheetsToTableConsumer;
+    public PermissionTableRefresher(Consumer<List<ReceivedRequestDTO>> usersListConsumer) {
+        this.addAllRequestsToTableConsumer = usersListConsumer;
     }
 
     @Override
     public void run() {
         Request request = new Request.Builder()
-                .url(Constants.REFRESH_SHEET_TABLE)
+                .url(Constants.REFRESH_PERMISSION_TABLE)
                 .build();
         HttpClientUtil.runAsync(request, new Callback() {
 
@@ -38,10 +38,10 @@ public class SheetTableRefresher extends TimerTask {
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody.string();
-                        SheetMetaDataDTO[] sheetMetaDataDTOS = Constants.GSON_INSTANCE.fromJson(responseBodyString, SheetMetaDataDTO[].class);
-                        addAllSheetsToTableConsumer.accept(Arrays.asList(sheetMetaDataDTOS));
-                    }
+                    ReceivedRequestDTO[] receivedRequestDTOS = Constants.GSON_INSTANCE.fromJson(responseBodyString, ReceivedRequestDTO[].class);
+                    addAllRequestsToTableConsumer.accept(Arrays.asList(receivedRequestDTOS));
                 }
+            }
         });
     }
 }

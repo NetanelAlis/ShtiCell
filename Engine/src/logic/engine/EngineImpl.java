@@ -32,10 +32,10 @@ public class EngineImpl implements Engine{
     private Archive archive;
     private Map<String, PermissionRequestInEngine> usersPermissions;
 
-    public EngineImpl(String owner) {
+    public EngineImpl(User owner) {
         this.usersPermissions = new HashMap<>();
-        this.owner = new User(owner);
-        usersPermissions.put(owner, PermissionRequestInEngine.createPermissionRequestInEngine(PermissionType.OWNER, PermissionType.OWNER, PermissionStatus.OWNER));
+        this.owner = owner;
+        usersPermissions.put(owner.getUserName(), PermissionRequestInEngine.createPermissionRequestInEngine(PermissionType.OWNER, PermissionType.OWNER, PermissionStatus.OWNER));
         this.archive = null;
         this.sheet = null;
         this.sheetName = null;
@@ -232,13 +232,12 @@ public class EngineImpl implements Engine{
     public SheetMetaDataDTO getSheetMetaDataDTO(String userName) {
         PermissionType userPermissionType = this.getUserPermission(userName);
 
-        return new SheetMetaDataDTO(sheet.getSheetName(), sheet.getLayout().getColumn(), sheet.getLayout().getRow(), userName, userPermissionType);
+        return new SheetMetaDataDTO(sheet.getSheetName(), sheet.getLayout().getColumn(), sheet.getLayout().getRow(), this.owner.getUserName(), userPermissionType);
     }
 
     @Override
     public void createPermissionRequest(PermissionType requestedPermission, String username) {
         PermissionRequestInEngine userPermissions = this.usersPermissions.get(username);
-        PermissionType currentPermission  = PermissionType.NONE;
 
         if(userPermissions == null && isNewPermissionIsRequested(requestedPermission, PermissionType.NONE)) {
             usersPermissions.put(username, PermissionRequestInEngine.createPermissionRequestInEngine(PermissionType.NONE, requestedPermission, PermissionStatus.PENDING));
@@ -247,10 +246,10 @@ public class EngineImpl implements Engine{
 
             userPermissions.setRequestedPermissionStatus(PermissionStatus.PENDING);
             userPermissions.setRequestedPermission(requestedPermission);
-            currentPermission = userPermissions.getCurrentPermission();
         }
 
         this.owner.createPermissionRequest(requestedPermission, this.sheetName, username);
+
     }
 
     private PermissionType getUserPermission(String userName){
@@ -271,9 +270,11 @@ public class EngineImpl implements Engine{
         if(requestedPermission.equals(currentPermission)){
             throw (new IllegalArgumentException("Already has " + requestedPermission.getType() + " permission for sheet " + this.sheetName));
         }
+        else if(currentPermission == PermissionType.OWNER){
+            throw (new IllegalArgumentException("Cannot crate permission request for your own sheet"));
+        }
         else{
             return true;
-
         }
     }
 

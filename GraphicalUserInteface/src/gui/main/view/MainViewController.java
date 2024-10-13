@@ -37,6 +37,7 @@ import logic.engine.Engine;
 import logic.engine.EngineImpl;
 import logic.function.returnable.api.Returnable;
 import tasks.FileLoadingTask;
+import user.User;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,7 +69,7 @@ public class MainViewController {
 
     @FXML
     public void initialize() {
-        this.engine = new EngineImpl();
+        this.engine = new EngineImpl(new User("delete"));
 
         if (this.topSubComponentController != null) {
             this.topSubComponentController.setMainController(this);

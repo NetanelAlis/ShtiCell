@@ -1,5 +1,6 @@
 package servlets;
 
+import dto.ReceivedRequestDTO;
 import dto.SendRequestDTO;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -12,6 +13,8 @@ import utils.ServletUtils;
 import utils.SessionUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Set;
 
 @WebServlet(name = "Request Sheet Permission Servlet", urlPatterns = "/requestPermission")
 public class SheetPermissionRequestServlet extends HttpServlet {
@@ -22,7 +25,7 @@ public class SheetPermissionRequestServlet extends HttpServlet {
         String username = SessionUtils.getUsername(request);
         EngineManager engineManager = ServletUtils.getEngineManager(getServletContext());
 
-        if(!SessionUtils.isSessionExists(response, username)){
+        if(SessionUtils.isSessionExists(response, username)){
             return;
         }
 
@@ -37,8 +40,8 @@ public class SheetPermissionRequestServlet extends HttpServlet {
             }
 
             try{
-            engine.createPermissionRequest(sendRequestDTO.getRequestedPermission(), username);
-            response.setStatus(HttpServletResponse.SC_OK);
+                engine.createPermissionRequest(sendRequestDTO.getRequestedPermission(), username);
+                response.setStatus(HttpServletResponse.SC_OK);
 
         } catch (RuntimeException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

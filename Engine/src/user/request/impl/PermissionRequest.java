@@ -5,6 +5,8 @@ import user.permission.PermissionType;
 import user.request.api.PermissionRequestInEngine;
 import user.request.api.PermissionRequestInOwner;
 
+import java.util.Objects;
+
 public class PermissionRequest implements PermissionRequestInEngine, PermissionRequestInOwner {
     private PermissionType requestedPermissionType;
     private PermissionStatus requestedStatus;
@@ -22,7 +24,7 @@ public class PermissionRequest implements PermissionRequestInEngine, PermissionR
 
     public PermissionRequest(PermissionType requestedPermissionType, String sheetName, String requesterUserName) {
         this.requestedPermissionType = requestedPermissionType;
-        this.requestedStatus = null;
+        this.requestedStatus = PermissionStatus.PENDING;
         this.currentPermissionType = null;
         this.sheetName = sheetName;
         this.requesterUserName = requesterUserName;
@@ -30,7 +32,7 @@ public class PermissionRequest implements PermissionRequestInEngine, PermissionR
 
     @Override
     public PermissionType getRequestedPermissionType() {
-        return this.currentPermissionType;
+        return this.requestedPermissionType;
     }
 
     @Override
@@ -68,6 +70,17 @@ public class PermissionRequest implements PermissionRequestInEngine, PermissionR
         return this.requesterUserName;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PermissionRequest that = (PermissionRequest) o;
+        return requestedPermissionType == that.requestedPermissionType && requestedStatus == that.requestedStatus && currentPermissionType == that.currentPermissionType && Objects.equals(sheetName, that.sheetName) && Objects.equals(requesterUserName, that.requesterUserName);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(requestedPermissionType, requestedStatus, currentPermissionType, sheetName, requesterUserName);
+    }
 }
 

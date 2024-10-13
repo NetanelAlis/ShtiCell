@@ -1,6 +1,5 @@
 package servlets;
 
-import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -40,13 +39,14 @@ public class LoadSheetFromFileServlet extends HttpServlet {
         ////////////////////////////////////////////////////////////
 
         String username = SessionUtils.getUsername(request);
-        if(!SessionUtils.isSessionExists(response, username)){
+        if(SessionUtils.isSessionExists(response, username)){
             return;
         }
 
+        User user = userManager.getUser(username);
         try{
-            boolean engineExists = false;
-            Engine engine = new EngineImpl(username);
+            boolean engineExists;
+            Engine engine = new EngineImpl(user);
             engine.loadDataFromInputStream(filePart.getInputStream());
             String sheetName = engine.getSheetMetaDataDTO(username).getSheetName();
             synchronized(this) {
