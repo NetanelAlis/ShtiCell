@@ -1,7 +1,7 @@
 package client.gui.editor.ranges;
 
-import dto.RangeDTO;
-import dto.RangesDTO;
+import dto.range.RangeDTO;
+import dto.range.RangesDTO;
 import client.gui.editor.main.view.MainEditorController;
 import javafx.animation.PauseTransition;
 import javafx.beans.binding.Bindings;

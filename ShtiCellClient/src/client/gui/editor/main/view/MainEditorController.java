@@ -1,7 +1,8 @@
 package client.gui.editor.main.view;
 
+import client.gui.app.MainAppViewController;
+import client.gui.home.main.view.HomeViewController;
 import component.cell.api.CellType;
-import dto.*;
 import client.Main;
 import client.gui.editor.action.line.ActionLineController;
 import client.gui.editor.cell.CellSubComponentController;
@@ -14,6 +15,12 @@ import client.gui.editor.grid.GridBuilder;
 import client.gui.editor.grid.SheetGridController;
 import client.gui.editor.ranges.RangesController;
 import client.gui.editor.top.TopSubComponentController;
+import dto.cell.CellDTO;
+import dto.cell.ColoredCellDTO;
+import dto.range.RangeDTO;
+import dto.range.RangesDTO;
+import dto.sheet.ColoredSheetDTO;
+import dto.sheet.SheetDTO;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
@@ -58,6 +65,7 @@ public class MainEditorController {
     private BooleanProperty fileNotLoadedProperty;
     private Engine engine;
     private Stage primaryStage;
+    private MainAppViewController mainAppViewController;
 
     public MainEditorController() {
         this.fileNotLoadedProperty = new SimpleBooleanProperty(true);
@@ -450,4 +458,7 @@ public class MainEditorController {
         graphStage.showAndWait();  // Show the popup and wait for it to close
     }
 
+    public void setAppMainController(MainAppViewController mainAppViewController) {
+        this.mainAppViewController = mainAppViewController;
+    }
 }

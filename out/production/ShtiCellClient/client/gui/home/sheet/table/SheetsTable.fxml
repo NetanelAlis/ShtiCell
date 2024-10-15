@@ -9,10 +9,10 @@
   <content>
       <TableView fx:id="table" prefHeight="200.0" prefWidth="300.0">
          <columns>
-            <TableColumn fx:id="userNameColumn" prefWidth="75.0" text="User Name" />
-            <TableColumn fx:id="sheetNameColumn" prefWidth="75.0" text="Sheet Name" />
-            <TableColumn fx:id="sheetSizeColumn" prefWidth="75.0" text="Sheet Size" />
-            <TableColumn fx:id="permissionsColumn" prefWidth="75.0" text="Permissions" />
+            <TableColumn fx:id="userNameColumn" prefWidth="75.0" sortable="false" text="User Name" />
+            <TableColumn fx:id="sheetNameColumn" prefWidth="75.0" sortable="false" text="Sheet Name" />
+            <TableColumn fx:id="sheetSizeColumn" prefWidth="75.0" sortable="false" text="Sheet Size" />
+            <TableColumn fx:id="permissionsColumn" prefWidth="75.0" sortable="false" text="Permissions" />
          </columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

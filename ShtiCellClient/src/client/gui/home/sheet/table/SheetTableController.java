@@ -1,7 +1,8 @@
 package client.gui.home.sheet.table;
 
+import client.gui.home.main.view.HomeViewController;
 import client.task.SheetTableRefresher;
-import dto.SheetMetaDataDTO;
+import dto.sheet.SheetMetaDataDTO;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -10,6 +11,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import java.io.Closeable;
 import java.util.List;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -31,6 +33,8 @@ public class SheetTableController implements Closeable {
 
     @FXML
     private TableView<SheetTableEntry> table;
+
+    private HomeViewController homeViewController;
     private TimerTask tableRefresher;
     private Timer timer;
 
@@ -41,6 +45,16 @@ public class SheetTableController implements Closeable {
         sheetNameColumn.setCellValueFactory(new PropertyValueFactory<>("sheetName"));
         sheetSizeColumn.setCellValueFactory(new PropertyValueFactory<>("sheetSize"));
         userNameColumn.setCellValueFactory(new PropertyValueFactory<>("userName"));
+
+        table.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && !newValue.equals(oldValue)) {
+                this.homeViewController.updateCurrentSelectedSheet(newValue);
+            }
+        });
+    }
+
+    public void setHomeViewController(HomeViewController homeViewController) {
+        this.homeViewController = homeViewController;
     }
 
     public void addNewSheet(SheetMetaDataDTO sheetMetaDataDTO) {
@@ -50,16 +64,30 @@ public class SheetTableController implements Closeable {
     public void startSheetTableRefresher() {
         tableRefresher = new SheetTableRefresher(this::updateSheetTable);
         timer = new Timer();
-        timer.schedule(tableRefresher, 10000, REFRESH_RATE);
+        timer.schedule(tableRefresher, REFRESH_RATE, REFRESH_RATE);
     }
 
     private void updateSheetTable(List<SheetMetaDataDTO> sheets) {
         Platform.runLater(() -> {
+            SheetTableEntry selectedSheet = this.table.getSelectionModel().getSelectedItem();
+            String selectedSheetName = (selectedSheet != null) ? selectedSheet.getSheetName() : null;
+
             ObservableList<SheetTableEntry> items = table.getItems();
             items.clear();
             sheets.forEach(this::addNewSheet);
+
+            if(selectedSheetName != null) {
+                for (SheetTableEntry sheetEntry : this.table.getItems()) {
+                    if(Objects.equals(sheetEntry.getSheetName(), selectedSheetName)){
+                        this.table.getSelectionModel().select(sheetEntry);
+                        break;
+                    }
+                }
+            }
+
         });
     }
+
     @Override
     public void close() {
         table.getItems().clear();

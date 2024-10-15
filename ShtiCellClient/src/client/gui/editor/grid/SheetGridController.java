@@ -1,8 +1,8 @@
 package client.gui.editor.grid;
 
-import dto.CellDTO;
-import dto.ColoredCellDTO;
-import dto.RangeDTO;
+import dto.cell.CellDTO;
+import dto.cell.ColoredCellDTO;
+import dto.range.RangeDTO;
 import client.gui.editor.cell.CellModel;
 import client.gui.editor.cell.CellSubComponentController;
 import client.gui.editor.cell.DependenciesCellModel;

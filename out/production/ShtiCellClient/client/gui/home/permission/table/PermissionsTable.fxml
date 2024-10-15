@@ -7,11 +7,11 @@
 
 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.gui.home.permission.table.PermissionTableController">
     <content>
-        <TableView prefHeight="200.0" prefWidth="300.0">
+        <TableView fx:id="permissionTableView" prefHeight="200.0" prefWidth="300.0">
             <columns>
-                <TableColumn prefWidth="75.0" text="User Name" />
-                <TableColumn prefWidth="75.0" text="Request Type" />
-                <TableColumn prefWidth="75.0" text="Request Status" />
+                <TableColumn fx:id="userNameColumn" prefWidth="75.0" sortable="false" text="User Name" />
+                <TableColumn fx:id="RequestTypeColumn" prefWidth="75.0" sortable="false" text="Request Type" />
+                <TableColumn fx:id="RequestTypeStatus" prefWidth="75.0" sortable="false" text="Request Status" />
             </columns>
             <columnResizePolicy>
                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

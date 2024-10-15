@@ -1,16 +1,20 @@
 package client.gui.home.main.view;
 
 import client.Main;
+import client.gui.app.MainAppViewController;
 import client.gui.exception.ExceptionWindowController;
 import client.gui.home.command.CommandComponentController;
+import client.gui.home.command.PermissionRequestTableEntry;
 import client.gui.home.file.upload.FileUploadController;
 import client.gui.home.permission.table.PermissionTableController;
 import client.gui.home.sheet.table.SheetTableController;
+import client.gui.home.sheet.table.SheetTableEntry;
 import client.task.FileLoadingTask;
 import client.util.Constants;
 import client.util.http.HttpClientUtil;
-import dto.SendRequestDTO;
-import dto.SheetMetaDataDTO;
+import dto.permission.ReceivedRequestForTableDTO;
+import dto.permission.SendRequestDTO;
+import dto.sheet.SheetMetaDataDTO;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -30,39 +34,35 @@ import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
 import user.permission.PermissionType;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
-public class HomeViewController {
+public class HomeViewController implements Closeable {
 
 
     @FXML private Button loadSheetButton;
-    @FXML private Label userNameLabel;
     @FXML private SheetTableController sheetTableController;
     @FXML private PermissionTableController permissionTableController;
     @FXML private CommandComponentController commandComponentController;
     private Stage primaryStage;
-    private StringProperty userNameProperty;
+    private SheetTableEntry lastSelectedSheetEntry;
+    private MainAppViewController mainAppViewController;
 
     @FXML public void initialize() {
         if(this.sheetTableController != null) {
-          this.sheetTableController.startSheetTableRefresher();
+          this.sheetTableController.setHomeViewController(this);
         }
 
         if(this.permissionTableController != null) {
+            this.permissionTableController.setHomeViewController(this);
         }
 
         if(this.commandComponentController != null){
             this.commandComponentController.setHomeViewController(this);
-           this.commandComponentController.startPermissionTableRefresher();
         }
 
-        this.userNameLabel.textProperty().bind(this.userNameProperty);
-    }
-
-    public HomeViewController() {
-        this.userNameProperty = new SimpleStringProperty("receiver");
     }
 
 //    public void setUserNameProperty(String userNameProperty){
@@ -85,7 +85,7 @@ public class HomeViewController {
 
     private void loadNewSheetFromXML(String absolutePath) {
         FileUploadController fileUploadController = this.openFileUploadWindow();
-        Task<Boolean> fileLoadingTask = new FileLoadingTask(absolutePath, fileUploadController, this::addNewSheet, this.userNameProperty.get());
+        Task<Boolean> fileLoadingTask = new FileLoadingTask(absolutePath, fileUploadController, this::addNewSheet);
 
         this.bindFileLoadingTaskToUIComponents(fileUploadController, fileLoadingTask);
 
@@ -137,9 +137,7 @@ public class HomeViewController {
     public void sendNewPermissionRequest(String sheetName, String permissionType) {
         SendRequestDTO sendRequestDTO = new SendRequestDTO(PermissionType.valueOf(permissionType.trim().toUpperCase()), sheetName);
         String json = Constants.GSON_INSTANCE.toJson(sendRequestDTO);
-
         RequestBody body = RequestBody.create(json, MediaType.parse("application/json"));
-
         Request request = new Request.Builder()
                 .url(Constants.REQUEST_PERMISSION)
                 .post(body)
@@ -159,16 +157,83 @@ public class HomeViewController {
                 try (ResponseBody responseBody = response.body()) {
                     if (response.code() != 200) {
                         String responseBodyString = responseBody.string();
-                        Platform.runLater(() ->{
-                           commandComponentController.updateErrorLabel(responseBody);
+                        Platform.runLater(() -> {
+                            commandComponentController.updateErrorLabel(responseBody);
+                        });
+                    } else {
+                        Platform.runLater(() -> {
+                            commandComponentController.clearNewPermissionRequest();
                         });
                     }
-                }else {
-                    Platform.runLater(() ->{
-                        commandComponentController.clearNewPermissionRequest();
-                    })
                 }
             }
         });
+    }
+
+    public void updateCurrentSelectedSheet(SheetTableEntry newSheetEntry) {
+        this.lastSelectedSheetEntry = newSheetEntry.deepCopy();
+        this.permissionTableController.updateSheetNameInRefresher(newSheetEntry);
+    }
+
+    public void replyToPermissionRequest(PermissionRequestTableEntry selectedItem, boolean approveRequest) {
+        HttpUrl url = HttpUrl.parse(Constants.RESPONSE_TO_PERMISSION_REQUEST)
+                .newBuilder()
+                .addQueryParameter("request_approved", String.valueOf(approveRequest))
+                .build();
+
+        ReceivedRequestForTableDTO permissionRequest = new ReceivedRequestForTableDTO(PermissionType.valueOf(selectedItem.getPermissions().toUpperCase()), selectedItem.getSender(), selectedItem.getSheetName(), selectedItem.getRequestNumber());
+        String json = Constants.GSON_INSTANCE.toJson(permissionRequest);
+
+        RequestBody body = RequestBody.create(json, MediaType.parse("application/json"));
+        Request request = new Request.Builder()
+                .url(url) // Use the URL with query parameter
+                .post(body)
+                .build();
+
+        HttpClientUtil.runAsync(request, new Callback() {
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Platform.runLater(() -> {
+                    ExceptionWindowController.openExceptionPopup("Something went wrong: " + e.getMessage());
+                });
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.code() != 200) {
+                        String responseBodyString = responseBody.string();
+                        Platform.runLater(() -> {
+                            ExceptionWindowController.openExceptionPopup("Something went wrong: " + responseBodyString);
+                        });
+                    }
+                }
+            }
+        });
+    }
+
+    public void setAppMainController(MainAppViewController mainAppViewController) {
+        this.mainAppViewController = mainAppViewController;
+    }
+
+    public void setActive() {
+        if(this.sheetTableController != null) {
+            this.sheetTableController.startSheetTableRefresher();
+        }
+
+        if(this.permissionTableController != null) {
+            this.permissionTableController.startPermissionTableRefresher();
+        }
+
+        if(this.commandComponentController != null){
+            this.commandComponentController.startPermissionTableRefresher();
+        }
+    }
+
+    public void close() {
+        this.sheetTableController.close();
+        this.permissionTableController.close();
+        this.commandComponentController.close();
     }
 }

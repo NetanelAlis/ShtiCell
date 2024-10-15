@@ -1,6 +1,6 @@
 package gui.customization;
 
-import dto.CellDTO;
+import dto.cell.CellDTO;
 import gui.main.view.MainViewController;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;

@@ -1,7 +1,12 @@
 package gui.main.view;
 
 import component.cell.api.CellType;
-import dto.*;
+import dto.cell.CellDTO;
+import dto.cell.ColoredCellDTO;
+import dto.range.RangeDTO;
+import dto.range.RangesDTO;
+import dto.sheet.ColoredSheetDTO;
+import dto.sheet.SheetDTO;
 import gui.Main;
 import gui.action.line.ActionLineController;
 import gui.cell.CellSubComponentController;

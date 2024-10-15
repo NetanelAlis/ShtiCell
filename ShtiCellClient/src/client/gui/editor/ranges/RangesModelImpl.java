@@ -1,7 +1,7 @@
 package client.gui.editor.ranges;
 
-import dto.RangeDTO;
-import dto.RangesDTO;
+import dto.range.RangeDTO;
+import dto.range.RangesDTO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;

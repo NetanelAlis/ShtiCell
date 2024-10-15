@@ -8,7 +8,14 @@ import component.range.api.Range;
 import component.range.impl.RangeImpl;
 import component.sheet.api.Sheet;
 import component.sheet.impl.SheetImpl;
-import dto.*;
+import dto.cell.CellDTO;
+import dto.permission.RequestedRequestForTableDTO;
+import dto.range.RangeDTO;
+import dto.range.RangesDTO;
+import dto.sheet.ColoredSheetDTO;
+import dto.sheet.SheetDTO;
+import dto.sheet.SheetMetaDataDTO;
+import dto.version.VersionChangesDTO;
 import jakarta.xml.bind.JAXBException;
 import javafx.scene.paint.Color;
 import jaxb.converter.api.XMLToSheetConverter;
@@ -20,27 +27,35 @@ import user.User;
 import user.permission.PermissionStatus;
 import user.permission.PermissionType;
 import logic.sort.Sorter;
-import user.request.api.PermissionRequestInEngine;
+import user.permission.request.PermissionRequest;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class EngineImpl implements Engine{
+public class EngineImpl implements Engine {
     private User owner;
     private String sheetName;
     private Sheet sheet;
     private Archive archive;
-    private Map<String, PermissionRequestInEngine> usersPermissions;
+    private Map<String, PermissionType> usersCurrentPermission;
+    private List<PermissionRequest> allPermissionRequests;
+    private final ReadWriteLock usersCurrentPermissionReadWriteLock;
+    private final ReadWriteLock allPermissionRequestsReadWriteLock;
 
     public EngineImpl(User owner) {
-        this.usersPermissions = new HashMap<>();
+        this.usersCurrentPermission = new HashMap<>();
+        this.allPermissionRequests = new LinkedList<>();
         this.owner = owner;
-        usersPermissions.put(owner.getUserName(), PermissionRequestInEngine.createPermissionRequestInEngine(PermissionType.OWNER, PermissionType.OWNER, PermissionStatus.OWNER));
+        usersCurrentPermission.put(owner.getUserName(), PermissionType.OWNER);
         this.archive = null;
         this.sheet = null;
         this.sheetName = null;
+        this.usersCurrentPermissionReadWriteLock = new ReentrantReadWriteLock();
+        this.allPermissionRequestsReadWriteLock = new ReentrantReadWriteLock();
     }
-    
+
     @Override
     public void loadData(String path) {
         try {
@@ -48,7 +63,7 @@ public class EngineImpl implements Engine{
             this.sheet = converter.convert(path);
             this.archive = new ArchiveImpl();
             this.archive.storeInArchive(this.sheet.copySheet());
-        } catch (JAXBException | FileNotFoundException e ) {
+        } catch (JAXBException | FileNotFoundException e) {
             throw new RuntimeException("Error loading data from file", e);
         }
     }
@@ -61,7 +76,7 @@ public class EngineImpl implements Engine{
             this.sheetName = this.sheet.getSheetName();
             this.archive = new ArchiveImpl();
             this.archive.storeInArchive(this.sheet.copySheet());
-        } catch (JAXBException | FileNotFoundException e ) {
+        } catch (JAXBException | FileNotFoundException e) {
             throw new RuntimeException("Error loading data from file", e);
         }
     }
@@ -81,11 +96,11 @@ public class EngineImpl implements Engine{
         Cell cellToUpdate = this.sheet.getCell(cellID);
         boolean isUpdatingEmptyToEmpty = cellToUpdate == null && value.isEmpty();
         boolean isOriginalValueChanged = cellToUpdate != null && !cellToUpdate.getOriginalValue().equals(value);
-        
+
         if (isUpdatingEmptyToEmpty) {
             return;
         }
-        
+
         SheetImpl newSheetVersion = this.sheet.copySheet();
         updateCell(cellID, value, newSheetVersion);
         Sheet tempSheet = this.sheet.updateSheet(newSheetVersion, isOriginalValueChanged);
@@ -136,55 +151,55 @@ public class EngineImpl implements Engine{
     public void saveToFile(String path) {
         this.archive.saveToFile(path);
     }
-    
+
     @Override
     public RangeDTO addRange(String rangeName, String range) {
         this.sheet.createRange(rangeName, range);
         return new RangeDTO(this.sheet.getRanges().get(rangeName));
     }
-    
+
     @Override
     public void removeRange(String rangeName) {
         this.sheet.deleteRange(rangeName);
     }
-    
+
     @Override
     public RangesDTO getAllRanges() {
         return new RangesDTO(this.sheet.getRanges());
     }
-    
+
     @Override
     public void updateCellStyle(String cellID, Color backgroundColor, Color textColor) {
-        if(this.sheet.getCell(cellID) == null) {
+        if (this.sheet.getCell(cellID) == null) {
             Cell cell = new CellImpl(cellID, "", this.sheet.getVersion(), this.sheet);
             this.sheet.getCells().put(cell.getCellId(), cell);
         }
-        
+
         this.sheet.getCell(cellID).setBackgroundColor(backgroundColor);
         this.sheet.getCell(cellID).setTextColor(textColor);
     }
-    
+
     @Override
     public ColoredSheetDTO sortRangeOfCells(String range, List<String> columnsToSortBy) {
         Sheet sortedSheet = this.sheet.copySheet();
         Sorter sorter = new Sorter(new RangeImpl("sort", range, sortedSheet), columnsToSortBy);
-        
+
         sorter.sort().getRangeCells().forEach(cell -> sortedSheet.getCells().put(cell.getCellId(), cell));
-        
+
         return new ColoredSheetDTO(sortedSheet);
     }
-    
+
     @Override
     public List<String> getColumnsListOfRange(String range) {
         Range rangeToFilter = new RangeImpl("range of columns", range, this.sheet.copySheet());
-        
+
         return rangeToFilter.getColumnsListOfRange();
     }
-    
+
     @Override
     public List<Returnable> getUniqueItemsToFilterBy(String column, String rangeName) {
         Range range = new RangeImpl("range of unique items", rangeName, this.sheet.copySheet());
-        
+
         return this.getUniqueItemsInColumn(column, range);
     }
 
@@ -205,13 +220,13 @@ public class EngineImpl implements Engine{
                 .stream()
                 .filter(cell -> cell.getCellId().contains(column))
                 .toList();
-        
+
         Set<Returnable> itemsSet = new LinkedHashSet<>();
         itemsList.forEach(cell -> itemsSet.add(cell.getEffectiveValue()));
-        
+
         return new ArrayList<>(itemsSet);
     }
-    
+
     @Override
     public ColoredSheetDTO filterRangeOfCells(String rangeToFilterBy, String columnToFilterBy, List<Integer> itemsToFilterBy) {
         Sheet filteredSheet = this.sheet.copySheet();
@@ -223,7 +238,7 @@ public class EngineImpl implements Engine{
         for (int itemToFilterIndex : itemsToFilterBy) {
             filteredItemsList.add(uniqueItemsList.get(itemToFilterIndex));
         }
-        filter.filter(columnToFilterBy,filteredItemsList)
+        filter.filter(columnToFilterBy, filteredItemsList)
                 .getRangeCells().forEach(cell -> filteredSheet.getCells().put(cell.getCellId(), cell));
         return new ColoredSheetDTO(filteredSheet);
     }
@@ -236,45 +251,85 @@ public class EngineImpl implements Engine{
     }
 
     @Override
+    public List<RequestedRequestForTableDTO> getAllRequestsAsRequestedRequestForTableDTO() {
+        List<RequestedRequestForTableDTO> requestedRequestForTableDTOs;
+
+        this.usersCurrentPermissionReadWriteLock.readLock().lock();
+        try {
+            requestedRequestForTableDTOs = new ArrayList<>(this.allPermissionRequests.size());
+
+            this.allPermissionRequests.forEach((permission) -> {
+                requestedRequestForTableDTOs.add(
+                        new RequestedRequestForTableDTO(
+                                permission.getSenderName(),
+                                permission.getRequestedPermissionType(),
+                                permission.getRequestedPermissionStatus()
+                        )
+                );
+            });
+        } finally {
+            this.usersCurrentPermissionReadWriteLock.readLock().unlock();
+        }
+
+        return requestedRequestForTableDTOs;
+    }
+
+    @Override
+    public void updatePermissionStatus(String requesterUserName, PermissionType requestedPermission, boolean requestApproved, int requestNumber) {
+        PermissionStatus permissionStatus;
+
+        if (requestApproved) {
+            permissionStatus = PermissionStatus.ACCEPTED;
+            this.usersCurrentPermissionReadWriteLock.writeLock().lock();
+            try {
+                this.usersCurrentPermission.put(requesterUserName, requestedPermission);
+            } finally {
+                this.usersCurrentPermissionReadWriteLock.writeLock().unlock();
+            }
+        } else {
+            permissionStatus = PermissionStatus.DENIED;
+        }
+
+        this.usersCurrentPermissionReadWriteLock.writeLock().lock();
+        try {
+            this.allPermissionRequests.get(requestNumber - 1).setRequestedPermissionStatus(permissionStatus);
+        } finally {
+            this.usersCurrentPermissionReadWriteLock.writeLock().unlock();
+        }
+    }
+
+    @Override
     public void createPermissionRequest(PermissionType requestedPermission, String username) {
-        PermissionRequestInEngine userPermissions = this.usersPermissions.get(username);
-
-        if(userPermissions == null && isNewPermissionIsRequested(requestedPermission, PermissionType.NONE)) {
-            usersPermissions.put(username, PermissionRequestInEngine.createPermissionRequestInEngine(PermissionType.NONE, requestedPermission, PermissionStatus.PENDING));
-        }
-        else if(userPermissions!= null && isNewPermissionIsRequested(requestedPermission, userPermissions.getCurrentPermission())) {
-
-            userPermissions.setRequestedPermissionStatus(PermissionStatus.PENDING);
-            userPermissions.setRequestedPermission(requestedPermission);
-        }
-
-        this.owner.createPermissionRequest(requestedPermission, this.sheetName, username);
-
-    }
-
-    private PermissionType getUserPermission(String userName){
-        PermissionRequestInEngine userPermissions = this.usersPermissions.get(userName);
-        PermissionType userPermissionType;
-
-        if(userPermissions == null) {
-            userPermissionType = PermissionType.NONE;
-        }
-        else {
-            userPermissionType = userPermissions.getRequestedPermissionType();
-        }
-
-        return userPermissionType;
-    }
-
-    private boolean isNewPermissionIsRequested(PermissionType requestedPermission, PermissionType currentPermission){
-        if(requestedPermission.equals(currentPermission)){
-            throw (new IllegalArgumentException("Already has " + requestedPermission.getType() + " permission for sheet " + this.sheetName));
-        }
-        else if(currentPermission == PermissionType.OWNER){
+        if (requestedPermission == PermissionType.OWNER) {
             throw (new IllegalArgumentException("Cannot crate permission request for your own sheet"));
         }
-        else{
-            return true;
+
+        this.allPermissionRequestsReadWriteLock.writeLock().lock();
+        PermissionRequest permissionRequestForOwner;
+
+        try {
+            PermissionRequest permissionRequest = new PermissionRequest(username,
+                    requestedPermission, PermissionStatus.PENDING, this.allPermissionRequests.size());
+            this.allPermissionRequests.add(permissionRequest);
+            permissionRequestForOwner = permissionRequest.deepCopy();
+        } finally {
+            this.allPermissionRequestsReadWriteLock.writeLock().unlock();
+        }
+        this.owner.createPermissionRequest(permissionRequestForOwner, this.sheetName);
+    }
+
+    private PermissionType getUserPermission(String userName) {
+        this.usersCurrentPermissionReadWriteLock.readLock().lock();
+        try{
+        PermissionType userCurrentPermission = this.usersCurrentPermission.get(userName);
+
+        if (userCurrentPermission == null) {
+            userCurrentPermission = PermissionType.NONE;
+        }
+
+        return userCurrentPermission;
+    } finally {
+            this.usersCurrentPermissionReadWriteLock.readLock().unlock();
         }
     }
 

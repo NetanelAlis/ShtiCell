@@ -1,8 +1,8 @@
 package client.gui.home.command;
 
 import client.gui.home.main.view.HomeViewController;
-import client.task.PermissionTableRefresher;
-import dto.ReceivedRequestDTO;
+import client.task.ReceivedPermissionTableRefresher;
+import dto.permission.ReceivedRequestForTableDTO;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
@@ -15,9 +15,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import okhttp3.ResponseBody;
-
 import java.io.Closeable;
 import java.util.List;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -74,16 +74,27 @@ public class CommandComponentController implements Closeable {
         this.sendPermissonRequestButton.disableProperty().bind(Bindings.or(
                 this.sheetNameTextField.textProperty().isEmpty(),
                 this.permissionChoiceBox.getSelectionModel().selectedItemProperty().isEqualTo("Permission Type")));
+
+        this.acceptPermissionButton.disableProperty().bind(this.requestTableView.getSelectionModel().selectedItemProperty().isNull());
+        this.declinePremissionButton.disableProperty().bind(this.requestTableView.getSelectionModel().selectedItemProperty().isNull());
     }
 
     @FXML
     void onAcceptPermissionClicked(ActionEvent event) {
-
+        PermissionRequestTableEntry selectedRequest = this.requestTableView.getSelectionModel().getSelectedItem();
+        if (selectedRequest != null) {
+            this.homeViewController.replyToPermissionRequest(
+                    this.requestTableView.getSelectionModel().getSelectedItem(),true);
+        }
     }
 
     @FXML
     void onDeclinePermissionClicked(ActionEvent event) {
-
+        PermissionRequestTableEntry selectedRequest = this.requestTableView.getSelectionModel().getSelectedItem();
+        if (selectedRequest != null) {
+            this.homeViewController.replyToPermissionRequest(
+                    this.requestTableView.getSelectionModel().getSelectedItem(),false);
+        }
     }
 
     @FXML
@@ -103,23 +114,37 @@ public class CommandComponentController implements Closeable {
     }
 
     public void startPermissionTableRefresher() {
-        tableRefresher = new PermissionTableRefresher(this::updateRequestTable);
+        tableRefresher = new ReceivedPermissionTableRefresher(this::updateRequestTable);
         timer = new Timer();
-        timer.schedule(tableRefresher, 10000, REFRESH_RATE);
+        timer.schedule(tableRefresher, REFRESH_RATE, REFRESH_RATE);
     }
 
-    public void addNewPermissionRequest(ReceivedRequestDTO receivedRequestDTO) {
+    public void addNewPermissionRequest(ReceivedRequestForTableDTO receivedRequestForTableDTO) {
             requestTableView.getItems().add(new PermissionRequestTableEntry(
-                    receivedRequestDTO.getRequesterUserName(),
-                    receivedRequestDTO.getSheetName(),
-                    receivedRequestDTO.getRequestedPermission().getType()));
+                    receivedRequestForTableDTO.getRequesterUserName(),
+                    receivedRequestForTableDTO.getSheetName(),
+                    receivedRequestForTableDTO.getRequestedPermission().getType(),
+                    receivedRequestForTableDTO.getRequestNumber()));
     }
 
-    private void updateRequestTable(List<ReceivedRequestDTO> requests) {
+    private void updateRequestTable(List<ReceivedRequestForTableDTO> requests) {
         Platform.runLater(() -> {
+            PermissionRequestTableEntry selectedRequest = this.requestTableView.getSelectionModel().getSelectedItem();
+
+
             ObservableList<PermissionRequestTableEntry> items = requestTableView.getItems();
             items.clear();
             requests.forEach(this::addNewPermissionRequest);
+
+            if(selectedRequest != null) {
+                for (PermissionRequestTableEntry requestEntry : this.requestTableView.getItems()) {
+                    if(Objects.equals(requestEntry, selectedRequest)){
+                        this.requestTableView.getSelectionModel().select(requestEntry);
+                        break;
+                    }
+                }
+            }
+
         });
     }
 

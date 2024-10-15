@@ -1,14 +1,13 @@
 package gui.grid;
 
-import dto.CellDTO;
-import dto.ColoredCellDTO;
-import dto.RangeDTO;
+import dto.cell.CellDTO;
+import dto.cell.ColoredCellDTO;
+import dto.range.RangeDTO;
 import gui.cell.CellModel;
 import gui.cell.CellSubComponentController;
 import gui.cell.DependenciesCellModel;
 import gui.main.view.MainViewController;
 import javafx.scene.control.Button;
-import javafx.scene.layout.GridPane;
 import logic.function.returnable.api.Returnable;
 import java.util.ArrayList;
 import java.util.HashMap;

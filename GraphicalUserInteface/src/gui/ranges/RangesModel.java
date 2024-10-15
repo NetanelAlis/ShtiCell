@@ -1,9 +1,7 @@
 package gui.ranges;
 
-import dto.RangeDTO;
-import javafx.beans.property.StringProperty;
+import dto.range.RangeDTO;
 import javafx.collections.ObservableList;
-import javafx.scene.control.ListView;
 
 public interface RangesModel {
     ObservableList<RangeDTO> rangesProperty();

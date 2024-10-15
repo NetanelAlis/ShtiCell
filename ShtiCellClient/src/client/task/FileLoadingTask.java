@@ -4,7 +4,7 @@ import client.gui.exception.ExceptionWindowController;
 import client.gui.home.file.upload.FileUploadController;
 import client.util.Constants;
 import client.util.http.HttpClientUtil;
-import dto.SheetMetaDataDTO;
+import dto.sheet.SheetMetaDataDTO;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import okhttp3.*;
@@ -18,13 +18,11 @@ public class FileLoadingTask extends Task<Boolean> {
     private String filePath;
     private FileUploadController fileUploadController;
     private Consumer<SheetMetaDataDTO> onFinished;
-    private String ownerName;
 
-    public FileLoadingTask(String filePath, FileUploadController fileUploadController, Consumer<SheetMetaDataDTO> onFinished,String ownerName) {
+    public FileLoadingTask(String filePath, FileUploadController fileUploadController, Consumer<SheetMetaDataDTO> onFinished) {
         this.filePath = filePath;
         this.fileUploadController = fileUploadController;
         this.onFinished = onFinished;
-        this.ownerName = ownerName;
     }
 
     @Override
@@ -63,13 +61,9 @@ public class FileLoadingTask extends Task<Boolean> {
                         .addFormDataPart("file", file.getName(), RequestBody.create(file, MediaType.parse("application/xml")))
                         .build();
 
-        HttpUrl url = Objects.requireNonNull(HttpUrl.parse(Constants.UPLOAD_FILE))
-                .newBuilder()
-                .addQueryParameter("username", this.ownerName)
-                .build();
 
         Request request = new Request.Builder()
-                .url(url)
+                .url(Constants.UPLOAD_FILE)
                 .post(body)
                 .build();
 

@@ -1,6 +1,13 @@
 package logic.engine;
 
-import dto.*;
+import dto.cell.CellDTO;
+import dto.permission.RequestedRequestForTableDTO;
+import dto.range.RangeDTO;
+import dto.range.RangesDTO;
+import dto.sheet.ColoredSheetDTO;
+import dto.sheet.SheetDTO;
+import dto.sheet.SheetMetaDataDTO;
+import dto.version.VersionChangesDTO;
 import javafx.scene.paint.Color;
 import logic.function.returnable.api.Returnable;
 import user.permission.PermissionType;
@@ -55,4 +62,8 @@ public interface Engine {
     ColoredSheetDTO filterRangeOfCells(String rangeToFilterBy, String columnToFilterBy, List<Integer> itemsToFilterBy);
 
     SheetMetaDataDTO getSheetMetaDataDTO(String userName);
+
+    List<RequestedRequestForTableDTO> getAllRequestsAsRequestedRequestForTableDTO();
+
+    void updatePermissionStatus(String requesterUserName, PermissionType requestedPermission, boolean requestApproved, int requestNumber);
 }

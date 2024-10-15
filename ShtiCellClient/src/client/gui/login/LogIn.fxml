@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.shape.Rectangle?>
+
+<ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="600.0" prefWidth="1000.0" stylesheets="@style/Log-in.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.gui.login.LoginController">
+   <content>
+      <StackPane styleClass="stack-pane-container">
+         <children>
+            <Rectangle arcHeight="5.0" arcWidth="10.0" height="502.0" stroke="TRANSPARENT" strokeType="INSIDE" width="350.0">
+               <fill>
+                  <LinearGradient endX="0.29166663776744495" endY="0.5075756966164617">
+                     <stops>
+                        <Stop>
+                           <color>
+                              <Color red="0.07777778059244156" green="0.5542592406272888" blue="1.0" />
+                           </color>
+                        </Stop>
+                        <Stop offset="1.0">
+                           <color>
+                              <Color red="0.30000001192092896" green="0.6616666913032532" blue="1.0" opacity="0.0" />
+                           </color>
+                        </Stop>
+                     </stops>
+                  </LinearGradient>
+               </fill>
+            </Rectangle>
+            <VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="300.0" spacing="25.0" stylesheets="@style/Log-in.css">
+                <!-- Title "Welcome" -->
+                <Label id="welcome-label" styleClass="welcome-label" text="Welcome" />
+               <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                     <Image url="@../resources/shticellLogo.png" />
+                  </image>
+               </ImageView>
+            
+                                                                         <!-- Email input field -->
+                <TextField fx:id="userNameTextField" onKeyTyped="#userNameKeyTyped" promptText="  Username" styleClass="input-field" />
+            
+                                                                         <!-- Login Button -->
+                <Button onAction="#loginButtonClicked" styleClass="login-button" text="LOGIN" />
+               <Label id="error-label" fx:id="errorMessageLabel" onKeyTyped="#userNameKeyTyped" wrapText="true" />
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
+            </VBox>
+         </children>
+      </StackPane>
+   </content>
+</ScrollPane>

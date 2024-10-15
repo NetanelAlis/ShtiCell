@@ -1,6 +1,6 @@
 package client.gui.editor.customization;
 
-import dto.CellDTO;
+import dto.cell.CellDTO;
 import client.gui.editor.main.view.MainEditorController;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;

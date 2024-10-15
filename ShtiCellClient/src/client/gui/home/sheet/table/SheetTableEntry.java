@@ -30,4 +30,13 @@ public class SheetTableEntry {
     public String getPermissions() {
         return permissions.get();
     }
+
+    public SheetTableEntry deepCopy() {
+        return new SheetTableEntry(
+                this.getUserName(),
+                this.getSheetName(),
+                this.getSheetSize(),
+                this.getPermissions()
+        );
+    }
 }
