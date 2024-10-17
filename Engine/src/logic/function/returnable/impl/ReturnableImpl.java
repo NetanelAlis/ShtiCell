@@ -1,5 +1,6 @@
 package logic.function.returnable.impl;
 
+import com.google.gson.Gson;
 import component.cell.api.CellType;
 import logic.function.returnable.api.Returnable;
 
@@ -45,4 +46,5 @@ public class ReturnableImpl implements Returnable {
     public int hashCode() {
         return Objects.hash(value, cellType);
     }
+
 }

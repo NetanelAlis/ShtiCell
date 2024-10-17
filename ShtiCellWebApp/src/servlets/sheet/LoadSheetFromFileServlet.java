@@ -28,7 +28,7 @@ public class LoadSheetFromFileServlet extends HttpServlet {
         EngineManager engineManager = ServletUtils.getEngineManager(getServletContext());
         UserManager userManager = ServletUtils.getUserManager(getServletContext());
         String username = SessionUtils.getUsername(request);
-        if(SessionUtils.isSessionExists(response, username)){
+        if(SessionUtils.userExistInSession(response, username)){
             return;
         }
         User user = userManager.getUser(username);

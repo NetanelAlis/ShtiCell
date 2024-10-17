@@ -3,6 +3,7 @@ package dto.sheet;
 import component.cell.api.Cell;
 import component.sheet.api.Sheet;
 import component.sheet.impl.SheetImpl;
+import dto.returnable.EffectiveValueDTO;
 import logic.function.returnable.api.Returnable;
 
 import java.util.HashMap;
@@ -11,7 +12,7 @@ import java.util.Map;
 public class SheetDTO {
     private final String sheetName;
     private final LayoutDTO layout;
-    private final Map<String, Returnable> cells;
+    private final Map<String, EffectiveValueDTO> cells;
     private final int version;
     private final int numOfCellsUpdated;
 
@@ -53,7 +54,7 @@ public class SheetDTO {
         this.cells = new HashMap<>();
 
         for (Cell cell : sheet.getCells().values()) {
-            this.cells.put(cell.getCellId(), cell.getEffectiveValue());
+            this.cells.put(cell.getCellId(), new EffectiveValueDTO(cell.getEffectiveValue()));
         }
     }
 
@@ -65,7 +66,7 @@ public class SheetDTO {
         return layout;
     }
 
-    public Map<String, Returnable> getCells() {
+    public Map<String, EffectiveValueDTO> getCells() {
         return cells;
     }
 

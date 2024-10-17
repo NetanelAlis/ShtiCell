@@ -1,14 +1,14 @@
 package client.gui.editor.graph;
 
+import dto.returnable.EffectiveValueDTO;
 import javafx.scene.chart.*;
-import logic.function.returnable.api.Returnable;
 import java.util.LinkedHashMap;
 
 
 public enum GraphType {
     LINE_CHART("Line Chart") {
         @Override
-        public Chart createChart(LinkedHashMap<Returnable, LinkedHashMap<Returnable, Returnable>> graphData) {
+        public Chart createChart(LinkedHashMap<EffectiveValueDTO, LinkedHashMap<EffectiveValueDTO, EffectiveValueDTO>> graphData) {
             try {
                 LineChart<String, Number> lineChart = new LineChart<>(new CategoryAxis(), new NumberAxis());
                 lineChart.setTitle(getChartType());
@@ -22,7 +22,7 @@ public enum GraphType {
     },
     BAR_CHART("Bar Chart") {
         @Override
-        public Chart createChart(LinkedHashMap<Returnable, LinkedHashMap<Returnable, Returnable>> graphData) {
+        public Chart createChart(LinkedHashMap<EffectiveValueDTO, LinkedHashMap<EffectiveValueDTO, EffectiveValueDTO>> graphData) {
             try {
                 BarChart<String, Number> barChart = new BarChart<>(new CategoryAxis(), new NumberAxis());
                 barChart.setTitle(getChartType());
@@ -36,7 +36,7 @@ public enum GraphType {
     },
     PIE_CHART("Pie Chart") {
         @Override
-        public Chart createChart(LinkedHashMap<Returnable, LinkedHashMap<Returnable, Returnable>> graphData) {
+        public Chart createChart(LinkedHashMap<EffectiveValueDTO, LinkedHashMap<EffectiveValueDTO, EffectiveValueDTO>> graphData) {
             try{
                 PieChart pieChart = new PieChart();
                 pieChart.setTitle(getChartType());
@@ -44,12 +44,13 @@ public enum GraphType {
                 graphData.forEach((seriesName, value) -> {
                     value.forEach((xAxis, yAxis) -> {
                         try {
-                            String label = seriesName.getValue().toString() + ": " + xAxis.getValue().toString();
-                            pieChart.getData().add(new PieChart.Data(label, yAxis.tryConvertTo(Double.class)));
-                        } catch (ClassCastException e) {
-                            throw new ClassCastException("Invalid Y-Axis for series: "+ seriesName.getValue() + " expected numeric but got:  " + yAxis.getValue());
+                            double yAxisValue = Double.parseDouble(yAxis.getEffectiveValue());
+                            String label = seriesName.getEffectiveValue() + ": " + xAxis.getEffectiveValue();
+                            pieChart.getData().add(new PieChart.Data(label, yAxisValue));
+                        } catch (NumberFormatException e) {
+                            throw new ClassCastException("Invalid Y-Axis for series: "+ seriesName.getEffectiveValue() + " expected numeric but got:  " + yAxis.getEffectiveValue());
                         } catch (RuntimeException e) {
-                            throw new NullPointerException("Empty Y-axis value for series: " + seriesName.getValue());
+                            throw new NullPointerException("Empty Y-axis value for series: " + seriesName.getEffectiveValue());
                         }
                     });
                 });
@@ -70,21 +71,22 @@ public enum GraphType {
         return chartType;
     }
 
-    public abstract Chart createChart(LinkedHashMap<Returnable, LinkedHashMap<Returnable, Returnable>> graphData);
+    public abstract Chart createChart(LinkedHashMap<EffectiveValueDTO, LinkedHashMap<EffectiveValueDTO, EffectiveValueDTO>> graphData);
 
     // Common method to populate LineChart or BarChart with data
-    protected void populateChartWithData(LinkedHashMap<Returnable, LinkedHashMap<Returnable, Returnable>> graphData, XYChart<String, Number> chart) {
+    protected void populateChartWithData(LinkedHashMap<EffectiveValueDTO, LinkedHashMap<EffectiveValueDTO, EffectiveValueDTO>> graphData, XYChart<String, Number> chart) {
         graphData.forEach((seriesName, value) -> {
             XYChart.Series<String, Number> series = new XYChart.Series<>();
-            series.setName("" + seriesName.getValue());
+            series.setName(seriesName.getEffectiveValue());
 
             value.forEach((xAxis, yAxis) -> {
                 try {
-                    series.getData().add(new XYChart.Data<>(xAxis.getValue().toString(), yAxis.tryConvertTo(Double.class)));
-                } catch (ClassCastException e) {
-                    throw new ClassCastException("Invalid Y-Axis for series: "+ seriesName.getValue() + " expected numeric but got:  " + yAxis.getValue());
+                    double yAxisValue = Double.parseDouble(yAxis.getEffectiveValue());
+                    series.getData().add(new XYChart.Data<>(xAxis.getEffectiveValue(), yAxisValue));
+                } catch (NumberFormatException e) {
+                    throw new ClassCastException("Invalid Y-Axis for series: "+ seriesName.getEffectiveValue() + " expected numeric but got:  " + yAxis.getEffectiveValue());
                 } catch (NullPointerException e) {
-                    throw new NullPointerException("Empty Y-axis value for series: " + seriesName.getValue());
+                    throw new NullPointerException("Empty Y-axis value for series: " + seriesName.getEffectiveValue());
                 }
             });
 

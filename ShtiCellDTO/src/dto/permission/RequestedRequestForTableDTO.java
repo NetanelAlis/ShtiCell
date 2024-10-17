@@ -18,11 +18,11 @@ public class RequestedRequestForTableDTO {
         return this.requesterUserName;
     }
 
-    public PermissionType getRequestedPermission() {
-        return this.requestedPermission;
+    public String getRequestedPermission() {
+        return this.requestedPermission.getType();
     }
 
-    public PermissionStatus getRequestPermissionStatus() {
-        return this.requestPermissionStatus;
+    public String getRequestPermissionStatus() {
+        return this.requestPermissionStatus.getStatus();
     }
 }

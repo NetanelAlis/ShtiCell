@@ -16,8 +16,6 @@ import dto.permission.ReceivedRequestForTableDTO;
 import dto.permission.SendRequestDTO;
 import dto.sheet.SheetMetaDataDTO;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,15 +23,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
-import user.permission.PermissionType;
-
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -135,7 +130,7 @@ public class HomeViewController implements Closeable {
     }
 
     public void sendNewPermissionRequest(String sheetName, String permissionType) {
-        SendRequestDTO sendRequestDTO = new SendRequestDTO(PermissionType.valueOf(permissionType.trim().toUpperCase()), sheetName);
+        SendRequestDTO sendRequestDTO = new SendRequestDTO(permissionType, sheetName);
         String json = Constants.GSON_INSTANCE.toJson(sendRequestDTO);
         RequestBody body = RequestBody.create(json, MediaType.parse("application/json"));
         Request request = new Request.Builder()
@@ -158,7 +153,7 @@ public class HomeViewController implements Closeable {
                     if (response.code() != 200) {
                         String responseBodyString = responseBody.string();
                         Platform.runLater(() -> {
-                            commandComponentController.updateErrorLabel(responseBody);
+                            commandComponentController.updateErrorLabel(responseBodyString);
                         });
                     } else {
                         Platform.runLater(() -> {
@@ -181,7 +176,7 @@ public class HomeViewController implements Closeable {
                 .addQueryParameter("request_approved", String.valueOf(approveRequest))
                 .build();
 
-        ReceivedRequestForTableDTO permissionRequest = new ReceivedRequestForTableDTO(PermissionType.valueOf(selectedItem.getPermissions().toUpperCase()), selectedItem.getSender(), selectedItem.getSheetName(), selectedItem.getRequestNumber());
+        ReceivedRequestForTableDTO permissionRequest = new ReceivedRequestForTableDTO(selectedItem.getPermissions(), selectedItem.getSender(), selectedItem.getSheetName(), selectedItem.getRequestNumber());
         String json = Constants.GSON_INSTANCE.toJson(permissionRequest);
 
         RequestBody body = RequestBody.create(json, MediaType.parse("application/json"));
@@ -235,5 +230,25 @@ public class HomeViewController implements Closeable {
         this.sheetTableController.close();
         this.permissionTableController.close();
         this.commandComponentController.close();
+    }
+
+    public void setInActive() {
+        try {
+            this.sheetTableController.close();
+            this.permissionTableController.close();
+            this.commandComponentController.close();
+        } catch (Exception ignored) {
+        }
+    }
+
+    public void viewSheet() {
+        if(this.lastSelectedSheetEntry == null){
+            this.commandComponentController.updateViewSheetErrorLabel("Please select a sheet");
+        } else if(this.lastSelectedSheetEntry.getPermissions().equalsIgnoreCase(Constants.NO_PERMISSION)){
+            this.commandComponentController.updateViewSheetErrorLabel("No permission to view sheet");
+        }
+        else
+            this.commandComponentController.updateViewSheetErrorLabel("");
+            this.mainAppViewController.switchToEditorPage(this.lastSelectedSheetEntry.getSheetName());
     }
 }

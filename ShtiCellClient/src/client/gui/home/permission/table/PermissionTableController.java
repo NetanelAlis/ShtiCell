@@ -60,7 +60,7 @@ public class PermissionTableController implements Closeable {
     }
 
     private void addNewRequestForPermissionTable(RequestedRequestForTableDTO requestedRequestForTableDTO) {
-        permissionTableView.getItems().add(new PermissionTableEntry(requestedRequestForTableDTO.getRequesterUserName(), requestedRequestForTableDTO.getRequestedPermission().getType(), requestedRequestForTableDTO.getRequestPermissionStatus().getStatus()));
+        permissionTableView.getItems().add(new PermissionTableEntry(requestedRequestForTableDTO.getRequesterUserName(), requestedRequestForTableDTO.getRequestedPermission(), requestedRequestForTableDTO.getRequestPermissionStatus()));
     }
 
     @Override

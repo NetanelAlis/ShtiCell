@@ -6,8 +6,8 @@ public class SendRequestDTO {
     private PermissionType requestedPermission;
     private String sheetName;
 
-    public SendRequestDTO(PermissionType requestedPermission, String sheetName) {
-        this.requestedPermission = requestedPermission;
+    public SendRequestDTO(String requestedPermissionAsString, String sheetName) {
+        this.requestedPermission = PermissionType.valueOf(requestedPermissionAsString.trim().toUpperCase());
         this.sheetName = sheetName;
     }
 

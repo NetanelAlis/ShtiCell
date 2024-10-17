@@ -7,8 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.stage.Stage;
-import java.util.Optional;
-import java.util.function.Consumer;
+
 
 public class FileUploadController {
 

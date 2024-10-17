@@ -1,6 +1,7 @@
 package client.gui.editor.command;
 
 import client.gui.editor.main.view.MainEditorController;
+import dto.returnable.EffectiveValueDTO;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -10,7 +11,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import logic.function.returnable.api.Returnable;
 import java.util.ArrayList;
 import java.util.List;
 import static client.gui.editor.main.view.MainEditorController.effectiveValueFormatter;
@@ -94,7 +94,7 @@ public class CommandsController {
         this.filterColumnChoiceBox.getSelectionModel().selectedItemProperty()
                 .addListener((observable, oldValue, newValue) -> {
             if(newValue != null && !newValue.equals("Select Column")) {
-                List<Returnable> availableFilters =
+                List<EffectiveValueDTO> availableFilters =
                         this.mainEditorController.getUniqueItems(this.filterColumnChoiceBox.getValue(),
                                 getCurrentRangeAsString());
                 this.filterElementMenuButton.getItems().clear();

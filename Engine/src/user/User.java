@@ -28,6 +28,7 @@ public class User {
         }
 
         requests.add(requestedPermission);
+        this.permissionsRequests.put(sheetName, requests);
 
     } finally {
             this.permissionsRequestsReadWriteLock.writeLock().unlock();
@@ -41,7 +42,7 @@ public class User {
         try {
             permissionsRequests.forEach((sheetName, requests) -> {
                 requests.forEach((permissionRequest) -> {
-                    receivedRequestForTableDTOsToReturn.add(new ReceivedRequestForTableDTO(permissionRequest.getRequestedPermissionType(),
+                    receivedRequestForTableDTOsToReturn.add(new ReceivedRequestForTableDTO(permissionRequest.getRequestedPermissionType().getType(),
                             permissionRequest.getSenderName(), sheetName, permissionRequest.getRequestNumber()));
                 });
             });

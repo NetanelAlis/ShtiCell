@@ -24,9 +24,4 @@ public interface Cell extends Serializable {
     void updateVersion(int newVersion);
     Set<String> getUsedRanges();
     void updateCellID(String newID);
-    
-    static String createCellID(int row, int col) {
-        char column = (char) ('A' + col - 1);
-        return "" + column + row;
-    }
 }

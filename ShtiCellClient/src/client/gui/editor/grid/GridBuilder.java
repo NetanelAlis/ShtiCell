@@ -1,6 +1,5 @@
 package client.gui.editor.grid;
 
-import component.cell.api.Cell;
 import client.gui.editor.cell.CellSubComponentController;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -60,7 +59,7 @@ public class GridBuilder {
         for (int i = 1; i <= this.numOfRows; i++) {
             for (int j = 1; j <= this.numOfCols; j++) {
                 FXMLLoader loader = new FXMLLoader();
-                String cellID = Cell.createCellID(i, j);
+                String cellID = this.createCellID(i, j);
                 URL url = getClass().getResource("/client/gui/editor/cell/CellSubComponent.fxml");
                 loader.setLocation(url);
                 Label cell = loader.load();
@@ -156,5 +155,10 @@ public class GridBuilder {
             
             columnConstraints.add(currentColumn);
         }
+    }
+
+    private String createCellID(int row, int col) {
+        char column = (char) ('A' + col - 1);
+        return "" + column + row;
     }
 }

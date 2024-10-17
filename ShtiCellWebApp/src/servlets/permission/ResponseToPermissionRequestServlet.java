@@ -9,6 +9,7 @@ import logic.engine.Engine;
 import managers.EngineManager;
 import managers.UserManager;
 import user.User;
+import user.permission.PermissionType;
 import utils.Constants;
 import utils.ServletUtils;
 import utils.SessionUtils;
@@ -25,7 +26,7 @@ import java.io.IOException;
             UserManager userManager = ServletUtils.getUserManager(getServletContext());
             String sheetOwnerName = SessionUtils.getUsername(request);
 
-            if(SessionUtils.isSessionExists(response, sheetOwnerName)){
+            if(SessionUtils.userExistInSession(response, sheetOwnerName)){
                 return;
             }
 
@@ -56,7 +57,7 @@ import java.io.IOException;
             try{
                 sheetOwner.removeRequestForSheetPermission(ownerResponseForTheRequest.getSheetName(), ownerResponseForTheRequest.getRequestNumber());
                 engine.updatePermissionStatus(ownerResponseForTheRequest.getRequesterUserName(),
-                        ownerResponseForTheRequest.getRequestedPermission(), requestAnswer.equals("true"), ownerResponseForTheRequest.getRequestNumber());
+                        PermissionType.valueOf(ownerResponseForTheRequest.getRequestedPermission().trim().toUpperCase()) , requestAnswer.equals("true"), ownerResponseForTheRequest.getRequestNumber());
             } catch (RuntimeException e){
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 response.getWriter().println(e.getMessage());

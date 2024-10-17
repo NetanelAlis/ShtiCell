@@ -12,6 +12,7 @@ import dto.cell.CellDTO;
 import dto.permission.RequestedRequestForTableDTO;
 import dto.range.RangeDTO;
 import dto.range.RangesDTO;
+import dto.returnable.EffectiveValueDTO;
 import dto.sheet.ColoredSheetDTO;
 import dto.sheet.SheetDTO;
 import dto.sheet.SheetMetaDataDTO;
@@ -21,7 +22,6 @@ import javafx.scene.paint.Color;
 import jaxb.converter.api.XMLToSheetConverter;
 import jaxb.converter.impl.XMLToSheetConverterImpl;
 import logic.filter.Filter;
-import logic.function.returnable.api.Returnable;
 import logic.graph.GraphSeriesBuilder;
 import user.User;
 import user.permission.PermissionStatus;
@@ -52,6 +52,7 @@ public class EngineImpl implements Engine {
         this.archive = null;
         this.sheet = null;
         this.sheetName = null;
+        this.allPermissionRequests.add(new PermissionRequest(this.owner.getUserName(), PermissionType.OWNER, PermissionStatus.OWNER, 0));
         this.usersCurrentPermissionReadWriteLock = new ReentrantReadWriteLock();
         this.allPermissionRequestsReadWriteLock = new ReentrantReadWriteLock();
     }
@@ -112,6 +113,7 @@ public class EngineImpl implements Engine {
 
     private void updateCell(String cellID, String value, Sheet newSheetVersion) {
         Cell cellToUpdate = newSheetVersion.getCell(cellID);
+
         if (cellToUpdate != null) {
             cellToUpdate.getUsedRanges().forEach(range -> {
                 Range currentRange = newSheetVersion.getRanges().get(range);
@@ -197,14 +199,14 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public List<Returnable> getUniqueItemsToFilterBy(String column, String rangeName) {
+    public List<EffectiveValueDTO> getUniqueItemsToFilterBy(String column, String rangeName) {
         Range range = new RangeImpl("range of unique items", rangeName, this.sheet.copySheet());
 
         return this.getUniqueItemsInColumn(column, range);
     }
 
     @Override
-    public LinkedHashMap<Returnable, LinkedHashMap<Returnable, Returnable>> getGraphFromRange(String rangeToBuildGraphFrom) {
+    public LinkedHashMap<EffectiveValueDTO, LinkedHashMap<EffectiveValueDTO, EffectiveValueDTO>> getGraphFromRange(String rangeToBuildGraphFrom) {
         GraphSeriesBuilder graphSeries = new GraphSeriesBuilder(new RangeImpl("range of graph", rangeToBuildGraphFrom, this.sheet.copySheet()));
 
         return graphSeries.build();
@@ -215,14 +217,14 @@ public class EngineImpl implements Engine {
         return this.sheetName;
     }
 
-    private List<Returnable> getUniqueItemsInColumn(String column, Range range) {
+    private List<EffectiveValueDTO> getUniqueItemsInColumn(String column, Range range) {
         List<Cell> itemsList = range.getRangeCells()
                 .stream()
                 .filter(cell -> cell.getCellId().contains(column))
                 .toList();
 
-        Set<Returnable> itemsSet = new LinkedHashSet<>();
-        itemsList.forEach(cell -> itemsSet.add(cell.getEffectiveValue()));
+        Set<EffectiveValueDTO> itemsSet = new LinkedHashSet<>();
+        itemsList.forEach(cell -> itemsSet.add(new EffectiveValueDTO(cell.getEffectiveValue())));
 
         return new ArrayList<>(itemsSet);
     }
@@ -233,8 +235,8 @@ public class EngineImpl implements Engine {
         Range rangeToFilter = new RangeImpl("range to filter", rangeToFilterBy, filteredSheet);
         rangeToFilter.getRangeCells().forEach(cell -> filteredSheet.getCells().remove(cell.getCellId()));
         Filter filter = new Filter(rangeToFilter);
-        List<Returnable> uniqueItemsList = this.getUniqueItemsInColumn(columnToFilterBy, rangeToFilter);
-        List<Returnable> filteredItemsList = new ArrayList<>();
+        List<EffectiveValueDTO> uniqueItemsList = this.getUniqueItemsInColumn(columnToFilterBy, rangeToFilter);
+        List<EffectiveValueDTO> filteredItemsList = new ArrayList<>();
         for (int itemToFilterIndex : itemsToFilterBy) {
             filteredItemsList.add(uniqueItemsList.get(itemToFilterIndex));
         }
@@ -292,7 +294,7 @@ public class EngineImpl implements Engine {
 
         this.usersCurrentPermissionReadWriteLock.writeLock().lock();
         try {
-            this.allPermissionRequests.get(requestNumber - 1).setRequestedPermissionStatus(permissionStatus);
+            this.allPermissionRequests.get(requestNumber).setRequestedPermissionStatus(permissionStatus);
         } finally {
             this.usersCurrentPermissionReadWriteLock.writeLock().unlock();
         }
@@ -300,7 +302,7 @@ public class EngineImpl implements Engine {
 
     @Override
     public void createPermissionRequest(PermissionType requestedPermission, String username) {
-        if (requestedPermission == PermissionType.OWNER) {
+        if (this.owner.getUserName().equals(username)) {
             throw (new IllegalArgumentException("Cannot crate permission request for your own sheet"));
         }
 

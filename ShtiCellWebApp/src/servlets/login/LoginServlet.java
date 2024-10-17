@@ -12,7 +12,7 @@ import utils.SessionUtils;
 
 import java.io.IOException;
 
-@WebServlet(name = "Permission", urlPatterns = "/login")
+@WebServlet(name = "Login Servlet", urlPatterns = "/login")
 public class LoginServlet extends HttpServlet {
 
     @Override

@@ -12,6 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 
 import java.io.IOException;
 import java.net.URL;
@@ -24,7 +25,7 @@ public class MainAppViewController {
     private Parent homeViewComponent;
     private HomeViewController homeViewController;
 
-    private Parent editorViewComponent;
+    private BorderPane editorViewComponent;
     private MainEditorController editorViewController;
 
     @FXML
@@ -44,7 +45,7 @@ public class MainAppViewController {
 
         this.loadLoginPage();
         this.loadHomePage();
-//        loadEditorPage();
+        this.loadEditorPage();
 
     }
 
@@ -83,7 +84,6 @@ public class MainAppViewController {
             this.editorViewComponent = fxmlLoader.load();
             this.editorViewController = fxmlLoader.getController();
             this.editorViewController.setAppMainController(this);
-            this.setMainPanelTo(this.editorViewComponent);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -99,8 +99,15 @@ public class MainAppViewController {
     }
 
     public void switchToHomePage() {
+        this.editorViewController.setInActive();
         setMainPanelTo(this.homeViewComponent);
         this.homeViewController.setActive();
+    }
+
+    public void switchToEditorPage(String sheenName) {
+        this.homeViewController.setInActive();
+        this.editorViewController.setActive(sheenName);
+        setMainPanelTo(this.editorViewComponent);
     }
 
 //    public void switchToLogin() {
@@ -120,4 +127,7 @@ public class MainAppViewController {
         this.homeViewController.close();
     }
 
+    public Parent getEditorViewRootComponent() {
+        return this.editorViewComponent;
+    }
 }

@@ -8,13 +8,8 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import okhttp3.ResponseBody;
 import java.io.Closeable;
 import java.util.List;
 import java.util.Objects;
@@ -54,6 +49,9 @@ public class CommandComponentController implements Closeable {
 
     @FXML
     private Button viewSheetButton;
+
+    @FXML
+    private Label viewSheetErrorLabel;
 
     private HomeViewController homeViewController;
     private TimerTask tableRefresher;
@@ -106,6 +104,7 @@ public class CommandComponentController implements Closeable {
 
     @FXML
     void onViewSheetClicked(ActionEvent event) {
+        this.homeViewController.viewSheet();
 
     }
 
@@ -123,14 +122,14 @@ public class CommandComponentController implements Closeable {
             requestTableView.getItems().add(new PermissionRequestTableEntry(
                     receivedRequestForTableDTO.getRequesterUserName(),
                     receivedRequestForTableDTO.getSheetName(),
-                    receivedRequestForTableDTO.getRequestedPermission().getType(),
+                    receivedRequestForTableDTO.getRequestedPermission(),
                     receivedRequestForTableDTO.getRequestNumber()));
     }
 
     private void updateRequestTable(List<ReceivedRequestForTableDTO> requests) {
         Platform.runLater(() -> {
             PermissionRequestTableEntry selectedRequest = this.requestTableView.getSelectionModel().getSelectedItem();
-
+            String selectedRequestForPermissionName = (selectedRequest != null) ? selectedRequest.getSheetName() : null;
 
             ObservableList<PermissionRequestTableEntry> items = requestTableView.getItems();
             items.clear();
@@ -138,7 +137,7 @@ public class CommandComponentController implements Closeable {
 
             if(selectedRequest != null) {
                 for (PermissionRequestTableEntry requestEntry : this.requestTableView.getItems()) {
-                    if(Objects.equals(requestEntry, selectedRequest)){
+                    if(Objects.equals(requestEntry.getSheetName(), selectedRequestForPermissionName)){
                         this.requestTableView.getSelectionModel().select(requestEntry);
                         break;
                     }
@@ -165,6 +164,11 @@ public class CommandComponentController implements Closeable {
         // this.errorLabelClear
     }
 
-    public void updateErrorLabel(ResponseBody responseBody) {
+    public void updateErrorLabel(String message) {
+        this.viewSheetErrorLabel.setText(message);
+    }
+
+    public void updateViewSheetErrorLabel(String message) {
+        this.viewSheetErrorLabel.setText(message);
     }
 }

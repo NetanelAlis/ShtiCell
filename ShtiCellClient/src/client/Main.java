@@ -9,7 +9,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
@@ -24,12 +23,12 @@ public class Main extends Application {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(url);
             Parent root = loader.load(url.openStream());
-            MainAppViewController mainAppViewController = loader.getController();
+            mainAppViewController = loader.getController();
             Scene scene = new Scene(root, 1000, 600);
             stage.setTitle("ShtiCell v3.0");
             stage.getIcons().add(
                     new Image(Objects.requireNonNull(
-                            Main.class.getResourceAsStream("/client/gui/resources/shticellLogo.png"))));
+                            Main.class.getResourceAsStream(Constants.SHTICELL_ICON_LOCATION))));
             stage.setScene(scene);
             //        controller.setPrimaryStage(stage);
             stage.show();
@@ -41,7 +40,7 @@ public class Main extends Application {
     @Override
     public void stop() throws IOException {
         HttpClientUtil.shutdown();
-        this.mainAppViewController.close();
+        mainAppViewController.close();
     }
 
     public static void main(String[] args) {

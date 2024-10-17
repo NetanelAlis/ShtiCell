@@ -22,7 +22,7 @@ public class SheetPermissionRequestServlet extends HttpServlet {
         String username = SessionUtils.getUsername(request);
         EngineManager engineManager = ServletUtils.getEngineManager(getServletContext());
 
-        if(SessionUtils.isSessionExists(response, username)){
+        if(SessionUtils.userExistInSession(response, username)){
             return;
         }
 

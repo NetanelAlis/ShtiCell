@@ -6,21 +6,16 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.FileChooser;
-import java.io.File;
 
 public class TopSubComponentController {
     
     @FXML private ActionLineController actionLineController;
     @FXML private ChoiceBox<String> versionsChoiceBox;
-    @FXML private TextField filePathTextField;
     @FXML private TitledPane sheetNameTitledPane;
 
-    private StringProperty filePathProperty;
     private StringProperty sheetNameProperty;
     private StringProperty sheetVersionProperty;
     private MainEditorController mainEditorController;
@@ -28,7 +23,6 @@ public class TopSubComponentController {
     private int lastSelectVersion = 1;
 
     public TopSubComponentController() {
-        this.filePathProperty = new SimpleStringProperty("path/to/your/xml/file/fileName.xml");
         this.sheetNameProperty = new SimpleStringProperty("Sheet Name");
         this.sheetVersionProperty = new SimpleStringProperty("-");
         this.isFileLoadedProperty = new SimpleBooleanProperty(false);
@@ -43,7 +37,6 @@ public class TopSubComponentController {
         this.versionsChoiceBox.getItems().add("Select Version");
         this.versionsChoiceBox.getSelectionModel().select("Select Version");
 
-        this.filePathTextField.textProperty().bind(this.filePathProperty);
         this.sheetNameTitledPane.textProperty().bind(this.sheetNameProperty);
         this.versionsChoiceBox.disableProperty().bind(this.isFileLoadedProperty.not());
 
@@ -55,32 +48,18 @@ public class TopSubComponentController {
             }
                 this.versionsChoiceBox.getSelectionModel().selectFirst();
         });
-
-
     }
-    
-    @FXML
-    private void onLoadXMLPressed(ActionEvent event) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Select Sheet file");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("xml files", "*.xml"));
-        File selectedFile = this.mainEditorController.getFilePath(fileChooser);
-        if (selectedFile == null) {
-            return;
-        }
-        
-        String absolutePath = selectedFile.getAbsolutePath();
-//        this.mainEditorController.loadNewSheetFromXML(absolutePath);
-        this.filePathProperty.set(absolutePath);
-    }
+
     
     @FXML
     public void onVersionMenuClicked(MouseEvent mouseEvent) {
         mouseEvent.consume();
 
-        int numOfVersions = this.mainEditorController.getSheetVersions();
+        this.mainEditorController.getLatestVersionNumber();
+    }
 
-        for (int i = 1; i <= numOfVersions; i++) {
+    public void updateVersionsChoiceBox(int lastSheetVersionNumber) {
+        for (int i = 1; i <= lastSheetVersionNumber; i++) {
             if(!this.versionsChoiceBox.getItems().contains("version " + i)) {
                 this.versionsChoiceBox.getItems().add("version " + i);
                 this.lastSelectVersion = i;
@@ -88,7 +67,6 @@ public class TopSubComponentController {
             };
         }
         this.versionsChoiceBox.show();
-
     }
     
     public void setMainController(MainEditorController mainEditorController) {

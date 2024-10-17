@@ -13,14 +13,14 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-@WebServlet(name = "Permission", urlPatterns = "/refreshPermissionTable")
+@WebServlet(name = "Get Requested Permission Requests Table Servlet", urlPatterns = "/refreshPermissionTable")
 public class RequestedPermissionRequestTableServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
         try (PrintWriter out = response.getWriter()) {
             EngineManager engineManager = ServletUtils.getEngineManager(getServletContext());
-            Engine engine = engineManager.getEngine(request.getParameter(Constants.SHEETNAME));
+            Engine engine = engineManager.getEngine(request.getParameter(Constants.SHEET_NAME));
             List<RequestedRequestForTableDTO> requestedRequestForTableDTOS = engine.getAllRequestsAsRequestedRequestForTableDTO();
             String json = Constants.GSON_INSTANCE.toJson(requestedRequestForTableDTOS);
             out.println(json);

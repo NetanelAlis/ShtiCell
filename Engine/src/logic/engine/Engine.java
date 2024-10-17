@@ -4,6 +4,7 @@ import dto.cell.CellDTO;
 import dto.permission.RequestedRequestForTableDTO;
 import dto.range.RangeDTO;
 import dto.range.RangesDTO;
+import dto.returnable.EffectiveValueDTO;
 import dto.sheet.ColoredSheetDTO;
 import dto.sheet.SheetDTO;
 import dto.sheet.SheetMetaDataDTO;
@@ -40,9 +41,9 @@ public interface Engine {
 
     List<String> getColumnsListOfRange(String rangeToFilter);
 
-    List<Returnable> getUniqueItemsToFilterBy(String columnToFilterBy, String rangeToFilter);
+    List<EffectiveValueDTO> getUniqueItemsToFilterBy(String columnToFilterBy, String rangeToFilter);
 
-    LinkedHashMap<Returnable, LinkedHashMap<Returnable, Returnable>> getGraphFromRange(String rangeToBuildGraphFrom);
+    LinkedHashMap<EffectiveValueDTO, LinkedHashMap<EffectiveValueDTO, EffectiveValueDTO>> getGraphFromRange(String rangeToBuildGraphFrom);
 
     String getSheetName();
 

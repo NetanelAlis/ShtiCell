@@ -8,15 +8,15 @@ public class ReceivedRequestForTableDTO {
     private String requesterUserName;
     private int requestNumber;
 
-    public ReceivedRequestForTableDTO(PermissionType requestedPermission, String requesterUserName, String sheetName, int requestNumber) {
-        this.requestedPermission = requestedPermission;
+    public ReceivedRequestForTableDTO(String requestedPermissionAsString, String requesterUserName, String sheetName, int requestNumber) {
+        this.requestedPermission = PermissionType.valueOf(requestedPermissionAsString.trim().toUpperCase());
         this.requesterUserName = requesterUserName;
         this.sheetName = sheetName;
         this.requestNumber = requestNumber;
     }
 
-    public PermissionType getRequestedPermission() {
-        return requestedPermission;
+    public String getRequestedPermission() {
+        return this.requestedPermission.getType();
     }
 
     public String getRequesterUserName() {
