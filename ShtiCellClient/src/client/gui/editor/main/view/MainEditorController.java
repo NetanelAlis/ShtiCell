@@ -15,6 +15,7 @@ import client.gui.editor.grid.SheetGridController;
 import client.gui.editor.ranges.RangesController;
 import client.gui.editor.top.TopSubComponentController;
 import dto.cell.CellDTO;
+import dto.cell.CellStyleDTO;
 import dto.cell.ColoredCellDTO;
 import dto.range.RangeDTO;
 import dto.range.RangesDTO;
@@ -148,15 +149,6 @@ public class MainEditorController {
         }
     }
 
-    public boolean deleteRange(RangeDTO rangeToDelete) {
-        try {
-            this.engine.removeRange(rangeToDelete.getName());
-            return true;
-        } catch (RuntimeException e) {
-            this.rangesController.updateDeleteErrorLabel(e.getMessage());
-            return false;
-        }
-    }
 
     public void toggleSelectedRange(RangeDTO selectedRange, RangeDTO previousSelectedRange) {
         this.sheetGridController.toggleSelectedRange(selectedRange, previousSelectedRange);
@@ -203,26 +195,6 @@ public class MainEditorController {
             }
         });
     }
-
-    public void setCellStyle(String cellID, Color backgroundColor, Color textColor) {
-        this.cellSubComponentControllerMap.get(cellID).setCellStyle(backgroundColor, textColor);
-        this.engine.updateCellStyle(cellID, backgroundColor, textColor);
-    }
-
-    public boolean sortRange(String rangeToSort, List<String> columnsToSortBy) {
-        try {
-            ColoredSheetDTO sortedSheet = this.engine.sortRangeOfCells(rangeToSort, columnsToSortBy);
-            createReadonlyGrid(sortedSheet, " - Sorted");
-            return true;
-        } catch (ClassCastException e) {
-            this.commandsController.updateSortErrorLabel("Cannot sort by non-numeric column");
-            return false;
-        } catch (RuntimeException e) {
-            this.commandsController.updateSortErrorLabel(e.getMessage());
-            return false;
-        }
-    }
-
     public boolean filterRange(String rangeToFilterBy, String columnToFilterBy, List<Integer> itemsToFilterBy) {
         try {
             ColoredSheetDTO filteredSheet = this.engine.filterRangeOfCells(rangeToFilterBy, columnToFilterBy, itemsToFilterBy);
@@ -395,7 +367,7 @@ public class MainEditorController {
             }
 
             @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) {
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException{
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody.string();
                     if (response.code() != 200) {
@@ -411,10 +383,6 @@ public class MainEditorController {
                             initializeSheetLayoutAndController(sheetDTO, rangesDto);
                         });
                     }
-                } catch (RuntimeException | IOException e) {
-                    Platform.runLater(() -> {
-                        ExceptionWindowController.openExceptionPopup(e.getMessage());
-                    });
                 }
             }
         });
@@ -443,6 +411,8 @@ public class MainEditorController {
         topSubComponentController.setSheetNameAndVersion(sheetDTO.getSheetName(), sheetDTO.getVersion());
     }
 
+    ///////////////////////Cell//////////////////////////////////////////
+
     private void getSingleCellDataAsDTO(String cellID) {
         HttpUrl url = Objects.requireNonNull(HttpUrl.parse(Constants.GET_CELL))
                 .newBuilder()
@@ -463,7 +433,7 @@ public class MainEditorController {
             }
 
             @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) {
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException{
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody.string();
                     if (response.code() != 200) {
@@ -478,10 +448,6 @@ public class MainEditorController {
                             customizationsController.setSelectedCell(cellDTO);
                         });
                     }
-                } catch (RuntimeException | IOException e) {
-                    Platform.runLater(() -> {
-                        ExceptionWindowController.openExceptionPopup(e.getMessage());
-                    });
                 }
             }
         });
@@ -509,7 +475,7 @@ public class MainEditorController {
             }
 
             @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) {
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException{
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody.string();
                     if (response.code() != 200) {
@@ -524,10 +490,6 @@ public class MainEditorController {
                             updateControllersAfterCellUpdate(sheetAndCellDTO.getSheet(), sheetAndCellDTO.getCell());
                         });
                     }
-                } catch (RuntimeException | IOException e) {
-                    Platform.runLater(() -> {
-                        ExceptionWindowController.openExceptionPopup(e.getMessage());
-                    });
                 }
             }
         });
@@ -539,6 +501,48 @@ public class MainEditorController {
         this.sheetGridController.showSelectedCellAndDependencies(cell);
         this.topSubComponentController.updateSheetVersion(sheet.getVersion());
     }
+
+//    public void setCellStyle(String cellID, Color backgroundColor, Color textColor) {
+//        this.cellSubComponentControllerMap.get(cellID).setCellStyle(backgroundColor, textColor);
+//        this.engine.updateCellStyle(cellID, backgroundColor, textColor);
+//    }
+
+    public void setCellStyle(String cellID, Color backgroundColor, Color textColor) {
+        this.cellSubComponentControllerMap.get(cellID).setCellStyle(backgroundColor, textColor);
+
+        CellStyleDTO cellStyleDTO = new CellStyleDTO(cellID, backgroundColor, textColor);
+        String json = Constants.GSON_INSTANCE.toJson(cellStyleDTO);
+        RequestBody body = RequestBody.create(json, MediaType.parse("application/json"));
+
+        Request request = new Request.Builder()
+                .url(Constants.UPDATE_CELL_STYLE)
+                .post(body)
+                .build();
+
+        HttpClientUtil.runAsync(request, new Callback() {
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Platform.runLater(() ->
+                        ExceptionWindowController.openExceptionPopup("Something went wrong: " + e.getMessage())
+                );
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException{
+                try (ResponseBody responseBody = response.body()) {
+                    String responseBodyString = responseBody.string();
+                    if (response.code() != 200) {
+                        Platform.runLater(() -> {
+                            ExceptionWindowController.openExceptionPopup(responseBodyString);
+                        });
+                    }
+                }
+            }
+        });
+    }
+
+    ///////////////Sheet//////////////////////////////
 
     public void getLatestVersionNumber() {
 
@@ -556,7 +560,7 @@ public class MainEditorController {
             }
 
             @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) {
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException{
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody.string();
                     if (response.code() != 200) {
@@ -570,10 +574,6 @@ public class MainEditorController {
                             topSubComponentController.updateVersionsChoiceBox(latestSheetVersionNumber);
                         });
                     }
-                } catch (RuntimeException | IOException e) {
-                    Platform.runLater(() -> {
-                        ExceptionWindowController.openExceptionPopup(e.getMessage());
-                    });
                 }
             }
         });
@@ -600,7 +600,7 @@ public class MainEditorController {
             }
 
             @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) {
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException{
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody.string();
                     if (response.code() != 200) {
@@ -611,17 +611,15 @@ public class MainEditorController {
                         ColoredSheetDTO coloredSheetDTO = Constants.GSON_INSTANCE.fromJson(responseBodyString, ColoredSheetDTO.class);
 
                         Platform.runLater(() -> {
-                           createReadonlyGrid(coloredSheetDTO, " - version " + coloredSheetDTO.getVersion());
+                            createReadonlyGrid(coloredSheetDTO, " - version " + coloredSheetDTO.getVersion());
                         });
                     }
-                } catch (RuntimeException | IOException e) {
-                    Platform.runLater(() -> {
-                        ExceptionWindowController.openExceptionPopup(e.getMessage());
-                    });
                 }
             }
         });
     }
+
+    /////////////////////////////Ranges//////////////////////////////////////////////
 
     public void addNewRange(String rangeName, String from, String to) {
 
@@ -645,7 +643,7 @@ public class MainEditorController {
             }
 
             @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) {
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody.string();
                     if (response.code() != 200) {
@@ -659,13 +657,105 @@ public class MainEditorController {
                             rangesController.addNewRange(rangesDTO);
                         });
                     }
-                } catch (RuntimeException | IOException e) {
-                    Platform.runLater(() -> {
-                        ExceptionWindowController.openExceptionPopup(e.getMessage());
-                    });
                 }
             }
         });
     }
+
+    public void deleteRange(String rangeName) {
+
+        HttpUrl url = Objects.requireNonNull(HttpUrl.parse(Constants.DELETE_RANG))
+                .newBuilder()
+                .addQueryParameter("rangename", rangeName)
+                .build();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        HttpClientUtil.runAsync(request, new Callback() {
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Platform.runLater(() ->
+                        ExceptionWindowController.openExceptionPopup("Something went wrong: " + e.getMessage())
+                );
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException{
+                try (ResponseBody responseBody = response.body()) {
+                    String responseBodyString = responseBody.string();
+                    if (response.code() != 200) {
+                        Platform.runLater(() -> {
+                            rangesController.updateDeleteErrorLabel(responseBodyString);
+                        });
+                    } else {
+                        Platform.runLater(() -> {
+                            rangesController.deleteRange();
+                        });
+                    }
+                }
+            }
+        });
+    }
+
+    public void sortRange(String rangeName, List<String> columnsToSortBy) {
+
+        HttpUrl url = Objects.requireNonNull(HttpUrl.parse(Constants.SORT_RANGE))
+                .newBuilder()
+                .addQueryParameter("rangename", rangeName)
+                .build();
+
+        String json = Constants.GSON_INSTANCE.toJson(columnsToSortBy);
+        RequestBody body = RequestBody.create(json, MediaType.parse("application/json"));
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+
+        HttpClientUtil.runAsync(request, new Callback() {
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Platform.runLater(() ->
+                        ExceptionWindowController.openExceptionPopup("Something went wrong: " + e.getMessage())
+                );
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    String responseBodyString = responseBody.string();
+                    if (response.code() != 200) {
+                        Platform.runLater(() -> {
+                            commandsController.updateSortErrorLabel(responseBodyString);
+                        });
+                    } else {
+                        Platform.runLater(() -> {
+                            ColoredSheetDTO sortedSheetDTO = Constants.GSON_INSTANCE.fromJson(responseBodyString, ColoredSheetDTO.class);
+                            createReadonlyGrid(sortedSheetDTO, " - Sorted");
+                            commandsController.updateSortErrorLabel("");
+                        });
+                    }
+                }
+            }
+        });
+    }
+
+//    public boolean sortRange(String rangeToSort, List<String> columnsToSortBy) {
+//        try {
+//            ColoredSheetDTO sortedSheet = this.engine.sortRangeOfCells(rangeToSort, columnsToSortBy);
+//
+//            return true;
+//        } catch (ClassCastException e) {
+//            this.commandsController.updateSortErrorLabel("Cannot sort by non-numeric column");
+//            return false;
+//        } catch (RuntimeException e) {
+//            this.commandsController.updateSortErrorLabel(e.getMessage());
+//            return false;
+//        }
+//    }
 
 }

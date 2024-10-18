@@ -1,6 +1,7 @@
 package servlets.range;
 
-import dto.range.RangeDTO;
+import com.google.gson.reflect.TypeToken;
+import dto.sheet.ColoredSheetDTO;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,13 +12,17 @@ import managers.UserManager;
 import utils.Constants;
 import utils.ServletUtils;
 import utils.SessionUtils;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.List;
 
-@WebServlet(name = "add new range", urlPatterns = "/addRange")
-public class AddNewRangeServlet extends HttpServlet {
+@WebServlet(name = "sort range", urlPatterns = "/sortRange")
+public class SortRangeServlet extends HttpServlet {
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
 
         EngineManager engineManager = ServletUtils.getEngineManager(getServletContext());
@@ -26,10 +31,8 @@ public class AddNewRangeServlet extends HttpServlet {
         String engineName = SessionUtils.getEngineName(request);
 
         String rangeNameFromParam = request.getParameter(Constants.RANGE_NAME);
-        String rangeBoundariesFromParam = request.getParameter(Constants.RANGE_BOUNDARIES);
 
-        if (rangeNameFromParam == null || rangeNameFromParam.isEmpty() ||
-                rangeBoundariesFromParam == null || rangeBoundariesFromParam.isEmpty()) {
+        if (rangeNameFromParam == null || rangeNameFromParam.isEmpty()){
             response.setStatus(HttpServletResponse.SC_CONFLICT);
         }else if(SessionUtils.userExistInSession(response, username) ||
                 SessionUtils.engineExistInSession(response, engineName)) {
@@ -47,10 +50,17 @@ public class AddNewRangeServlet extends HttpServlet {
                 response.getWriter().flush();
             } else {
                 try {
-                Engine engine = engineManager.getEngine(engineName);
-                    RangeDTO rangeDTO =  engine.addRange(rangeNameFromParam, rangeBoundariesFromParam);
+                    BufferedReader reader = request.getReader();
+                    List<String> columnsToSortBy = Arrays.stream(Constants.GSON_INSTANCE.fromJson(reader, String[].class))
+                            .toList();
+                    Engine engine = engineManager.getEngine(engineName);
+                    ColoredSheetDTO coloredSheetDTO = engine.sortRangeOfCells(rangeNameFromParam, columnsToSortBy);
                     response.setStatus(HttpServletResponse.SC_OK);
-                    response.getWriter().print(Constants.GSON_INSTANCE.toJson(rangeDTO));
+                    response.getWriter().print(Constants.GSON_INSTANCE.toJson(coloredSheetDTO));
+                    response.getWriter().flush();
+                } catch (ClassCastException e) {
+                    response.setStatus(HttpServletResponse.SC_CONFLICT);
+                    response.getWriter().print("Cannot sort by non-numeric column");
                     response.getWriter().flush();
                 } catch (RuntimeException e) {
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

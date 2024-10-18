@@ -31,4 +31,5 @@ public class ServletUtils {
 		}
 		return (UserManager) servletContext.getAttribute(USER_MANAGER_ATTRIBUTE_NAME);
 	}
+
 }

@@ -1,6 +1,7 @@
 package servlets.range;
 
 import dto.range.RangeDTO;
+import dto.range.RangesDTO;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,8 +14,8 @@ import utils.ServletUtils;
 import utils.SessionUtils;
 import java.io.IOException;
 
-@WebServlet(name = "add new range", urlPatterns = "/addRange")
-public class AddNewRangeServlet extends HttpServlet {
+@WebServlet(name = "delete range", urlPatterns = "/deleteRange")
+public class DeleteRangeServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -26,10 +27,9 @@ public class AddNewRangeServlet extends HttpServlet {
         String engineName = SessionUtils.getEngineName(request);
 
         String rangeNameFromParam = request.getParameter(Constants.RANGE_NAME);
-        String rangeBoundariesFromParam = request.getParameter(Constants.RANGE_BOUNDARIES);
 
-        if (rangeNameFromParam == null || rangeNameFromParam.isEmpty() ||
-                rangeBoundariesFromParam == null || rangeBoundariesFromParam.isEmpty()) {
+        if (rangeNameFromParam == null || rangeNameFromParam.isEmpty())
+        {
             response.setStatus(HttpServletResponse.SC_CONFLICT);
         }else if(SessionUtils.userExistInSession(response, username) ||
                 SessionUtils.engineExistInSession(response, engineName)) {
@@ -47,10 +47,9 @@ public class AddNewRangeServlet extends HttpServlet {
                 response.getWriter().flush();
             } else {
                 try {
-                Engine engine = engineManager.getEngine(engineName);
-                    RangeDTO rangeDTO =  engine.addRange(rangeNameFromParam, rangeBoundariesFromParam);
+                    Engine engine = engineManager.getEngine(engineName);
+                    engine.removeRange(rangeNameFromParam);
                     response.setStatus(HttpServletResponse.SC_OK);
-                    response.getWriter().print(Constants.GSON_INSTANCE.toJson(rangeDTO));
                     response.getWriter().flush();
                 } catch (RuntimeException e) {
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

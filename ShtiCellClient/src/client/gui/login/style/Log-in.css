@@ -15,8 +15,7 @@
 .welcome-label {
     -fx-font-size: 24px;
     -fx-font-weight: bold;
-    -fx-text-fill: #333;
-    -fx-text-fill: white;
+    -fx-text-fill: #f5f5ff;
 }
 
 .logo-label {
@@ -58,4 +57,9 @@
     -fx-font-size: 10;
     -fx-font-weight: normal;
     -fx-fill: red;
+}
+
+.stack-pane-container{
+    /*-fx-border-color:green ;*/
+    /*-fx-border-width: 10px;*/
 }

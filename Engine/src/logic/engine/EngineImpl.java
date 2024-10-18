@@ -9,6 +9,7 @@ import component.range.impl.RangeImpl;
 import component.sheet.api.Sheet;
 import component.sheet.impl.SheetImpl;
 import dto.cell.CellDTO;
+import dto.cell.CellStyleDTO;
 import dto.permission.RequestedRequestForTableDTO;
 import dto.range.RangeDTO;
 import dto.range.RangesDTO;
@@ -18,7 +19,6 @@ import dto.sheet.SheetDTO;
 import dto.sheet.SheetMetaDataDTO;
 import dto.version.VersionChangesDTO;
 import jakarta.xml.bind.JAXBException;
-import javafx.scene.paint.Color;
 import jaxb.converter.api.XMLToSheetConverter;
 import jaxb.converter.impl.XMLToSheetConverterImpl;
 import logic.filter.Filter;
@@ -171,14 +171,14 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public void updateCellStyle(String cellID, Color backgroundColor, Color textColor) {
-        if (this.sheet.getCell(cellID) == null) {
-            Cell cell = new CellImpl(cellID, "", this.sheet.getVersion(), this.sheet);
+    public void updateCellStyle(CellStyleDTO cellStyleDTO) {
+        if (this.sheet.getCell(cellStyleDTO.getCellID()) == null) {
+            Cell cell = new CellImpl(cellStyleDTO.getCellID(), "", this.sheet.getVersion(), this.sheet);
             this.sheet.getCells().put(cell.getCellId(), cell);
         }
 
-        this.sheet.getCell(cellID).setBackgroundColor(backgroundColor);
-        this.sheet.getCell(cellID).setTextColor(textColor);
+        this.sheet.getCell(cellStyleDTO.getCellID()).setBackgroundColor(cellStyleDTO.getBackgroundColor());
+        this.sheet.getCell(cellStyleDTO.getCellID()).setTextColor(cellStyleDTO.getTextColor());
     }
 
     @Override

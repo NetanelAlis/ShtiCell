@@ -98,10 +98,15 @@ public class RangesController {
     @FXML
     void onDeleteRangeClicked(ActionEvent event) {
         RangeDTO rangeToDelete = this.rangesListView.getFocusModel().getFocusedItem();
-        if (rangeToDelete != null && this.mainEditorController.deleteRange(rangeToDelete)) {
-            this.rangesModel.deleteRange(rangeToDelete);
-            this.deleteRangeErrorProperty.set("");
+        if (rangeToDelete != null){
+            this.mainEditorController.deleteRange(rangeToDelete.getName());
         }
+    }
+
+    public void deleteRange() {
+        RangeDTO rangeToDelete = this.rangesListView.getFocusModel().getFocusedItem();
+        this.rangesModel.deleteRange(rangeToDelete);
+        this.deleteRangeErrorProperty.set("");
     }
 
     @FXML

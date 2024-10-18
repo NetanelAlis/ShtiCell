@@ -103,7 +103,7 @@ public class HomeViewController implements Closeable {
             fileUploadController.setStage(popUpStage);
             popUpStage.getIcons().add(
                     new Image(Objects.requireNonNull(
-                            Main.class.getResourceAsStream("/client/gui/resources/shticellLogo.png"))));
+                            Main.class.getResourceAsStream(Constants.SHTICELL_ICON_LOCATION))));
             // Make the window modal (blocks interactions with the main window)
             popUpStage.initModality(Modality.APPLICATION_MODAL);
 

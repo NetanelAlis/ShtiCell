@@ -1,6 +1,7 @@
 package logic.engine;
 
 import dto.cell.CellDTO;
+import dto.cell.CellStyleDTO;
 import dto.permission.RequestedRequestForTableDTO;
 import dto.range.RangeDTO;
 import dto.range.RangesDTO;
@@ -37,7 +38,7 @@ public interface Engine {
 
     RangesDTO getAllRanges();
 
-    void updateCellStyle(String cellID, Color backgroundColor, Color textColor);
+    void updateCellStyle(CellStyleDTO cellStyleDTO);
 
     List<String> getColumnsListOfRange(String rangeToFilter);
 

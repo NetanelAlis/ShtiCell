@@ -169,9 +169,7 @@ public class CommandsController {
         String rangeToSort = this.topRightBoundaryTextField.getText()
                 + ".." + this.bottomLeftBoundaryTextField.getText();
         List<String> columnsToSortBy = this.getColumnsToSortBy();
-        if ( this.mainEditorController.sortRange(rangeToSort, columnsToSortBy)) {
-            this.sortErrorProperty.set("");
-        }
+        this.mainEditorController.sortRange(rangeToSort, columnsToSortBy);
     }
 
     @FXML

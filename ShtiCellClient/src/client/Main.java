@@ -24,12 +24,13 @@ public class Main extends Application {
             loader.setLocation(url);
             Parent root = loader.load(url.openStream());
             mainAppViewController = loader.getController();
-            Scene scene = new Scene(root, 1000, 600);
+            Scene scene = new Scene(root, 400, 600);
             stage.setTitle("ShtiCell v3.0");
             stage.getIcons().add(
                     new Image(Objects.requireNonNull(
                             Main.class.getResourceAsStream(Constants.SHTICELL_ICON_LOCATION))));
             stage.setScene(scene);
+            mainAppViewController.setStage(stage);
             //        controller.setPrimaryStage(stage);
             stage.show();
         } catch (IOException e) {
