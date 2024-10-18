@@ -11,6 +11,7 @@ public class Constants {
     public static final String REQUEST_APPROVED = "request_approved";
     public static final String RANGE_NAME = "rangename";
     public static final String RANGE_BOUNDARIES = "rangeboundaries";
+    public static final String COLUMN_TO_FILTER_BY = "columntofilterby";
 
 
     public static Gson GSON_INSTANCE = new Gson();

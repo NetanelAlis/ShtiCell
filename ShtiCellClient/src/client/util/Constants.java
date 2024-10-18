@@ -33,6 +33,9 @@ public class Constants {
     public static final String ADD_RANGE = FULL_SERVER_PATH + "/addRange";
     public static final String DELETE_RANG = FULL_SERVER_PATH + "/deleteRange";
     public static final String SORT_RANGE = FULL_SERVER_PATH + "/sortRange";
+    public static final String GET_COLUMNS_TO_FILTER_BY = FULL_SERVER_PATH + "/getColumnsToFilterBy";
+    public static final String GET_ITEMS_TO_FILTER_BY = FULL_SERVER_PATH + "/getItemsToFilterBy"; ;
+    public static final String FILTER_RANGE = FULL_SERVER_PATH + "/filterRange";
     public static final String UPDATE_CELL_STYLE = FULL_SERVER_PATH + "/updateCellStyle";
     public static final String GET_SHEET_LATEST_VERSION_NUMBER = FULL_SERVER_PATH + "/getSheetLatestVersionNumber";
     public final static String REFRESH_RECEIVED_PERMISSION_REQUEST_TABLE = FULL_SERVER_PATH + "/refreshReceivedPermissionRequestTable";

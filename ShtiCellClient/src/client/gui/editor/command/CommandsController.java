@@ -94,19 +94,21 @@ public class CommandsController {
         this.filterColumnChoiceBox.getSelectionModel().selectedItemProperty()
                 .addListener((observable, oldValue, newValue) -> {
             if(newValue != null && !newValue.equals("Select Column")) {
-                List<EffectiveValueDTO> availableFilters =
                         this.mainEditorController.getUniqueItems(this.filterColumnChoiceBox.getValue(),
                                 getCurrentRangeAsString());
                 this.filterElementMenuButton.getItems().clear();
-                availableFilters.forEach((item) -> {
-                    if (item != null) {
-                        CheckMenuItem checkMenuItem = new CheckMenuItem(effectiveValueFormatter(item));
-                        this.filterElementMenuButton.getItems().add(checkMenuItem);
-                    }
-                });
             }
         });
         
+    }
+
+    public void updateAvailableItemsToFilterBy(List<EffectiveValueDTO> availableFilters) {
+        availableFilters.forEach((item) -> {
+            if (item != null) {
+                CheckMenuItem checkMenuItem = new CheckMenuItem(effectiveValueFormatter(item));
+                this.filterElementMenuButton.getItems().add(checkMenuItem);
+            }
+        });
     }
     
     private String getCurrentRangeAsString() {
@@ -126,15 +128,10 @@ public class CommandsController {
             
             List<Integer> itemsToFilterIndices = this.getItemsToFilter();
             
-            if (!itemsToFilterIndices.isEmpty() && this.mainEditorController.filterRange(
+             this.mainEditorController.filterRange(
                     getCurrentRangeAsString(),
                     this.filterColumnChoiceBox.getValue(),
-                    getItemsToFilter())) {
-                
-                this.filterErrorProperty.set("");
-            } else {
-                this.filterErrorProperty.set("Must select at least one item");
-            }
+                    getItemsToFilter());
         }
     }
     
@@ -153,15 +150,19 @@ public class CommandsController {
     @FXML
     void onColumnToFilterByClicked(MouseEvent event) {
         event.consume();
-        List<String> columnsToFilterBy = this.mainEditorController.getColumnsOfRange(getCurrentRangeAsString());
+        this.mainEditorController.getColumnsOfRange(getCurrentRangeAsString());
+    }
+
+    public void updateFilterColumnChoiceBox(List<String> columnsToFilterBy) {
         this.filterColumnChoiceBox.getItems().clear();
         this.filterColumnChoiceBox.getItems().add("Select Column");
         if (columnsToFilterBy.isEmpty()) {
-            this.filterColumnChoiceBox.getSelectionModel().selectFirst();
+            this.filterColumnChoiceBox.getSelectionModel().selectFirst();;
         } else {
             this.filterColumnChoiceBox.getItems().addAll(columnsToFilterBy);
             this.filterColumnChoiceBox.show();
         }
+
     }
 
     @FXML

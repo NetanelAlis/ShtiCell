@@ -195,17 +195,6 @@ public class MainEditorController {
             }
         });
     }
-    public boolean filterRange(String rangeToFilterBy, String columnToFilterBy, List<Integer> itemsToFilterBy) {
-        try {
-            ColoredSheetDTO filteredSheet = this.engine.filterRangeOfCells(rangeToFilterBy, columnToFilterBy, itemsToFilterBy);
-            createReadonlyGrid(filteredSheet, " - Filtered");
-            return true;
-        } catch (RuntimeException e) {
-            this.commandsController.updateFilterErrorLabel(e.getMessage());
-            return false;
-        }
-
-    }
 
     private void createReadonlyGrid(ColoredSheetDTO sheetToShow, String popupName) {
         GridBuilder gridBuilder = new GridBuilder(
@@ -227,25 +216,6 @@ public class MainEditorController {
             }
 
         });
-    }
-
-    public List<String> getColumnsOfRange(String rangeToFilter) {
-        try {
-            return this.engine.getColumnsListOfRange(rangeToFilter);
-        } catch (RuntimeException e) {
-            this.commandsController.updateFilterErrorLabel(e.getMessage());
-            return Collections.emptyList();
-        }
-    }
-
-    public List<EffectiveValueDTO> getUniqueItems(String columnToFilterBy, String rangeToFilter) {
-        try {
-            return this.engine.getUniqueItemsToFilterBy(columnToFilterBy, rangeToFilter);
-        } catch (RuntimeException e) {
-            this.commandsController.updateFilterErrorLabel(e.getMessage());
-        }
-
-        return Collections.emptyList();
     }
 
     public static String effectiveValueFormatter(EffectiveValueDTO effectiveValue) {
@@ -699,6 +669,8 @@ public class MainEditorController {
             }
         });
     }
+    //////////////////////////commands/////////////////////////////////////////////////
+            ////////////////sort///////////////////////////////////////
 
     public void sortRange(String rangeName, List<String> columnsToSortBy) {
 
@@ -744,17 +716,165 @@ public class MainEditorController {
         });
     }
 
-//    public boolean sortRange(String rangeToSort, List<String> columnsToSortBy) {
+    ////////////////////////////////filter//////////////////////////////////////
+
+    public void getColumnsOfRange(String rangeName) {
+
+        HttpUrl url = Objects.requireNonNull(HttpUrl.parse(Constants.GET_COLUMNS_TO_FILTER_BY))
+                .newBuilder()
+                .addQueryParameter("rangename", rangeName)
+                .build();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        HttpClientUtil.runAsync(request, new Callback() {
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Platform.runLater(() ->
+                        ExceptionWindowController.openExceptionPopup("Something went wrong: " + e.getMessage())
+                );
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    String responseBodyString = responseBody.string();
+                    if (response.code() != 200) {
+                        Platform.runLater(() -> {
+                            commandsController.updateFilterColumnChoiceBox(Collections.emptyList());
+                            commandsController.updateFilterErrorLabel(responseBodyString);
+                        });
+                    } else {
+                        Platform.runLater(() -> {
+                            List<String> columnsArray = Arrays.asList(Constants.GSON_INSTANCE.fromJson(responseBodyString, String[].class));
+                            commandsController.updateFilterColumnChoiceBox(columnsArray);
+                        });
+                    }
+                }
+            }
+        });
+    }
+
+    public void getUniqueItems(String columnToFilterBy, String rangeToFilter) {
+
+        HttpUrl url = Objects.requireNonNull(HttpUrl.parse(Constants.GET_ITEMS_TO_FILTER_BY))
+                .newBuilder()
+                .addQueryParameter("rangename", rangeToFilter)
+                .addQueryParameter("columntofilterby", columnToFilterBy)
+                .build();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        HttpClientUtil.runAsync(request, new Callback() {
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Platform.runLater(() ->
+                        ExceptionWindowController.openExceptionPopup("Something went wrong: " + e.getMessage())
+                );
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    String responseBodyString = responseBody.string();
+                    if (response.code() != 200) {
+                        Platform.runLater(() -> {
+                            commandsController.updateAvailableItemsToFilterBy(Collections.emptyList());
+                            commandsController.updateFilterErrorLabel(responseBodyString);
+                        });
+                    } else {
+                        Platform.runLater(() -> {
+                            List<EffectiveValueDTO> columnsArray = Arrays.asList(Constants.GSON_INSTANCE.fromJson(responseBodyString, EffectiveValueDTO[].class));
+                            commandsController.updateAvailableItemsToFilterBy(columnsArray);
+                        });
+                    }
+                }
+            }
+        });
+    }
+
+    public void filterRange(String rangeToFilterBy, String columnToFilterBy, List<Integer> itemsToFilterBy) {
+
+        HttpUrl url = Objects.requireNonNull(HttpUrl.parse(Constants.FILTER_RANGE))
+                .newBuilder()
+                .addQueryParameter("rangename", rangeToFilterBy)
+                .addQueryParameter("columntofilterby", columnToFilterBy)
+                .build();
+
+        String json = Constants.GSON_INSTANCE.toJson(itemsToFilterBy);
+        RequestBody body = RequestBody.create(json, MediaType.parse("application/json"));
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+
+        HttpClientUtil.runAsync(request, new Callback() {
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Platform.runLater(() ->
+                        ExceptionWindowController.openExceptionPopup("Something went wrong: " + e.getMessage())
+                );
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    String responseBodyString = responseBody.string();
+                    if (response.code() != 200) {
+                        Platform.runLater(() -> {
+                            commandsController.updateFilterErrorLabel(responseBodyString);
+                        });
+                    } else {
+                        Platform.runLater(() -> {
+                            ColoredSheetDTO filteredSheet = Constants.GSON_INSTANCE.fromJson(responseBodyString, ColoredSheetDTO.class);
+                            createReadonlyGrid(filteredSheet, " - Filtered");
+                            commandsController.updateFilterErrorLabel("");
+                        });
+                    }
+                }
+            }
+        });
+    }
+
+//    public boolean filterRange(String rangeToFilterBy, String columnToFilterBy, List<Integer> itemsToFilterBy) {
 //        try {
-//            ColoredSheetDTO sortedSheet = this.engine.sortRangeOfCells(rangeToSort, columnsToSortBy);
-//
+//            ColoredSheetDTO filteredSheet = this.engine.filterRangeOfCells(rangeToFilterBy, columnToFilterBy, itemsToFilterBy);
+//            createReadonlyGrid(filteredSheet, " - Filtered");
 //            return true;
-//        } catch (ClassCastException e) {
-//            this.commandsController.updateSortErrorLabel("Cannot sort by non-numeric column");
-//            return false;
 //        } catch (RuntimeException e) {
-//            this.commandsController.updateSortErrorLabel(e.getMessage());
+//            this.commandsController.updateFilterErrorLabel(e.getMessage());
 //            return false;
+//        }
+//
+//    }
+
+
+
+//    public void getUniqueItems(String columnToFilterBy, String rangeToFilter) {
+//        try {
+//            return this.engine.getUniqueItemsToFilterBy(columnToFilterBy, rangeToFilter);
+//        } catch (RuntimeException e) {
+//            this.commandsController.updateFilterErrorLabel(e.getMessage());
+//        }
+//
+//        return Collections.emptyList();
+//    }
+
+
+//    public List<String> getColumnsOfRange(String rangeToFilter) {
+//        try {
+//            return this.engine.getColumnsListOfRange(rangeToFilter);
+//        } catch (RuntimeException e) {
+//            this.commandsController.updateFilterErrorLabel(e.getMessage());
+//            return Collections.emptyList();
 //        }
 //    }
 
