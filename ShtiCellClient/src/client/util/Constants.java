@@ -37,6 +37,7 @@ public class Constants {
     public static final String GET_ITEMS_TO_FILTER_BY = FULL_SERVER_PATH + "/getItemsToFilterBy"; ;
     public static final String FILTER_RANGE = FULL_SERVER_PATH + "/filterRange";
     public static final String UPDATE_CELL_STYLE = FULL_SERVER_PATH + "/updateCellStyle";
+    public static final String BUILD_GRAPH = FULL_SERVER_PATH + "/buildGraph";
     public static final String GET_SHEET_LATEST_VERSION_NUMBER = FULL_SERVER_PATH + "/getSheetLatestVersionNumber";
     public final static String REFRESH_RECEIVED_PERMISSION_REQUEST_TABLE = FULL_SERVER_PATH + "/refreshReceivedPermissionRequestTable";
     public final static String REFRESH_REQUESTED_PERMISSION_TABLE = FULL_SERVER_PATH + "/refreshPermissionTable";

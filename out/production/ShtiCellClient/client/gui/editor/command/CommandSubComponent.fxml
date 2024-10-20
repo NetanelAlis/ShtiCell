@@ -64,7 +64,7 @@
             <Label styleClass="header" text="Graph" GridPane.columnIndex="1" GridPane.rowIndex="13" />
             <ChoiceBox fx:id="graphTypeChoiceBox" layoutX="167.0" layoutY="320.0" maxWidth="1.7976931348623157E308" GridPane.columnIndex="2" GridPane.rowIndex="13" />
             <Button fx:id="buildGraphButton" layoutX="229.0" layoutY="385.0" mnemonicParsing="false" onAction="#onBuildGraphClicked" text="Build" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="14" />
-            <Label fx:id="graphErrorLabel" layoutX="25.0" layoutY="259.0" onMouseClicked="#onColumnToFilterByClicked" styleClass="error-label" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="14" GridPane.rowSpan="2" GridPane.valignment="TOP">
+            <Label fx:id="graphErrorLabel" layoutX="25.0" layoutY="259.0" styleClass="error-label" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="14" GridPane.rowSpan="2" GridPane.valignment="TOP">
                <font>
                   <Font size="10.0" />
                </font>

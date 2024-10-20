@@ -30,7 +30,7 @@ public class Main extends Application {
                     new Image(Objects.requireNonNull(
                             Main.class.getResourceAsStream(Constants.SHTICELL_ICON_LOCATION))));
             stage.setScene(scene);
-            mainAppViewController.setStage(stage);
+            mainAppViewController.setPrimaryStage(stage);
             //        controller.setPrimaryStage(stage);
             stage.show();
         } catch (IOException e) {

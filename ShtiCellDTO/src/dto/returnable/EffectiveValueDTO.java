@@ -11,11 +11,21 @@ public class EffectiveValueDTO {
         this.cellType = returnable.getCellType().toString();
     }
 
+    public EffectiveValueDTO(String part, String part1) {
+        this.effectiveValue = part;
+        this.cellType = part1;
+    }
+
     public String getEffectiveValue() {
         return effectiveValue;
     }
 
     public String getCellType() {
         return cellType;
+    }
+
+    @Override
+    public String toString() {
+        return effectiveValue + "-" + cellType; // Or some other unique string representation
     }
 }

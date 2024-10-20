@@ -76,12 +76,11 @@ public class CommandsController {
                         Bindings.or(this.bottomLeftBoundaryTextField.textProperty().isEmpty(),
                                 this.topRightBoundaryTextField.textProperty().isEmpty())));
 
-
-
         this.filterElementMenuButton.disableProperty().bind(
                 Bindings.or(this.filterColumnChoiceBox.disableProperty(),
-                            this.filterColumnChoiceBox.getSelectionModel()
-                                    .selectedItemProperty().isEqualTo("Select Item")));
+                        Bindings.or(this.filterColumnChoiceBox.getSelectionModel()
+                                        .selectedItemProperty().isEqualTo("Select Column"),
+                                this.filterColumnChoiceBox.getSelectionModel().selectedItemProperty().isNull())));
         
         
         
@@ -99,7 +98,7 @@ public class CommandsController {
                 this.filterElementMenuButton.getItems().clear();
             }
         });
-        
+
     }
 
     public void updateAvailableItemsToFilterBy(List<EffectiveValueDTO> availableFilters) {
@@ -150,6 +149,7 @@ public class CommandsController {
     @FXML
     void onColumnToFilterByClicked(MouseEvent event) {
         event.consume();
+
         this.mainEditorController.getColumnsOfRange(getCurrentRangeAsString());
     }
 
@@ -157,12 +157,14 @@ public class CommandsController {
         this.filterColumnChoiceBox.getItems().clear();
         this.filterColumnChoiceBox.getItems().add("Select Column");
         if (columnsToFilterBy.isEmpty()) {
-            this.filterColumnChoiceBox.getSelectionModel().selectFirst();;
+            this.filterColumnChoiceBox.getSelectionModel().selectFirst();
+            ;
         } else {
             this.filterColumnChoiceBox.getItems().addAll(columnsToFilterBy);
             this.filterColumnChoiceBox.show();
-        }
 
+
+        }
     }
 
     @FXML
@@ -178,11 +180,12 @@ public class CommandsController {
         String rangeToBuildGraphFrom =
                 this.topRightBoundaryTextField.getText() + ".." + this.bottomLeftBoundaryTextField.getText();
 
-        if(this.mainEditorController.buildGraph(rangeToBuildGraphFrom, this.graphTypeChoiceBox.getSelectionModel().getSelectedItem())){
-            this.updateGraphErrorLabel("");
+        this.mainEditorController.buildGraph(rangeToBuildGraphFrom, this.graphTypeChoiceBox.getSelectionModel().getSelectedItem());
+    }
+
+    public void selectFirstInGraphTypeChoiceBox(){
             this.graphTypeChoiceBox.getSelectionModel().selectFirst();
         }
-    }
 
     private List<String> getColumnsToSortBy() {
         List<String> columnsToSortBy = new ArrayList<>();

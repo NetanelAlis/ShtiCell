@@ -28,7 +28,7 @@ public class SheetMetaDataDTO {
     public String getUserName() {
         return this.userName;
     }
-    public PermissionType getPermission() {
-        return this.permission;
+    public String getPermission() {
+        return this.permission.getType();
     }
 }

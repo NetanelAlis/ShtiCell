@@ -14,6 +14,7 @@ import client.gui.editor.grid.GridBuilder;
 import client.gui.editor.grid.SheetGridController;
 import client.gui.editor.ranges.RangesController;
 import client.gui.editor.top.TopSubComponentController;
+import com.google.gson.reflect.TypeToken;
 import dto.cell.CellDTO;
 import dto.cell.CellStyleDTO;
 import dto.cell.ColoredCellDTO;
@@ -37,12 +38,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import logic.engine.Engine;
-import logic.engine.EngineImpl;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
-import user.User;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -62,7 +61,6 @@ public class MainEditorController {
     private SheetGridController sheetGridController;
     private Map<String, CellSubComponentController> cellSubComponentControllerMap;
     private BooleanProperty fileNotLoadedProperty;
-    private Engine engine;
     private MainAppViewController mainAppViewController;
 
     public MainEditorController() {
@@ -71,7 +69,6 @@ public class MainEditorController {
 
     @FXML
     public void initialize() {
-        this.engine = new EngineImpl(new User("tempForEditorTestUser"));
         if (this.topSubComponentController != null) {
             this.topSubComponentController.setMainController(this);
             this.setActionLineController(this.topSubComponentController.getActionLIneController());
@@ -245,35 +242,24 @@ public class MainEditorController {
         return valueToPrint.toUpperCase();
     }
 
-    public boolean buildGraph(String rangeToBuildGraphFrom, String graphType) {
-        try {
-            LinkedHashMap<EffectiveValueDTO, LinkedHashMap<EffectiveValueDTO, EffectiveValueDTO>> graph = this.engine.getGraphFromRange(rangeToBuildGraphFrom);
-            this.showGraphPopup(graphType, graph);
-            return true;
-        } catch (RuntimeException e) {
-            this.commandsController.updateGraphErrorLabel(e.getMessage());
-            return false;
-        }
-    }
-
     private void showGraphPopup(String i_GraphType, LinkedHashMap<EffectiveValueDTO, LinkedHashMap<EffectiveValueDTO, EffectiveValueDTO>> graphData) {
         GraphType graphType = GraphType.valueOf(i_GraphType.toUpperCase().replace(" ", "_"));
-        Chart graphChart = graphType.createChart(graphData);
-
-        Stage graphStage = new Stage();
-        graphStage.setTitle(i_GraphType);
-        graphStage.getIcons().add(
-                new Image(Objects.requireNonNull(
-                        Main.class.getResourceAsStream(Constants.SHTICELL_ICON_LOCATION))));
-        ScrollPane scrollPane = new ScrollPane();
-        (graphChart).setPadding(new Insets(20, 20, 60, 20));
-        scrollPane.setContent(graphChart);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setFitToHeight(true);
-        Scene scene = new Scene(scrollPane, 800, 600);
-        graphStage.setScene(scene);
-        graphStage.showAndWait();  // Show the popup and wait for it to close
+            Chart graphChart = graphType.createChart(graphData);
+            Stage graphStage = new Stage();
+            graphStage.setTitle(i_GraphType);
+            graphStage.getIcons().add(
+                    new Image(Objects.requireNonNull(
+                            Main.class.getResourceAsStream(Constants.SHTICELL_ICON_LOCATION))));
+            ScrollPane scrollPane = new ScrollPane();
+            (graphChart).setPadding(new Insets(20, 20, 60, 20));
+            scrollPane.setContent(graphChart);
+            scrollPane.setFitToWidth(true);
+            scrollPane.setFitToHeight(true);
+            Scene scene = new Scene(scrollPane, 800, 600);
+            graphStage.setScene(scene);
+            graphStage.showAndWait();  // Show the popup and wait for it to close
     }
+
 
     public void setAppMainController(MainAppViewController mainAppViewController) {
         this.mainAppViewController = mainAppViewController;
@@ -281,7 +267,6 @@ public class MainEditorController {
 
     public void setActive(String sheenName) {
         this.setEngineNameInSession(sheenName);
-        this.getSheetAndRangesAsDTO();
     }
 
     public void setInActive() {
@@ -316,6 +301,8 @@ public class MainEditorController {
                         Platform.runLater(() -> {
                             ExceptionWindowController.openExceptionPopup(responseBodyString);
                         });
+                    } else {
+                        getSheetAndRangesAsDTO();
                     }
                 }
             }
@@ -337,7 +324,7 @@ public class MainEditorController {
             }
 
             @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException{
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody.string();
                     if (response.code() != 200) {
@@ -403,7 +390,7 @@ public class MainEditorController {
             }
 
             @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException{
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody.string();
                     if (response.code() != 200) {
@@ -445,7 +432,7 @@ public class MainEditorController {
             }
 
             @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException{
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody.string();
                     if (response.code() != 200) {
@@ -499,7 +486,7 @@ public class MainEditorController {
             }
 
             @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException{
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody.string();
                     if (response.code() != 200) {
@@ -530,7 +517,7 @@ public class MainEditorController {
             }
 
             @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException{
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody.string();
                     if (response.code() != 200) {
@@ -570,7 +557,7 @@ public class MainEditorController {
             }
 
             @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException{
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody.string();
                     if (response.code() != 200) {
@@ -653,7 +640,7 @@ public class MainEditorController {
             }
 
             @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException{
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody.string();
                     if (response.code() != 200) {
@@ -670,7 +657,7 @@ public class MainEditorController {
         });
     }
     //////////////////////////commands/////////////////////////////////////////////////
-            ////////////////sort///////////////////////////////////////
+    ////////////////sort///////////////////////////////////////
 
     public void sortRange(String rangeName, List<String> columnsToSortBy) {
 
@@ -844,38 +831,57 @@ public class MainEditorController {
         });
     }
 
-//    public boolean filterRange(String rangeToFilterBy, String columnToFilterBy, List<Integer> itemsToFilterBy) {
-//        try {
-//            ColoredSheetDTO filteredSheet = this.engine.filterRangeOfCells(rangeToFilterBy, columnToFilterBy, itemsToFilterBy);
-//            createReadonlyGrid(filteredSheet, " - Filtered");
-//            return true;
-//        } catch (RuntimeException e) {
-//            this.commandsController.updateFilterErrorLabel(e.getMessage());
-//            return false;
-//        }
-//
-//    }
+    ///////////////////////Graph//////////////////////////////////////////////////
 
+    public void buildGraph(String rangeToBuildGraphFrom, String graphType) {
 
+        HttpUrl url = Objects.requireNonNull(HttpUrl.parse(Constants.BUILD_GRAPH))
+                .newBuilder()
+                .addQueryParameter("rangename", rangeToBuildGraphFrom)
+                .build();
 
-//    public void getUniqueItems(String columnToFilterBy, String rangeToFilter) {
-//        try {
-//            return this.engine.getUniqueItemsToFilterBy(columnToFilterBy, rangeToFilter);
-//        } catch (RuntimeException e) {
-//            this.commandsController.updateFilterErrorLabel(e.getMessage());
-//        }
-//
-//        return Collections.emptyList();
-//    }
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
 
+        HttpClientUtil.runAsync(request, new Callback() {
 
-//    public List<String> getColumnsOfRange(String rangeToFilter) {
-//        try {
-//            return this.engine.getColumnsListOfRange(rangeToFilter);
-//        } catch (RuntimeException e) {
-//            this.commandsController.updateFilterErrorLabel(e.getMessage());
-//            return Collections.emptyList();
-//        }
-//    }
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Platform.runLater(() ->
+                        ExceptionWindowController.openExceptionPopup("Something went wrong: " + e.getMessage())
+                );
+            }
 
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    String responseBodyString = responseBody.string();
+                    if (response.code() != 200) {
+                        Platform.runLater(() -> {
+                            commandsController.updateGraphErrorLabel(responseBodyString);
+                        });
+                    } else {
+                        Type mapType = new TypeToken<LinkedHashMap<String, LinkedHashMap<String, EffectiveValueDTO>>>() {
+                        }.getType();
+                        LinkedHashMap<String, LinkedHashMap<String, EffectiveValueDTO>> graph =
+                                Constants.GSON_INSTANCE.fromJson(responseBodyString, mapType);
+                        LinkedHashMap<EffectiveValueDTO, LinkedHashMap<EffectiveValueDTO, EffectiveValueDTO>> originalGraph =
+                                GraphType.recreateOriginalMap(graph);
+                        Platform.runLater(() -> {
+                            try {
+                            showGraphPopup(graphType, originalGraph);
+                            commandsController.updateGraphErrorLabel("");
+                            commandsController.selectFirstInGraphTypeChoiceBox();
+                            } catch (RuntimeException e) {
+                                commandsController.selectFirstInGraphTypeChoiceBox();
+                                commandsController.updateGraphErrorLabel(e.getMessage());
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    }
 }
+

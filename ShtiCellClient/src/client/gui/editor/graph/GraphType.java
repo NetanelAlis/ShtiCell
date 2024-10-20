@@ -3,6 +3,7 @@ package client.gui.editor.graph;
 import dto.returnable.EffectiveValueDTO;
 import javafx.scene.chart.*;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 
 public enum GraphType {
@@ -92,5 +93,48 @@ public enum GraphType {
 
             chart.getData().add(series);
         });
+    }
+
+    public static LinkedHashMap<EffectiveValueDTO, LinkedHashMap<EffectiveValueDTO, EffectiveValueDTO>> recreateOriginalMap(
+            LinkedHashMap<String, LinkedHashMap<String, EffectiveValueDTO>> stringMap) {
+
+        // Create a new LinkedHashMap to store the result
+        LinkedHashMap<EffectiveValueDTO, LinkedHashMap<EffectiveValueDTO, EffectiveValueDTO>> originalMap = new LinkedHashMap<>();
+
+        // Iterate over the outer map (String -> LinkedHashMap<String, EffectiveValueDTO>)
+        for (Map.Entry<String, LinkedHashMap<String, EffectiveValueDTO>> outerEntry : stringMap.entrySet()) {
+
+            // Convert the outer String key to EffectiveValueDTO
+            EffectiveValueDTO outerKey = convertStringToEffectiveValueDTO(outerEntry.getKey());
+
+            // Get the inner map (String -> EffectiveValueDTO)
+            LinkedHashMap<String, EffectiveValueDTO> innerMap = outerEntry.getValue();
+
+            // Create a new inner map for the EffectiveValueDTO keys and values
+            LinkedHashMap<EffectiveValueDTO, EffectiveValueDTO> convertedInnerMap = new LinkedHashMap<>();
+
+            // Iterate over the inner map and convert the String keys to EffectiveValueDTO
+            for (Map.Entry<String, EffectiveValueDTO> innerEntry : innerMap.entrySet()) {
+                EffectiveValueDTO innerKey = convertStringToEffectiveValueDTO(innerEntry.getKey());
+                EffectiveValueDTO innerValue = innerEntry.getValue();
+
+                // Put the converted keys and values into the new inner map
+                convertedInnerMap.put(innerKey, innerValue);
+            }
+
+            // Put the converted outer key and inner map into the original map
+            originalMap.put(outerKey, convertedInnerMap);
+        }
+
+        return originalMap;
+    }
+
+    // Helper method to convert a String in the format "effectiveValue-cellType" to EffectiveValueDTO
+    private static EffectiveValueDTO convertStringToEffectiveValueDTO(String str) {
+        String[] parts = str.split("-");
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("Invalid format for EffectiveValueDTO key: " + str);
+        }
+        return new EffectiveValueDTO(parts[0], parts[1]); // Create a new EffectiveValueDTO with effectiveValue and cellType
     }
 }
