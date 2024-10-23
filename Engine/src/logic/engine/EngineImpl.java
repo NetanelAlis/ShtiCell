@@ -161,16 +161,11 @@ public class EngineImpl implements Engine {
             usersActiveSheetVersionReadWriteLock.writeLock().unlock();
         }
 
-        Sheet lastVersionSheet = this.archive.retrieveLatestVersion();
-        boolean userInReaderMode = !this.isPermittedToWrite(userName);
-        boolean lastVersionRequested = version == lastVersionSheet.getVersion();
-        boolean userCantEditTheSheet = userInReaderMode ? true : !lastVersionRequested;
-
         Sheet sheet = this.archive.retrieveVersion(version);
         ColoredSheetDTO coloredSheetDTO = new ColoredSheetDTO(sheet);
         RangesDTO rangesDTO = new RangesDTO(sheet.getRanges());
 
-        return new SheetAndRangesDTO(coloredSheetDTO, rangesDTO, userCantEditTheSheet);
+        return new SheetAndRangesDTO(coloredSheetDTO, rangesDTO, this.isUserCantEditTheSheet(version, userName));
     }
 
     @Override
@@ -398,6 +393,17 @@ public class EngineImpl implements Engine {
     @Override
     public Object getSheetEditLock() {
         return this.sheetEditLock;
+    }
+
+    @Override
+    public boolean isUserCantEditTheSheet(int version ,String userName) {
+
+        Sheet lastVersionSheet = this.archive.retrieveLatestVersion();
+        boolean userInReaderMode = !this.isPermittedToWrite(userName);
+        boolean lastVersionRequested = version == lastVersionSheet.getVersion();
+        boolean userCantEditTheSheet = userInReaderMode ? true : !lastVersionRequested;
+
+        return userCantEditTheSheet;
     }
 
     @Override

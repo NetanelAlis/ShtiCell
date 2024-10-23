@@ -173,3 +173,11 @@
     -fx-max-width: 10px; /* Maximum width */
     -fx-max-height: 7px; /* Maximum height */
 }
+
+.not-on-last-version{
+    -fx-border-color: orangered;
+    -fx-border-width: 3px;
+    -fx-cursor: hand;
+    -fx-border-radius: 20%;
+    -fx-background-radius: 50px;
+}

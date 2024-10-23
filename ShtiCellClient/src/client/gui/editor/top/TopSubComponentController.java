@@ -75,11 +75,21 @@ public class TopSubComponentController {
     public void setSheetNameAndVersion(String sheetName, int sheetVersion) {
         this.sheetNameProperty.set(sheetName);
         this.versionsChoiceBox.getItems().clear();
-        if(sheetVersion < this.latestVersion){
+        if(sheetVersion > this.latestVersion){
             this.latestVersion = sheetVersion;
         }
 
-        this.versionsChoiceBox.getItems().add("Version " + this.latestVersion + "/" + sheetVersion);
-        this.versionsChoiceBox.getSelectionModel().select("Version " + this.latestVersion + "/" + sheetVersion);
+        this.versionsChoiceBox.getItems().add("Version " + sheetVersion + "/" + this.latestVersion);
+        this.versionsChoiceBox.getSelectionModel().select("Version " + sheetVersion + "/" + this.latestVersion);
+    }
+
+    public void addNotOnLastVersionClassToVersionsChoiceBox() {
+        if (!this.versionsChoiceBox.getStyleClass().contains("not-on-last-version"))
+        this.versionsChoiceBox.getStyleClass().add("not-on-last-version");
+    }
+
+    public void removeNotOnLastVersionClassFromVersionsChoiceBox(int sheetVersion) {
+        if (sheetVersion == this.latestVersion && this.versionsChoiceBox.getStyleClass().contains("not-on-last-version"))
+            this.versionsChoiceBox.getStyleClass().remove("not-on-last-version");
     }
 }

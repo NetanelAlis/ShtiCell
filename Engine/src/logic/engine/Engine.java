@@ -75,4 +75,6 @@ public interface Engine {
     void updateUserActiveSheetVersion(String userName);
 
     Object getSheetEditLock();
+
+    boolean isUserCantEditTheSheet(int version, String userName);
 }

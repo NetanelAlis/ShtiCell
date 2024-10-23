@@ -1,6 +1,7 @@
 package client.gui.editor.main.view;
 
 import client.gui.app.MainAppViewController;
+import client.task.EditorRefresher;
 import client.util.Constants;
 import client.util.http.HttpClientUtil;
 import client.Main;
@@ -37,13 +38,17 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.Closeable;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.*;
 
-public class MainEditorController {
+import static client.util.Constants.REFRESH_RATE;
+
+public class MainEditorController implements Closeable {
 
     @FXML
     private TopSubComponentController topSubComponentController;
@@ -58,6 +63,8 @@ public class MainEditorController {
     private SheetGridController sheetGridController;
     private Map<String, CellSubComponentController> cellSubComponentControllerMap;
     private MainAppViewController mainAppViewController;
+    private TimerTask editorRefresher;
+    private Timer timer;
 
     @FXML
     public void initialize() {
@@ -253,6 +260,7 @@ public class MainEditorController {
 
     public void setActive(String sheenName) {
         this.setEngineNameInSession(sheenName);
+
     }
 
     public void setInActive() {
@@ -295,6 +303,7 @@ public class MainEditorController {
                         });
                     } else {
                         getSheetAndRangesAsDTO();
+                        startEditorRefresher();
                     }
                 }
             }
@@ -576,6 +585,7 @@ public class MainEditorController {
                         Platform.runLater(() -> {
                             {
                                 initializeSheetLayoutAndController(sheetAndRangesDTO.getSheetDTO(), sheetAndRangesDTO.getRangesDTO(), sheetAndRangesDTO.userCantEditTheSheet());
+                                topSubComponentController.removeNotOnLastVersionClassFromVersionsChoiceBox(sheetAndRangesDTO.getSheetDTO().getVersion());
                             }
                         });
                     }
@@ -890,6 +900,24 @@ public class MainEditorController {
                 }
             }
         });
+    }
+
+    public void startEditorRefresher() {
+        editorRefresher = new EditorRefresher(this::disableEditableActions, this::addNotOnLastVersionClassToVersionsChoiceBox);
+        timer = new Timer();
+        timer.schedule(editorRefresher, REFRESH_RATE, REFRESH_RATE);
+    }
+
+    @Override
+    public void close() {
+        if (editorRefresher != null && timer != null) {
+            editorRefresher.cancel();
+            timer.cancel();
+        }
+    }
+
+    private void addNotOnLastVersionClassToVersionsChoiceBox(){
+        this.topSubComponentController.addNotOnLastVersionClassToVersionsChoiceBox();
     }
 }
 

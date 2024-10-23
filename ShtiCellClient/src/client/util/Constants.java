@@ -17,6 +17,7 @@ public class Constants {
     //////////////Server resources locations////////////////////
     public final static String BASE_DOMAIN = "localhost";
     public final static String BASE_URL = "http://" + BASE_DOMAIN + ":8080";
+
     private final static String CONTEXT_PATH = "/ShtiCellWebApp_Web_exploded";
     private final static String FULL_SERVER_PATH = BASE_URL + CONTEXT_PATH;
     public final static String UPLOAD_FILE = FULL_SERVER_PATH + "/loadSheetFromFile";
@@ -41,6 +42,7 @@ public class Constants {
     public static final String GET_SHEET_LATEST_VERSION_NUMBER = FULL_SERVER_PATH + "/getSheetLatestVersionNumber";
     public final static String REFRESH_RECEIVED_PERMISSION_REQUEST_TABLE = FULL_SERVER_PATH + "/refreshReceivedPermissionRequestTable";
     public final static String REFRESH_REQUESTED_PERMISSION_TABLE = FULL_SERVER_PATH + "/refreshPermissionTable";
+    public static final String REFRESH_EDITOR = FULL_SERVER_PATH + "/refreshEditor";
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
