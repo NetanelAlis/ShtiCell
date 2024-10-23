@@ -7,7 +7,6 @@ import client.gui.editor.cell.CellModel;
 import client.gui.editor.cell.CellSubComponentController;
 import client.gui.editor.cell.DependenciesCellModel;
 import client.gui.editor.main.view.MainEditorController;
-import dto.returnable.EffectiveValueDTO;
 import javafx.scene.control.Button;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,23 +73,12 @@ public class SheetGridController {
         return this.cellsControllers;
     }
     
-    public void initializeGridModel(Map<String, EffectiveValueDTO> cells) {
+    public void initializeGridModel(Map<String, ColoredCellDTO> cells) {
         this.gridModel = new GridModel(cellsControllers);
         this.updateGridModel(cells);
     }
-    
-    public void updateGridModel(Map<String, EffectiveValueDTO> cells) {
-        cells.forEach((cellID, returnable) -> {
-            this.gridModel.getCellValueProperty(cellID).set(effectiveValueFormatter(returnable));
-        });
-    }
-    
-    public void initializePopupGridModel(Map<String, ColoredCellDTO> cells) {
-        this.gridModel = new GridModel(cellsControllers);
-        this.updatePopupGridModel(cells);
-    }
-    
-    public void updatePopupGridModel(Map<String, ColoredCellDTO> cells) {
+
+    public void updateGridModel(Map<String, ColoredCellDTO> cells) {
         cells.forEach((cellID, cell) -> {
             this.gridModel.getCellValueProperty(cellID).set(effectiveValueFormatter(cell.getEffectiveValue()));
         });

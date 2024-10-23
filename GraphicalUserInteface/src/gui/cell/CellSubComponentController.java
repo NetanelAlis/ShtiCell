@@ -15,6 +15,8 @@ public class CellSubComponentController {
     private Label cellComponent;
     private MainViewController mainViewController;
     private StringProperty cellID;
+    private Color backgroundColor;
+    private Color textColor;
     
     @FXML
     private void initialize() {
@@ -70,6 +72,8 @@ public class CellSubComponentController {
     
     public void setCellStyle(Color backgroundColor, Color textColor) {
         this.cellComponent.setStyle(formatCellStyleString(backgroundColor, textColor));
+        this.backgroundColor = backgroundColor;
+        this.textColor = textColor;
     }
     
     private String formatCellStyleString(Color backgroundColor, Color textColor) {
@@ -82,5 +86,13 @@ public class CellSubComponentController {
                 (int) (textColor.getRed() * 255),
                 (int) (textColor.getGreen() * 255),
                 (int) (textColor.getBlue() * 255));
+    }
+
+    public Color getBackgroundColor() {
+        return this.backgroundColor;
+    }
+
+    public Color getTextColor() {
+        return this.textColor;
     }
 }

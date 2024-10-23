@@ -46,16 +46,31 @@ public class DeleteRangeServlet extends HttpServlet {
                 response.getWriter().print(errorMessage);
                 response.getWriter().flush();
             } else {
-                try {
                     Engine engine = engineManager.getEngine(engineName);
-                    engine.removeRange(rangeNameFromParam);
-                    response.setStatus(HttpServletResponse.SC_OK);
-                    response.getWriter().flush();
-                } catch (RuntimeException e) {
-                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    response.getWriter().print(e.getMessage());
-                    response.getWriter().flush();
-                }
+
+                    synchronized (engine.getSheetEditLock()) {
+                        try {
+                            if (!engine.isPermittedToWrite(username)) {
+                                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                                response.getWriter().println("You are not allowed to update this cells");
+                                response.getWriter().flush();
+                                return;
+                            } else if (!engine.isInLastVersion(username)) {
+                                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                                response.getWriter().println("Unable to edit sheet while not in latest version");
+                                response.getWriter().flush();
+                                return;
+                            } else {
+                                engine.removeRange(rangeNameFromParam);
+                            }
+
+                        } catch (RuntimeException e) {
+                            ServletUtils.WriteBadRequestResponse(response, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST);
+                            return;
+                        }
+                    }
+
+                response.setStatus(HttpServletResponse.SC_OK);
             }
         }
     }

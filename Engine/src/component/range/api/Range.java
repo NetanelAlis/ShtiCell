@@ -2,7 +2,6 @@ package component.range.api;
 
 import component.cell.api.Cell;
 import component.sheet.api.ReadOnlySheet;
-
 import java.io.Serializable;
 import java.util.List;
 

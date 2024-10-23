@@ -47,17 +47,11 @@ public class GetSingleCellDataServlet extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 response.getWriter().print(errorMessage);
             } else{
-                try{
                 Engine engine = engineManager.getEngine(engineName);
-                CellDTO cellDTO = engine.getSingleCellData(cellNameFromParameter);
+                CellDTO cellDTO = engine.getSingleCellData(cellNameFromParameter, username);
                 response.setStatus(HttpServletResponse.SC_OK);
                 response.getWriter().print(Constants.GSON_INSTANCE.toJson(cellDTO));
                 response.getWriter().flush();
-            } catch (RuntimeException e) {
-                    response.setStatus(HttpServletResponse.SC_CONFLICT);
-                    response.getWriter().print(e.getMessage());
-                    response.getWriter().flush();
-                }
             }
         }
     }

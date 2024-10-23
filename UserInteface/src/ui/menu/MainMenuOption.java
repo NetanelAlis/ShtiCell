@@ -58,7 +58,7 @@ public enum MainMenuOption {
         @Override
         public void executeOption(Engine engine) {
             if (engine.isSheetLoaded()){
-                ConsoleUtils.printSheet(engine.getSheetAsDTO());
+                ConsoleUtils.printSheet(engine.getColoredSheetDTO());
             } else {
                 ConsoleUtils.printSheetNotLoaded();
             }
@@ -144,7 +144,7 @@ public enum MainMenuOption {
                             versionChangesDTO.getVersionChanges().size();
                     String version = ConsoleUtils.getInputFromUser(messageToUser, errorMessage, ArchiveImpl::isValidVersion);
                     if (!version.equalsIgnoreCase("Q")){
-                        ConsoleUtils.printSheet(engine.getSheetVersionAsDTO(Integer.parseInt(version)));
+                        ConsoleUtils.printSheet(engine.getSheetVersionAndRangesAsDTO(Integer.parseInt(version)));
                     }
                 } catch (RuntimeException e) {
                     System.out.println("Error Accessing Archive:\n" + e.getMessage() + "\n");

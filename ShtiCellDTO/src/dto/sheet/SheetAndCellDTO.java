@@ -3,15 +3,15 @@ package dto.sheet;
 import dto.cell.CellDTO;
 
 public class SheetAndCellDTO {
-    SheetDTO sheet;
+    ColoredSheetDTO sheet;
     CellDTO cell;
 
-    public SheetAndCellDTO(SheetDTO sheet, CellDTO cell) {
+    public SheetAndCellDTO(ColoredSheetDTO sheet, CellDTO cell) {
         this.sheet = sheet;
         this.cell = cell;
     }
 
-    public SheetDTO getSheet() {
+    public ColoredSheetDTO getSheet() {
         return sheet;
     }
 

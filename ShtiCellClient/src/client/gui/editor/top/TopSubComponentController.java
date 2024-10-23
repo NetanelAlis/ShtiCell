@@ -2,8 +2,6 @@ package client.gui.editor.top;
 
 import client.gui.editor.action.line.ActionLineController;
 import client.gui.editor.main.view.MainEditorController;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
@@ -17,15 +15,10 @@ public class TopSubComponentController {
     @FXML private TitledPane sheetNameTitledPane;
 
     private StringProperty sheetNameProperty;
-    private StringProperty sheetVersionProperty;
     private MainEditorController mainEditorController;
-    private BooleanProperty isFileLoadedProperty;
-    private int lastSelectVersion = 1;
-
+    private int latestVersion = 1;
     public TopSubComponentController() {
         this.sheetNameProperty = new SimpleStringProperty("Sheet Name");
-        this.sheetVersionProperty = new SimpleStringProperty("-");
-        this.isFileLoadedProperty = new SimpleBooleanProperty(false);
 
     }
     
@@ -34,21 +27,18 @@ public class TopSubComponentController {
         if (this.actionLineController != null) {
             this.actionLineController.setTopSubComponentController(this);
         }
-        this.versionsChoiceBox.getItems().add("Select Version");
-        this.versionsChoiceBox.getSelectionModel().select("Select Version");
-
         this.sheetNameTitledPane.textProperty().bind(this.sheetNameProperty);
-        this.versionsChoiceBox.disableProperty().bind(this.isFileLoadedProperty.not());
 
         this.versionsChoiceBox.getSelectionModel().selectedItemProperty()
                 .addListener((observable, oldValue, newValue) -> {
-            if (newValue != null && !newValue.contains("" + this.lastSelectVersion) && !newValue.contains("Select Version")) {
-                this.mainEditorController.loadSheetVersion(
-                        Integer.parseInt(this.versionsChoiceBox.getValue().substring(8)));
+
+                    if (newValue != null && oldValue != null && !newValue.equals(oldValue))
+                     {
+                        this.mainEditorController.loadSheetVersion(
+                                this.versionsChoiceBox.getSelectionModel().getSelectedIndex() + 1);
+                    }
+                });
             }
-                this.versionsChoiceBox.getSelectionModel().selectFirst();
-        });
-    }
 
     
     @FXML
@@ -59,12 +49,17 @@ public class TopSubComponentController {
     }
 
     public void updateVersionsChoiceBox(int lastSheetVersionNumber) {
+        this.latestVersion = lastSheetVersionNumber;
+        String previousVersion = this.versionsChoiceBox.getSelectionModel().getSelectedItem();
+        this.versionsChoiceBox.getItems().clear();
+
         for (int i = 1; i <= lastSheetVersionNumber; i++) {
-            if(!this.versionsChoiceBox.getItems().contains("version " + i)) {
-                this.versionsChoiceBox.getItems().add("version " + i);
-                this.lastSelectVersion = i;
-                this.versionsChoiceBox.styleProperty().set("-fx-mark-color: transparent");
-            };
+            {
+                this.versionsChoiceBox.getItems().add("Version " + i + "/" + lastSheetVersionNumber);
+                if(previousVersion.contains("Version " + i)){
+                    this.versionsChoiceBox.getSelectionModel().select(i - 1);
+                }
+            }
         }
         this.versionsChoiceBox.show();
     }
@@ -79,17 +74,12 @@ public class TopSubComponentController {
     
     public void setSheetNameAndVersion(String sheetName, int sheetVersion) {
         this.sheetNameProperty.set(sheetName);
-        this.sheetVersionProperty.set(String.valueOf(sheetVersion));
         this.versionsChoiceBox.getItems().clear();
-        this.versionsChoiceBox.getItems().add("Select Version");
-        this.versionsChoiceBox.getSelectionModel().select("Select Version");
-    }
-    
-    public void updateSheetVersion(int version) {
-        this.sheetVersionProperty.set(String.valueOf(version));
-    }
+        if(sheetVersion < this.latestVersion){
+            this.latestVersion = sheetVersion;
+        }
 
-    public void bindFileNotLoaded(BooleanProperty isFileLoaded) {
-        this.isFileLoadedProperty.bind(isFileLoaded.not());
+        this.versionsChoiceBox.getItems().add("Version " + this.latestVersion + "/" + sheetVersion);
+        this.versionsChoiceBox.getSelectionModel().select("Version " + this.latestVersion + "/" + sheetVersion);
     }
 }

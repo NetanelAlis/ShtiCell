@@ -1,6 +1,7 @@
 package servlets.cell;
 
 import dto.cell.CellDTO;
+import dto.sheet.ColoredSheetDTO;
 import dto.sheet.SheetAndCellDTO;
 import dto.sheet.SheetDTO;
 import jakarta.servlet.annotation.WebServlet;
@@ -49,19 +50,37 @@ public class UpdateSingleCellDataServlet extends HttpServlet {
                 response.getWriter().print(errorMessage);
                 response.getWriter().flush();
             } else {
-                try {
-                    Engine engine = engineManager.getEngine(engineName);
-                    engine.updateSingleCellData(cellNameFromParameter, newCellValue);
-                    CellDTO cellDTO = engine.getSingleCellData(cellNameFromParameter);
-                    SheetDTO sheetDTO = engine.getSheetAsDTO();
-                    response.setStatus(HttpServletResponse.SC_OK);
-                    response.getWriter().print(Constants.GSON_INSTANCE.toJson(new SheetAndCellDTO(sheetDTO, cellDTO)));
-                    response.getWriter().flush();
-                } catch (RuntimeException e) {
-                    response.setStatus(HttpServletResponse.SC_CONFLICT);
-                    response.getWriter().print(e.getMessage());
-                    response.getWriter().flush();
+                Engine engine = engineManager.getEngine(engineName);
+                CellDTO cellDTO;
+                ColoredSheetDTO coloredSheetDTO;
+                SheetAndCellDTO sheetAndCellDTO;
+
+                synchronized (engine.getSheetEditLock()) {
+                    try {
+                        if (!engine.isPermittedToWrite(username)) {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.getWriter().println("You are not allowed to update this cells");
+                            response.getWriter().flush();
+                            return;
+                        } else if (!engine.isInLastVersion(username)) {
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.getWriter().println("Unable to edit sheet while not in latest version");
+                            response.getWriter().flush();
+                            return;
+                        } else {
+                            engine.updateSingleCellData(cellNameFromParameter, newCellValue, username);
+                             cellDTO = engine.getSingleCellData(cellNameFromParameter, username);
+                             coloredSheetDTO = engine.getColoredSheetDTO(username);
+                             sheetAndCellDTO = new SheetAndCellDTO(coloredSheetDTO, cellDTO);
+                        }
+                    } catch (RuntimeException e) {
+                        ServletUtils.WriteBadRequestResponse(response, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST);
+                        return;
+                    }
                 }
+                response.setStatus(HttpServletResponse.SC_OK);
+                response.getWriter().print(Constants.GSON_INSTANCE.toJson(sheetAndCellDTO));
+                response.getWriter().flush();
             }
         }
     }

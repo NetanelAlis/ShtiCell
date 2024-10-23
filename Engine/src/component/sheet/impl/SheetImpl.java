@@ -6,7 +6,6 @@ import component.range.impl.RangeImpl;
 import component.sheet.api.Sheet;
 import component.sheet.topological.order.TopologicalOrder;
 import jaxb.generated.STLSheet;
-
 import java.io.*;
 import java.util.*;
 
@@ -148,7 +147,7 @@ public class SheetImpl implements Sheet {
     @Override
     public void createRange(String rangeName, String range) {
         if(!this.getRanges().containsKey(rangeName)) {
-            this.getRanges().put(rangeName, new RangeImpl(rangeName, range, this));
+                this.getRanges().put(rangeName, new RangeImpl(rangeName, range, this));
         } else {
             throw new IllegalArgumentException("The Range " + rangeName + " already exists");
         }
@@ -179,8 +178,6 @@ public class SheetImpl implements Sheet {
             ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
             return (SheetImpl) ois.readObject();
         } catch (Exception e) {
-            // deal with the runtime error that was discovered as part of invocation
-            // CATCH IN THE UI
             throw new RuntimeException(e);
         }
     }

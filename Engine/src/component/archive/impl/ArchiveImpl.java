@@ -12,31 +12,44 @@ public class ArchiveImpl implements Archive {
     private final Map<Integer, Sheet> storedSheets = new HashMap<>();
     private final List<Integer> changesPerVersion = new LinkedList<>();
 
+    private Object changesPerVersionLock = new Object();
+    private Object storedSheetsLock = new Object();
+
     @Override
     public void storeInArchive(Sheet sheet) {
+        synchronized (storedSheetsLock) {
         this.storedSheets.put(sheet.getVersion(), sheet);
+        }
+
+        synchronized (changesPerVersionLock) {
         this.changesPerVersion.add(sheet.getNumOfCellsUpdated());
+        }
     }
 
     @Override
     public Sheet retrieveVersion(int version) {
-        Sheet restoredSheet = this.storedSheets.get(version);
+        synchronized (storedSheetsLock) {
+            Sheet restoredSheet = this.storedSheets.get(version);
 
-        if (restoredSheet == null) {
-            throw new IllegalArgumentException("Version " + version + " does not exist.");
+            if (restoredSheet == null) {
+                throw new IllegalArgumentException("Version " + version + " does not exist.");
+            }
+            return restoredSheet;
         }
-
-        return restoredSheet;
     }
 
     @Override
     public Sheet retrieveLatestVersion() {
-        return this.retrieveVersion(this.storedSheets.size());
+        synchronized (changesPerVersionLock) {
+        return this.retrieveVersion(this.changesPerVersion.size());
+        }
     }
 
     @Override
     public List<Integer> getAllVersionsChangesList() {
+        synchronized (changesPerVersionLock) {
         return this.changesPerVersion;
+        }
     }
 
     @Override

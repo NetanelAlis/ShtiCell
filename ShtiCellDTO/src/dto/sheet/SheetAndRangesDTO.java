@@ -3,15 +3,17 @@ package dto.sheet;
 import dto.range.RangesDTO;
 
 public class SheetAndRangesDTO {
-    private SheetDTO sheetDTO;
-    private RangesDTO rangesDTO;
+    private final ColoredSheetDTO sheetDTO;
+    private final RangesDTO rangesDTO;
+    private final boolean userCantEditTheSheet;
 
-    public SheetAndRangesDTO(SheetDTO sheetDTO, RangesDTO rangesDTO) {
+    public SheetAndRangesDTO(ColoredSheetDTO sheetDTO, RangesDTO rangesDTO, boolean isInReaderMode) {
         this.sheetDTO = sheetDTO;
         this.rangesDTO = rangesDTO;
+        this.userCantEditTheSheet = isInReaderMode;
     }
 
-    public SheetDTO getSheetDTO() {
+    public ColoredSheetDTO getSheetDTO() {
         return sheetDTO;
     }
 
@@ -19,5 +21,8 @@ public class SheetAndRangesDTO {
         return rangesDTO;
     }
 
+    public boolean userCantEditTheSheet() {
+        return userCantEditTheSheet;
+    }
 
 }

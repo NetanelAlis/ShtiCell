@@ -15,7 +15,7 @@ import dto.range.RangeDTO;
 import dto.range.RangesDTO;
 import dto.returnable.EffectiveValueDTO;
 import dto.sheet.ColoredSheetDTO;
-import dto.sheet.SheetDTO;
+import dto.sheet.SheetAndRangesDTO;
 import dto.sheet.SheetMetaDataDTO;
 import dto.version.VersionChangesDTO;
 import jakarta.xml.bind.JAXBException;
@@ -41,12 +41,17 @@ public class EngineImpl implements Engine {
     private Archive archive;
     private Map<String, PermissionType> usersCurrentPermission;
     private List<PermissionRequest> allPermissionRequests;
+    private Map<String, Integer> usersActiveSheetVersion;
+
+    private final Object sheetEditLock;
     private final ReadWriteLock usersCurrentPermissionReadWriteLock;
     private final ReadWriteLock allPermissionRequestsReadWriteLock;
+    private final ReadWriteLock usersActiveSheetVersionReadWriteLock;
 
     public EngineImpl(User owner) {
         this.usersCurrentPermission = new HashMap<>();
         this.allPermissionRequests = new LinkedList<>();
+        this.usersActiveSheetVersion = new HashMap<>();
         this.owner = owner;
         usersCurrentPermission.put(owner.getUserName(), PermissionType.OWNER);
         this.archive = null;
@@ -55,6 +60,8 @@ public class EngineImpl implements Engine {
         this.allPermissionRequests.add(new PermissionRequest(this.owner.getUserName(), PermissionType.OWNER, PermissionStatus.OWNER, 0));
         this.usersCurrentPermissionReadWriteLock = new ReentrantReadWriteLock();
         this.allPermissionRequestsReadWriteLock = new ReentrantReadWriteLock();
+        this.usersActiveSheetVersionReadWriteLock = new ReentrantReadWriteLock();
+        this.sheetEditLock = new Object();
     }
 
     @Override
@@ -83,17 +90,27 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public SheetDTO getSheetAsDTO() {
-        return new SheetDTO(this.sheet);
+    public ColoredSheetDTO getColoredSheetDTO(String userName) {
+        this.usersActiveSheetVersionReadWriteLock.readLock().lock();
+        try {
+            return new ColoredSheetDTO(this.archive.retrieveVersion(this.usersActiveSheetVersion.get(userName)));
+        } finally {
+            this.usersActiveSheetVersionReadWriteLock.readLock().unlock();
+        }
     }
 
     @Override
-    public CellDTO getSingleCellData(String cellID) {
-        return new CellDTO(this.sheet.getCell(cellID), cellID);
+    public CellDTO getSingleCellData(String cellID, String userName) {
+        this.usersActiveSheetVersionReadWriteLock.readLock().lock();
+        try {
+            return new CellDTO(this.archive.retrieveVersion(this.usersActiveSheetVersion.get(userName)).getCell(cellID), cellID);
+        } finally {
+            this.usersActiveSheetVersionReadWriteLock.readLock().unlock();
+        }
     }
 
     @Override
-    public void updateSingleCellData(String cellID, String value) {
+    public void updateSingleCellData(String cellID, String value, String userName) {
         Cell cellToUpdate = this.sheet.getCell(cellID);
         boolean isUpdatingEmptyToEmpty = cellToUpdate == null && value.isEmpty();
         boolean isOriginalValueChanged = cellToUpdate != null && !cellToUpdate.getOriginalValue().equals(value);
@@ -107,6 +124,7 @@ public class EngineImpl implements Engine {
         Sheet tempSheet = this.sheet.updateSheet(newSheetVersion, isOriginalValueChanged);
         if (!tempSheet.equals(this.sheet)) {
             this.sheet = tempSheet;
+            this.updateUserActiveSheetVersion(userName);
             this.archive.storeInArchive(this.sheet.copySheet());
         }
     }
@@ -134,8 +152,25 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public ColoredSheetDTO getSheetVersionAsDTO(int version) {
-        return new ColoredSheetDTO(this.archive.retrieveVersion(version));
+    public SheetAndRangesDTO getSheetVersionAndRangesAsDTO(int version, String userName) {
+        usersActiveSheetVersionReadWriteLock.writeLock().lock();
+
+        try {
+                this.usersActiveSheetVersion.put(userName, version);
+        } finally {
+            usersActiveSheetVersionReadWriteLock.writeLock().unlock();
+        }
+
+        Sheet lastVersionSheet = this.archive.retrieveLatestVersion();
+        boolean userInReaderMode = !this.isPermittedToWrite(userName);
+        boolean lastVersionRequested = version == lastVersionSheet.getVersion();
+        boolean userCantEditTheSheet = userInReaderMode ? true : !lastVersionRequested;
+
+        Sheet sheet = this.archive.retrieveVersion(version);
+        ColoredSheetDTO coloredSheetDTO = new ColoredSheetDTO(sheet);
+        RangesDTO rangesDTO = new RangesDTO(sheet.getRanges());
+
+        return new SheetAndRangesDTO(coloredSheetDTO, rangesDTO, userCantEditTheSheet);
     }
 
     @Override
@@ -156,8 +191,14 @@ public class EngineImpl implements Engine {
 
     @Override
     public RangeDTO addRange(String rangeName, String range) {
-        this.sheet.createRange(rangeName, range);
-        return new RangeDTO(this.sheet.getRanges().get(rangeName));
+        this.allPermissionRequestsReadWriteLock.writeLock().lock();
+
+        try {
+            this.sheet.createRange(rangeName, range);
+            return new RangeDTO(this.sheet.getRanges().get(rangeName));
+        } finally {
+            this.allPermissionRequestsReadWriteLock.writeLock().unlock();
+        }
     }
 
     @Override
@@ -166,19 +207,26 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public RangesDTO getAllRanges() {
-        return new RangesDTO(this.sheet.getRanges());
+    public RangesDTO getAllRanges(String userName) {
+        this.allPermissionRequestsReadWriteLock.readLock().lock();
+        try{
+            return new RangesDTO(this.archive.retrieveVersion(this.usersActiveSheetVersion.get(userName)).getRanges());
+        } finally {
+            this.allPermissionRequestsReadWriteLock.readLock().unlock();
+        }
+
     }
 
     @Override
     public void updateCellStyle(CellStyleDTO cellStyleDTO) {
-        if (this.sheet.getCell(cellStyleDTO.getCellID()) == null) {
-            Cell cell = new CellImpl(cellStyleDTO.getCellID(), "", this.sheet.getVersion(), this.sheet);
-            this.sheet.getCells().put(cell.getCellId(), cell);
+        Cell cellToUpdate = this.sheet.getCell(cellStyleDTO.getCellID());
+        if (cellToUpdate == null) {
+            cellToUpdate = new CellImpl(cellStyleDTO.getCellID(), "", this.sheet.getVersion(), this.sheet);
+            this.sheet.getCells().put(cellToUpdate.getCellId(), cellToUpdate);
         }
 
-        this.sheet.getCell(cellStyleDTO.getCellID()).setBackgroundColor(cellStyleDTO.getBackgroundColor());
-        this.sheet.getCell(cellStyleDTO.getCellID()).setTextColor(cellStyleDTO.getTextColor());
+        cellToUpdate.setBackgroundColor(cellStyleDTO.getBackgroundColor());
+        cellToUpdate.setTextColor(cellStyleDTO.getTextColor());
     }
 
     @Override
@@ -298,6 +346,51 @@ public class EngineImpl implements Engine {
         } finally {
             this.usersCurrentPermissionReadWriteLock.writeLock().unlock();
         }
+    }
+
+    @Override
+    public boolean isPermittedToWrite(String userName) {
+        this.usersCurrentPermissionReadWriteLock.readLock().lock();
+
+        try{
+            if(this.usersCurrentPermission.containsKey(userName)){
+                return !this.usersCurrentPermission.get(userName).equals(PermissionType.READER);
+                } else {
+                throw new RuntimeException("user name: " + userName + " dosnt exists.");
+            }
+            } finally {
+            this.usersCurrentPermissionReadWriteLock.readLock().unlock();
+        }
+    }
+
+    public boolean isInLastVersion(String userName){
+        this.usersActiveSheetVersionReadWriteLock.readLock().lock();
+
+        try{
+            if(this.usersActiveSheetVersion.containsKey(userName)){
+                return this.usersActiveSheetVersion.get(userName).equals(this.sheet.getVersion());
+            } else {
+                throw new RuntimeException("user name: " + userName + " dosnt exists.");
+            }
+        } finally {
+            this.usersActiveSheetVersionReadWriteLock.readLock().unlock();
+        }
+    }
+
+    @Override
+    public void updateUserActiveSheetVersion(String userName) {
+        this.usersActiveSheetVersionReadWriteLock.writeLock().lock();
+
+        try{
+            this.usersActiveSheetVersion.put(userName, this.sheet.getVersion());
+        } finally {
+            this.usersActiveSheetVersionReadWriteLock.writeLock().unlock();
+        }
+    }
+
+    @Override
+    public Object getSheetEditLock() {
+        return this.sheetEditLock;
     }
 
     @Override

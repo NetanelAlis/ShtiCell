@@ -149,7 +149,7 @@ public class MainViewController {
 
     private void initializeSheetLayoutAndControllers() {
         try {
-            SheetDTO sheetDTO = this.engine.getSheetAsDTO();
+            SheetDTO sheetDTO = this.engine.getColoredSheetDTO();
             RangesDTO rangesDto = this.engine.getAllRanges();
             GridBuilder gridBuilder = new GridBuilder(sheetDTO.getLayout().getRow(),
                     sheetDTO.getLayout().getColumn(),
@@ -192,7 +192,7 @@ public class MainViewController {
     public void updateCellValue(String cellToUpdate, String newValue) {
         try {
             this.engine.updateSingleCellData(cellToUpdate, newValue);
-            SheetDTO sheetDTO = this.engine.getSheetAsDTO();
+            SheetDTO sheetDTO = this.engine.getColoredSheetDTO();
             CellDTO cellDTO = this.engine.getSingleCellData(cellToUpdate);
             this.sheetGridController.updateGridModel(sheetDTO.getCells());
             this.actionLineController.showCellDetails(cellDTO);
@@ -208,7 +208,7 @@ public class MainViewController {
     }
 
     public void loadSheetVersion(int version) {
-        ColoredSheetDTO sheetDTO = this.engine.getSheetVersionAsDTO(version);
+        ColoredSheetDTO sheetDTO = this.engine.getSheetVersionAndRangesAsDTO(version);
         createReadonlyGrid(sheetDTO, " - version " + version);
     }
 

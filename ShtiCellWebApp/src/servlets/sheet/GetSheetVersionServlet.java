@@ -1,6 +1,7 @@
 package servlets.sheet;
 
 import dto.sheet.ColoredSheetDTO;
+import dto.sheet.SheetAndRangesDTO;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,7 +46,7 @@ public class GetSheetVersionServlet extends HttpServlet {
             } else {
                 try {
                     Engine engine = engineManager.getEngine(engineName);
-                    ColoredSheetDTO coloredSheetDTO =  engine.getSheetVersionAsDTO(Integer.parseInt(sheetVersionFromParam));
+                    SheetAndRangesDTO coloredSheetDTO =  engine.getSheetVersionAndRangesAsDTO(Integer.parseInt(sheetVersionFromParam), username);
                     response.setStatus(HttpServletResponse.SC_OK);
                     response.getWriter().print(Constants.GSON_INSTANCE.toJson(coloredSheetDTO));
                     response.getWriter().flush();

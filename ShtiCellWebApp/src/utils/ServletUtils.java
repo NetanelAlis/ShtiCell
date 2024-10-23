@@ -1,8 +1,11 @@
 package utils;
 
 import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletResponse;
 import managers.EngineManager;
 import managers.UserManager;
+
+import java.io.IOException;
 
 public class ServletUtils {
 
@@ -11,6 +14,7 @@ public class ServletUtils {
 
 	private static final Object engineManagerLock = new Object();
 	private static final Object userManagerLock = new Object();
+
 
 	public static EngineManager getEngineManager(ServletContext servletContext) {
 
@@ -30,6 +34,12 @@ public class ServletUtils {
 			}
 		}
 		return (UserManager) servletContext.getAttribute(USER_MANAGER_ATTRIBUTE_NAME);
+	}
+
+	public static void WriteBadRequestResponse(HttpServletResponse response, String message, int statusCode) throws IOException {
+		response.setStatus(statusCode);
+		response.getWriter().println(message);
+		response.getWriter().flush();
 	}
 
 }

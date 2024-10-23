@@ -1,7 +1,6 @@
 package servlets.sheet;
 
 import dto.sheet.SheetAndRangesDTO;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,16 +35,11 @@ public class GetSheetAndRangesServlet extends HttpServlet {
             response.getWriter().flush();
 
         }
-        try {
-            SheetAndRangesDTO sheetAndRangesDTO = new SheetAndRangesDTO(engine.getSheetAsDTO(), engine.getAllRanges());
-            response.getWriter().println(Constants.GSON_INSTANCE.toJson(sheetAndRangesDTO));
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.getWriter().flush();
-
-        } catch (RuntimeException e){
-            response.getWriter().println(e.getMessage());
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().flush();
-        }
+        engine.updateUserActiveSheetVersion(userName);
+        SheetAndRangesDTO sheetAndRangesDTO = new SheetAndRangesDTO(engine.getColoredSheetDTO(userName), engine.getAllRanges(userName),
+                !engine.isPermittedToWrite(userName));
+        response.getWriter().println(Constants.GSON_INSTANCE.toJson(sheetAndRangesDTO));
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.getWriter().flush();
     }
 }

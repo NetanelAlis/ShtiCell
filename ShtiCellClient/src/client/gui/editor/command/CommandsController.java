@@ -34,20 +34,16 @@ public class CommandsController {
     private List<ChoiceBox<String>> additionalColumnsToSortBy;
     
     private MainEditorController mainEditorController;
-    private BooleanProperty isFileLoadedProperty;
     private StringProperty sortErrorProperty;
     private StringProperty filterErrorProperty;
     
     public CommandsController() {
-        this.isFileLoadedProperty = new SimpleBooleanProperty(false);
         this.sortErrorProperty = new SimpleStringProperty("");
         this.filterErrorProperty = new SimpleStringProperty("");
         this.additionalColumnsToSortBy = new ArrayList<>();
     }
     
     @FXML private void initialize() {
-        this.bottomLeftBoundaryTextField.disableProperty().bind(this.isFileLoadedProperty.not());
-        this.topRightBoundaryTextField.disableProperty().bind(this.isFileLoadedProperty.not());
         this.filterErrorLabel.textProperty().bind(this.filterErrorProperty);
         this.sortErrorLabel.textProperty().bind(this.sortErrorProperty);
         
@@ -62,19 +58,16 @@ public class CommandsController {
         this.graphTypeChoiceBox.getSelectionModel().selectFirst();
 
         this.columnsToSortByTextField.disableProperty().bind(
-                Bindings.or(this.isFileLoadedProperty.not(),
                         Bindings.or(this.bottomLeftBoundaryTextField.textProperty().isEmpty(),
-                                    this.topRightBoundaryTextField.textProperty().isEmpty())));
+                                    this.topRightBoundaryTextField.textProperty().isEmpty()));
         
         this.filterColumnChoiceBox.disableProperty().bind(
-                Bindings.or(this.isFileLoadedProperty.not(),
                             Bindings.or(this.bottomLeftBoundaryTextField.textProperty().isEmpty(),
-                                        this.topRightBoundaryTextField.textProperty().isEmpty())));
+                                        this.topRightBoundaryTextField.textProperty().isEmpty()));
 
         this.graphTypeChoiceBox.disableProperty().bind(
-                Bindings.or(this.isFileLoadedProperty.not(),
                         Bindings.or(this.bottomLeftBoundaryTextField.textProperty().isEmpty(),
-                                this.topRightBoundaryTextField.textProperty().isEmpty())));
+                                this.topRightBoundaryTextField.textProperty().isEmpty()));
 
         this.filterElementMenuButton.disableProperty().bind(
                 Bindings.or(this.filterColumnChoiceBox.disableProperty(),
@@ -200,10 +193,6 @@ public class CommandsController {
 
     public void setMainController(MainEditorController mainEditorController) {
         this.mainEditorController = mainEditorController;
-    }
-
-    public void bindFileNotLoaded(BooleanProperty isFileLoaded) {
-        this.isFileLoadedProperty.bind(isFileLoaded.not());
     }
 
     public void resetController() {

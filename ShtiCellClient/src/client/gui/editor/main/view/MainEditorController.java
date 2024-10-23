@@ -24,10 +24,7 @@ import dto.returnable.EffectiveValueDTO;
 import dto.sheet.ColoredSheetDTO;
 import dto.sheet.SheetAndCellDTO;
 import dto.sheet.SheetAndRangesDTO;
-import dto.sheet.SheetDTO;
 import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -60,12 +57,7 @@ public class MainEditorController {
     private ActionLineController actionLineController;
     private SheetGridController sheetGridController;
     private Map<String, CellSubComponentController> cellSubComponentControllerMap;
-    private BooleanProperty fileNotLoadedProperty;
     private MainAppViewController mainAppViewController;
-
-    public MainEditorController() {
-        this.fileNotLoadedProperty = new SimpleBooleanProperty(true);
-    }
 
     @FXML
     public void initialize() {
@@ -85,12 +77,6 @@ public class MainEditorController {
         if (this.commandsController != null) {
             this.commandsController.setMainController(this);
         }
-
-        this.actionLineController.bindFileNotLoaded(this.fileNotLoadedProperty);
-        this.rangesController.bindFileNotLoaded(this.fileNotLoadedProperty);
-        this.customizationsController.bindFileNotLoaded(this.fileNotLoadedProperty);
-        this.commandsController.bindFileNotLoaded(this.fileNotLoadedProperty);
-        this.topSubComponentController.bindFileNotLoaded(this.fileNotLoadedProperty);
     }
 
     public void setActionLineController(ActionLineController actionLineController) {
@@ -202,7 +188,7 @@ public class MainEditorController {
 
         this.openGridPopup(gridBuilder, popupName, sheetToShow.getSheetName());
         SheetGridController gridPopupController = gridBuilder.getSheetGridController();
-        gridPopupController.initializePopupGridModel(sheetToShow.getCells());
+        gridPopupController.initializeGridModel(sheetToShow.getCells());
 
         gridPopupController.getCellsControllers().forEach((cellID, cellController) -> {
             cellController.addOldVersionStyleClass();
@@ -272,6 +258,12 @@ public class MainEditorController {
     public void setInActive() {
     }
 
+   private void disableEditableActions(boolean disable){
+        this.actionLineController.disableEditableActions(disable);
+        this.rangesController.disableEditableActions(disable);
+        this.customizationsController.disableEditableActions(disable);
+    }
+
     ///////////////Requests For Server////////////////////////////////////////////////////////////////////////
 
     public void setEngineNameInSession(String engineName) {
@@ -333,11 +325,12 @@ public class MainEditorController {
                         });
                     } else {
                         SheetAndRangesDTO sheetAndRangesDTO = Constants.GSON_INSTANCE.fromJson(responseBodyString, SheetAndRangesDTO.class);
-                        SheetDTO sheetDTO = sheetAndRangesDTO.getSheetDTO();
+                        ColoredSheetDTO coloredSheetDTO = sheetAndRangesDTO.getSheetDTO();
                         RangesDTO rangesDto = sheetAndRangesDTO.getRangesDTO();
+                        boolean userCantEditTheSheet = sheetAndRangesDTO.userCantEditTheSheet();
 
                         Platform.runLater(() -> {
-                            initializeSheetLayoutAndController(sheetDTO, rangesDto);
+                            initializeSheetLayoutAndController(coloredSheetDTO, rangesDto, userCantEditTheSheet);
                         });
                     }
                 }
@@ -345,11 +338,11 @@ public class MainEditorController {
         });
     }
 
-    public void initializeSheetLayoutAndController(SheetDTO sheetDTO, RangesDTO rangesDTO) {
-        GridBuilder gridBuilder = new GridBuilder(sheetDTO.getLayout().getRow(),
-                sheetDTO.getLayout().getColumn(),
-                sheetDTO.getLayout().getRowHeight(),
-                sheetDTO.getLayout().getColumnWidth());
+    public void initializeSheetLayoutAndController(ColoredSheetDTO coloredSheetDTO , RangesDTO rangesDTO, boolean userCantEditTheSheet) {
+        GridBuilder gridBuilder = new GridBuilder(coloredSheetDTO.getLayout().getRow(),
+                coloredSheetDTO.getLayout().getColumn(),
+                coloredSheetDTO.getLayout().getRowHeight(),
+                coloredSheetDTO.getLayout().getColumnWidth());
         BorderPane root = (BorderPane) mainAppViewController.getEditorViewRootComponent();
         try {
             root.setCenter(gridBuilder.build());
@@ -358,14 +351,23 @@ public class MainEditorController {
         }
         setSheetGridController(gridBuilder.getSheetGridController());
         setCellSubComponentControllerMap(sheetGridController.getCellsControllers());
-        sheetGridController.initializeGridModel(sheetDTO.getCells());
+        sheetGridController.initializeGridModel(coloredSheetDTO.getCells());
         rangesController.initializeRangesModel(rangesDTO);
-        fileNotLoadedProperty.set(false);
         actionLineController.resetCellModel();
         rangesController.resetController();
         customizationsController.resetController();
         commandsController.resetController();
-        topSubComponentController.setSheetNameAndVersion(sheetDTO.getSheetName(), sheetDTO.getVersion());
+        topSubComponentController.setSheetNameAndVersion(coloredSheetDTO.getSheetName(), coloredSheetDTO.getVersion());
+
+        sheetGridController.getCellsControllers().forEach((cellID, cellController) -> {
+                    ColoredCellDTO currentCell = coloredSheetDTO.getCells().get(cellID);
+                    if (currentCell != null) {
+                        cellController.setCellStyle(currentCell.getBackgroundColor(), currentCell.getTextColor());
+                    }
+                });
+
+        this.disableEditableActions(userCantEditTheSheet);
+
     }
 
     ///////////////////////Cell//////////////////////////////////////////
@@ -400,9 +402,11 @@ public class MainEditorController {
                     } else {
                         CellDTO cellDTO = Constants.GSON_INSTANCE.fromJson(responseBodyString, CellDTO.class);
                         Platform.runLater(() -> {
+                            String selectedCellID = cellDTO.getCellId();
+                            CellSubComponentController currentSelectedCellController = cellSubComponentControllerMap.get(selectedCellID);
+                            customizationsController.setSelectedCell(selectedCellID, currentSelectedCellController.getBackgroundColor(), currentSelectedCellController.getTextColor());
                             actionLineController.showCellDetails(cellDTO);
                             sheetGridController.showSelectedCellAndDependencies(cellDTO);
-                            customizationsController.setSelectedCell(cellDTO);
                         });
                     }
                 }
@@ -445,6 +449,8 @@ public class MainEditorController {
 
                         Platform.runLater(() -> {
                             updateControllersAfterCellUpdate(sheetAndCellDTO.getSheet(), sheetAndCellDTO.getCell());
+                           topSubComponentController.setSheetNameAndVersion(sheetAndCellDTO.getSheet().getSheetName(), sheetAndCellDTO.getSheet().getVersion());
+
                         });
                     }
                 }
@@ -452,20 +458,13 @@ public class MainEditorController {
         });
     }
 
-    private void updateControllersAfterCellUpdate(SheetDTO sheet, CellDTO cell) {
+    private void updateControllersAfterCellUpdate(ColoredSheetDTO sheet, CellDTO cell) {
         this.sheetGridController.updateGridModel(sheet.getCells());
         this.actionLineController.showCellDetails(cell);
         this.sheetGridController.showSelectedCellAndDependencies(cell);
-        this.topSubComponentController.updateSheetVersion(sheet.getVersion());
     }
 
-//    public void setCellStyle(String cellID, Color backgroundColor, Color textColor) {
-//        this.cellSubComponentControllerMap.get(cellID).setCellStyle(backgroundColor, textColor);
-//        this.engine.updateCellStyle(cellID, backgroundColor, textColor);
-//    }
-
     public void setCellStyle(String cellID, Color backgroundColor, Color textColor) {
-        this.cellSubComponentControllerMap.get(cellID).setCellStyle(backgroundColor, textColor);
 
         CellStyleDTO cellStyleDTO = new CellStyleDTO(cellID, backgroundColor, textColor);
         String json = Constants.GSON_INSTANCE.toJson(cellStyleDTO);
@@ -492,6 +491,13 @@ public class MainEditorController {
                     if (response.code() != 200) {
                         Platform.runLater(() -> {
                             ExceptionWindowController.openExceptionPopup(responseBodyString);
+                            CellSubComponentController selectedCellController = cellSubComponentControllerMap.get(cellID);
+                            customizationsController.setSelectedCell(cellID, selectedCellController.getBackgroundColor(), selectedCellController.getTextColor());
+                        });
+                    }
+                    else{
+                        Platform.runLater(()->{
+                            cellSubComponentControllerMap.get(cellID).setCellStyle(backgroundColor, textColor);
                         });
                     }
                 }
@@ -565,10 +571,12 @@ public class MainEditorController {
                             ExceptionWindowController.openExceptionPopup(responseBodyString);
                         });
                     } else {
-                        ColoredSheetDTO coloredSheetDTO = Constants.GSON_INSTANCE.fromJson(responseBodyString, ColoredSheetDTO.class);
+                        SheetAndRangesDTO sheetAndRangesDTO = Constants.GSON_INSTANCE.fromJson(responseBodyString, SheetAndRangesDTO.class);
 
                         Platform.runLater(() -> {
-                            createReadonlyGrid(coloredSheetDTO, " - version " + coloredSheetDTO.getVersion());
+                            {
+                                initializeSheetLayoutAndController(sheetAndRangesDTO.getSheetDTO(), sheetAndRangesDTO.getRangesDTO(), sheetAndRangesDTO.userCantEditTheSheet());
+                            }
                         });
                     }
                 }
