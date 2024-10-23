@@ -62,7 +62,7 @@ public class FilterRange extends HttpServlet {
                         return;
                     }
                     Engine engine = engineManager.getEngine(engineName);
-                    ColoredSheetDTO coloredSheetDTO =  engine.filterRangeOfCells(rangeNameFromParam, columnToFilterByFromParam, columnsToSortBy);
+                    ColoredSheetDTO coloredSheetDTO =  engine.filterRangeOfCells(rangeNameFromParam, columnToFilterByFromParam, columnsToSortBy, username);
                     response.setStatus(HttpServletResponse.SC_OK);
                     response.getWriter().print(Constants.GSON_INSTANCE.toJson(coloredSheetDTO));
                     response.getWriter().flush();

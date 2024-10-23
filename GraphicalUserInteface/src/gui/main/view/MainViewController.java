@@ -364,7 +364,7 @@ public class MainViewController {
 
     public boolean sortRange(String rangeToSort, List<String> columnsToSortBy) {
         try {
-            ColoredSheetDTO sortedSheet = this.engine.sortRangeOfCells(rangeToSort, columnsToSortBy);
+            ColoredSheetDTO sortedSheet = this.engine.sortRangeOfCells(rangeToSort, columnsToSortBy, username);
             createReadonlyGrid(sortedSheet, " - Sorted");
             return true;
         } catch (ClassCastException e) {
@@ -378,7 +378,7 @@ public class MainViewController {
 
     public boolean filterRange(String rangeToFilterBy, String columnToFilterBy, List<Integer> itemsToFilterBy) {
         try {
-            ColoredSheetDTO filteredSheet = this.engine.filterRangeOfCells(rangeToFilterBy, columnToFilterBy, itemsToFilterBy);
+            ColoredSheetDTO filteredSheet = this.engine.filterRangeOfCells(rangeToFilterBy, columnToFilterBy, itemsToFilterBy, username);
             createReadonlyGrid(filteredSheet, " - Filtered");
             return true;
         } catch (RuntimeException e) {
@@ -421,7 +421,7 @@ public class MainViewController {
 
     public List<Returnable> getUniqueItems(String columnToFilterBy, String rangeToFilter) {
         try {
-            return this.engine.getUniqueItemsToFilterBy(columnToFilterBy, rangeToFilter);
+            return this.engine.getUniqueItemsToFilterBy(columnToFilterBy, rangeToFilter, username);
         } catch (RuntimeException e) {
             this.commandsController.updateFilterErrorLabel(e.getMessage());
         }
@@ -458,7 +458,7 @@ public class MainViewController {
 
     public boolean buildGraph(String rangeToBuildGraphFrom, String graphType) {
         try {
-            LinkedHashMap<Returnable, LinkedHashMap<Returnable, Returnable>> graph = this.engine.getGraphFromRange(rangeToBuildGraphFrom);
+            LinkedHashMap<Returnable, LinkedHashMap<Returnable, Returnable>> graph = this.engine.getGraphFromRange(rangeToBuildGraphFrom, username);
             this.showGraphPopup(graphType, graph);
             return true;
         } catch (RuntimeException e) {

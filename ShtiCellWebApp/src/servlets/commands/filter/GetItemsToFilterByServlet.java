@@ -49,7 +49,7 @@ public class GetItemsToFilterByServlet extends HttpServlet {
             } else {
                 try {
                     Engine engine = engineManager.getEngine(engineName);
-                    List<EffectiveValueDTO> itemsToFilterBy = engine.getUniqueItemsToFilterBy(columnToFilterByFromParam, rangeNameFromParam);
+                    List<EffectiveValueDTO> itemsToFilterBy = engine.getUniqueItemsToFilterBy(columnToFilterByFromParam, rangeNameFromParam, username);
                     response.setStatus(HttpServletResponse.SC_OK);
                     response.getWriter().print(Constants.GSON_INSTANCE.toJson(itemsToFilterBy));
                     response.getWriter().flush();

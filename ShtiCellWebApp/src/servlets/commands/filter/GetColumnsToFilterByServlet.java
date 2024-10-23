@@ -47,7 +47,7 @@ public class GetColumnsToFilterByServlet extends HttpServlet {
             } else {
                 try {
                     Engine engine = engineManager.getEngine(engineName);
-                    List<String> columnsToFilterBy = engine.getColumnsListOfRange(rangeNameFromParam);
+                    List<String> columnsToFilterBy = engine.getColumnsListOfRange(rangeNameFromParam, username);
                     response.setStatus(HttpServletResponse.SC_OK);
                     response.getWriter().print(Constants.GSON_INSTANCE.toJson(columnsToFilterBy));
                     response.getWriter().flush();

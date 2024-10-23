@@ -47,7 +47,7 @@ public class BuildGraphServlet extends HttpServlet {
                 try {
                     Engine engine = engineManager.getEngine(engineName);
                     LinkedHashMap<EffectiveValueDTO, LinkedHashMap<EffectiveValueDTO, EffectiveValueDTO>> graph =
-                            engine.getGraphFromRange(rangeNameFromParam);
+                            engine.getGraphFromRange(rangeNameFromParam, username);
                     response.setStatus(HttpServletResponse.SC_OK);
                     response.getWriter().print(Constants.GSON_INSTANCE.toJson(graph));
                     response.getWriter().flush();

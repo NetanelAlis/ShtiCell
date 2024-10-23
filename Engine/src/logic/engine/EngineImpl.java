@@ -230,8 +230,8 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public ColoredSheetDTO sortRangeOfCells(String range, List<String> columnsToSortBy) {
-        Sheet sortedSheet = this.sheet.copySheet();
+    public ColoredSheetDTO sortRangeOfCells(String range, List<String> columnsToSortBy, String username) {
+        Sheet sortedSheet = this.archive.retrieveVersion(this.getUserActiveVersion(username));
         Sorter sorter = new Sorter(new RangeImpl("sort", range, sortedSheet), columnsToSortBy);
 
         sorter.sort().getRangeCells().forEach(cell -> sortedSheet.getCells().put(cell.getCellId(), cell));
@@ -240,22 +240,26 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public List<String> getColumnsListOfRange(String range) {
-        Range rangeToFilter = new RangeImpl("range of columns", range, this.sheet.copySheet());
+    public List<String> getColumnsListOfRange(String range, String userName) {
+        int userActiveVersion = this.getUserActiveVersion(userName);
+
+        Range rangeToFilter = new RangeImpl("range of columns", range, this.archive.retrieveVersion(userActiveVersion).copySheet());
 
         return rangeToFilter.getColumnsListOfRange();
     }
 
     @Override
-    public List<EffectiveValueDTO> getUniqueItemsToFilterBy(String column, String rangeName) {
-        Range range = new RangeImpl("range of unique items", rangeName, this.sheet.copySheet());
+    public List<EffectiveValueDTO> getUniqueItemsToFilterBy(String column, String rangeName, String username) {
+        int userActiveVersion = this.getUserActiveVersion(username);
+
+        Range range = new RangeImpl("range of unique items", rangeName, this.archive.retrieveVersion(userActiveVersion).copySheet());
 
         return this.getUniqueItemsInColumn(column, range);
     }
 
     @Override
-    public LinkedHashMap<EffectiveValueDTO, LinkedHashMap<EffectiveValueDTO, EffectiveValueDTO>> getGraphFromRange(String rangeToBuildGraphFrom) {
-        GraphSeriesBuilder graphSeries = new GraphSeriesBuilder(new RangeImpl("range of graph", rangeToBuildGraphFrom, this.sheet.copySheet()));
+    public LinkedHashMap<EffectiveValueDTO, LinkedHashMap<EffectiveValueDTO, EffectiveValueDTO>> getGraphFromRange(String rangeToBuildGraphFrom, String username) {
+        GraphSeriesBuilder graphSeries = new GraphSeriesBuilder(new RangeImpl("range of graph", rangeToBuildGraphFrom, this.archive.retrieveVersion(this.getUserActiveVersion(username)).copySheet()));
 
         return graphSeries.build();
     }
@@ -278,8 +282,11 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public ColoredSheetDTO filterRangeOfCells(String rangeToFilterBy, String columnToFilterBy, List<Integer> itemsToFilterBy) {
-        Sheet filteredSheet = this.sheet.copySheet();
+    public ColoredSheetDTO filterRangeOfCells(String rangeToFilterBy, String columnToFilterBy,
+                                              List<Integer> itemsToFilterBy, String username) {
+
+        int userActiveVersion = this.getUserActiveVersion(username);
+        Sheet filteredSheet = this.archive.retrieveVersion(userActiveVersion).copySheet();
         Range rangeToFilter = new RangeImpl("range to filter", rangeToFilterBy, filteredSheet);
         rangeToFilter.getRangeCells().forEach(cell -> filteredSheet.getCells().remove(cell.getCellId()));
         Filter filter = new Filter(rangeToFilter);
@@ -425,6 +432,20 @@ public class EngineImpl implements Engine {
         return userCurrentPermission;
     } finally {
             this.usersCurrentPermissionReadWriteLock.readLock().unlock();
+        }
+    }
+    @Override
+    public int getUserActiveVersion(String userName){
+        this.usersActiveSheetVersionReadWriteLock.readLock().lock();
+
+        try{
+            if(this.usersActiveSheetVersion.containsKey(userName)){
+                return this.usersActiveSheetVersion.get(userName);
+            } else {
+                throw new RuntimeException("user name: " + userName + " dosnt exists.");
+            }
+        } finally {
+            this.usersActiveSheetVersionReadWriteLock.readLock().unlock();
         }
     }
 

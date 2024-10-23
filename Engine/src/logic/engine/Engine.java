@@ -37,15 +37,17 @@ public interface Engine {
 
     void updateCellStyle(CellStyleDTO cellStyleDTO);
 
-    List<String> getColumnsListOfRange(String rangeToFilter);
+    List<String> getColumnsListOfRange(String rangeToFilter, String userName);
 
-    List<EffectiveValueDTO> getUniqueItemsToFilterBy(String columnToFilterBy, String rangeToFilter);
+    List<EffectiveValueDTO> getUniqueItemsToFilterBy(String columnToFilterBy, String rangeToFilter, String username);
 
-    LinkedHashMap<EffectiveValueDTO, LinkedHashMap<EffectiveValueDTO, EffectiveValueDTO>> getGraphFromRange(String rangeToBuildGraphFrom);
+    LinkedHashMap<EffectiveValueDTO, LinkedHashMap<EffectiveValueDTO, EffectiveValueDTO>> getGraphFromRange(String rangeToBuildGraphFrom, String username);
 
     String getSheetName();
 
     void createPermissionRequest(PermissionType requestedPermission, String username);
+
+    int getUserActiveVersion(String userName);
 
     //// DTOs///////
     ColoredSheetDTO getColoredSheetDTO(String userName);
@@ -56,9 +58,9 @@ public interface Engine {
 
     SheetAndRangesDTO getSheetVersionAndRangesAsDTO(int version, String userName);
 
-    ColoredSheetDTO sortRangeOfCells(String range, List<String> columnsToSortBy);
+    ColoredSheetDTO sortRangeOfCells(String range, List<String> columnsToSortBy, String username);
 
-    ColoredSheetDTO filterRangeOfCells(String rangeToFilterBy, String columnToFilterBy, List<Integer> itemsToFilterBy);
+    ColoredSheetDTO filterRangeOfCells(String rangeToFilterBy, String columnToFilterBy, List<Integer> itemsToFilterBy, String username);
 
     SheetMetaDataDTO getSheetMetaDataDTO(String userName);
 

@@ -52,7 +52,7 @@ public class SortRangeServlet extends HttpServlet {
                     List<String> columnsToSortBy = Arrays.stream(Constants.GSON_INSTANCE.fromJson(reader, String[].class))
                             .toList();
                     Engine engine = engineManager.getEngine(engineName);
-                    ColoredSheetDTO coloredSheetDTO = engine.sortRangeOfCells(rangeNameFromParam, columnsToSortBy);
+                    ColoredSheetDTO coloredSheetDTO = engine.sortRangeOfCells(rangeNameFromParam, columnsToSortBy, username);
                     response.setStatus(HttpServletResponse.SC_OK);
                     response.getWriter().print(Constants.GSON_INSTANCE.toJson(coloredSheetDTO));
                     response.getWriter().flush();
