@@ -126,7 +126,7 @@ public class SheetImpl implements Sheet {
     }
     
     @Override
-    public Sheet updateSheet(SheetImpl newSheetVersion, boolean isOriginalValueChanged) {
+    public Sheet updateSheet(SheetImpl newSheetVersion, boolean isOriginalValueChanged, String username) {
         List<Cell> cellsThatHaveChanged =
                 TopologicalOrder.SORT.topologicalSort(newSheetVersion.getCells())
                         .stream()
@@ -139,7 +139,10 @@ public class SheetImpl implements Sheet {
 
         // successful calculation. update sheet and relevant cells version
         int newVersion = newSheetVersion.increaseVersion();
-        cellsThatHaveChanged.forEach(cell -> cell.updateVersion(newVersion));
+        cellsThatHaveChanged.forEach((cell) -> {
+            cell.updateVersion(newVersion);
+            cell.setUpdatedBy(username);
+        });
         newSheetVersion.numOfCellsUpdated = cellsThatHaveChanged.size();
 
         return newSheetVersion;
@@ -163,6 +166,11 @@ public class SheetImpl implements Sheet {
         }
     }
     
+    @Override
+    public void updateDynamicSheet() {
+            TopologicalOrder.SORT.topologicalSort(this.getCells()).forEach(Cell::calculateEffectiveValue);
+    }
+    
     private int increaseVersion() {
          return ++this.version;
     }
@@ -179,8 +187,6 @@ public class SheetImpl implements Sheet {
             ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
             return (SheetImpl) ois.readObject();
         } catch (Exception e) {
-            // deal with the runtime error that was discovered as part of invocation
-            // CATCH IN THE UI
             throw new RuntimeException(e);
         }
     }
@@ -201,7 +207,7 @@ public class SheetImpl implements Sheet {
     }
     
     @Override
-    public Map<String, Cell> getCells(){
+    public Map<String, Cell> getCells() {
         return this.cells;
     }
     

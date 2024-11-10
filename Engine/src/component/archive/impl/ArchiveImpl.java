@@ -9,34 +9,49 @@ import java.io.ObjectOutputStream;
 import java.util.*;
 
 public class ArchiveImpl implements Archive {
+
     private final Map<Integer, Sheet> storedSheets = new HashMap<>();
     private final List<Integer> changesPerVersion = new LinkedList<>();
+    
+    private final Object storedSheetsLock = new Object();
+    private final Object changesPerVersionsLock = new Object();
 
     @Override
     public void storeInArchive(Sheet sheet) {
-        this.storedSheets.put(sheet.getVersion(), sheet);
-        this.changesPerVersion.add(sheet.getNumOfCellsUpdated());
+        synchronized (storedSheetsLock) {
+            this.storedSheets.put(sheet.getVersion(), sheet);
+        }
+        
+        synchronized (changesPerVersionsLock) {
+            this.changesPerVersion.add(sheet.getNumOfCellsUpdated());
+        }
     }
 
     @Override
     public Sheet retrieveVersion(int version) {
-        Sheet restoredSheet = this.storedSheets.get(version);
-
-        if (restoredSheet == null) {
-            throw new IllegalArgumentException("Version " + version + " does not exist.");
+        synchronized (storedSheetsLock) {
+            Sheet restoredSheet = this.storedSheets.get(version);
+            
+            if (restoredSheet == null) {
+                throw new IllegalArgumentException("Version " + version + " does not exist.");
+            }
+            
+            return restoredSheet;
         }
-
-        return restoredSheet;
     }
 
     @Override
     public Sheet retrieveLatestVersion() {
-        return this.retrieveVersion(this.storedSheets.size());
+        synchronized (changesPerVersionsLock) {
+            return this.retrieveVersion(this.changesPerVersion.size());
+        }
     }
 
     @Override
     public List<Integer> getAllVersionsChangesList() {
-        return this.changesPerVersion;
+        synchronized (changesPerVersionsLock) {
+            return this.changesPerVersion;
+        }
     }
 
     @Override

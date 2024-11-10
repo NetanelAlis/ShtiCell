@@ -1,0 +1,46 @@
+.button {
+    -fx-padding: 5px 10px;
+    -fx-font-size: 12px; /* font size */
+    -fx-font-weight: Bold;
+    -fx-background-color: #5c7cfa; /* Change background color on hover */
+    -fx-text-fill: #f5f5ff;
+    -fx-border-color: #5c7cfa; /* blue border color */
+    -fx-border-width: 3px; /* border thickness */
+    -fx-cursor: hand; /* cursor style */
+    -fx-border-radius: 12px; /* rounded border */
+    -fx-background-radius: 12px;
+}
+
+.button:hover {
+    -fx-text-fill: #f5f5ff; /* text color */
+    -fx-background-color: #4c6ef5; /* background color */
+    -fx-border-color: #4c6ef5;
+}
+
+.button:pressed {
+    -fx-text-fill: #f5f5ff; /* text color */
+    -fx-background-color: #748ffc; /* background color */
+    -fx-border-color: #748ffc;
+}
+
+.label .text {
+    -fx-font-family: Arial;
+    -fx-font-weight: bold;
+}
+
+.hbox-action-line {
+    -fx-background-color: white;
+    -fx-background-radius: 15px ;
+}
+
+.text-field {
+    -fx-background-color: white;
+    -fx-border-width: 0px;
+    -fx-border-color: #91a7ff;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.separator:vertical .line {
+    -fx-margin: 10px 5px 10px 5px;
+}

@@ -1,12 +1,12 @@
 package logic.function;
 
 import component.cell.api.CellType;
-import component.sheet.api.ReadOnlySheet;
+import component.sheet.api.ReadonlySheet;
 import logic.function.returnable.api.Returnable;
 
 public interface Function {
 
     String getFunctionName();
-    Returnable invoke(ReadOnlySheet sheet);
+    Returnable invoke(ReadonlySheet sheet);
     CellType getReturnType();
 }

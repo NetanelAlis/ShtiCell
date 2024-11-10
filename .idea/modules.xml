@@ -5,6 +5,9 @@
       <module fileurl="file://$PROJECT_DIR$/Engine/Engine.iml" filepath="$PROJECT_DIR$/Engine/Engine.iml" />
       <module fileurl="file://$PROJECT_DIR$/GraphicalUserInteface/GraphicalUserInteface.iml" filepath="$PROJECT_DIR$/GraphicalUserInteface/GraphicalUserInteface.iml" />
       <module fileurl="file://$PROJECT_DIR$/Shticell.iml" filepath="$PROJECT_DIR$/Shticell.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ShticellClient/ShticellClient.iml" filepath="$PROJECT_DIR$/ShticellClient/ShticellClient.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ShticellDTO/ShticellDTO.iml" filepath="$PROJECT_DIR$/ShticellDTO/ShticellDTO.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ShticellWebApp/ShticellWebApp.iml" filepath="$PROJECT_DIR$/ShticellWebApp/ShticellWebApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/UserInteface/UserInteface.iml" filepath="$PROJECT_DIR$/UserInteface/UserInteface.iml" />
     </modules>
   </component>

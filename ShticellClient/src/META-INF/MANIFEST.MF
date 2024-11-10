@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: client.main.Main
+Class-Path: ShticellDTO.jar Engine.jar javafx/lib/javafx.base.jar javafx/lib/javafx.controls.jar javafx/lib/javafx.fxml.jar javafx/lib/javafx.graphics.jar javafx/lib/javafx.media.jar javafx/lib/javafx.swing.jar javafx/lib/javafx.web.jar javafx/lib/javafx-swt.jar
+ okHttp/lib/annotations-13.0.jar okHttp/lib/kotlin-stdlib-1.4.10.jar okHttp/lib/kotlin-stdlib-common-1.4.10.jar okHttp/lib/okhttp-4.9.1.jar okHttp/lib/okio-2.8.0.jar gson/gson-2.1.jar gson/gson-2.1-javadoc.jar gson/gson-2.1-sources.jar jaxb/angus-activation.jar jaxb/jakarta.activation-api.jar jaxb/jakarta.xml.bind-api.jar jaxb/jaxb-core.jar jaxb/jaxb-impl.jar jaxb/jaxb-jxc.jar jaxb/jaxb-xjc.jar

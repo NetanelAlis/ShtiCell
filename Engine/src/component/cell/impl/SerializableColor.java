@@ -12,13 +12,6 @@ public class SerializableColor implements Serializable {
     private double blue;
     private double opacity;
 
-    public SerializableColor(double red, double green, double blue, double opacity) {
-        this.red = red;
-        this.green = green;
-        this.blue = blue;
-        this.opacity = opacity;
-    }
-
     public SerializableColor(Color color) {
         this.red = color.getRed();
         this.green = color.getGreen();

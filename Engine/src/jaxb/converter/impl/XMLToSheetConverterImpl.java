@@ -11,12 +11,10 @@ import jaxb.converter.api.XMLToSheetConverter;
 import jaxb.generated.STLCell;
 import jaxb.generated.STLRange;
 import jaxb.generated.STLSheet;
-import logic.function.parser.OriginalValueParser;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.Set;
 
 public class XMLToSheetConverterImpl implements XMLToSheetConverter {
 
@@ -25,13 +23,18 @@ public class XMLToSheetConverterImpl implements XMLToSheetConverter {
         InputStream inputStream = new FileInputStream(xml);
         return this.STLSheetToSheet(this.deserializeFrom(inputStream));
     }
-
+    
+    @Override
+    public Sheet convertFromStream(InputStream inputStream) throws FileNotFoundException, JAXBException {
+        return this.STLSheetToSheet(this.deserializeFrom(inputStream));
+    }
+    
     private Sheet STLSheetToSheet(STLSheet stlSheet) {
         SheetImpl sheet = new SheetImpl(stlSheet);
         stlSheet.getSTLRanges().getSTLRange().forEach(stlRange -> this.createNewRange(stlRange, sheet));
         stlSheet.getSTLCells().getSTLCell().forEach(stlCell -> this.createNewCell(stlCell, sheet));
         sheet.getRanges().forEach((rangeName, range) -> range.populateRange(sheet));
-        return sheet.updateSheet(sheet, true);
+        return sheet.updateSheet(sheet, true, "");
     }
     
     private void createNewRange(STLRange stlRange, SheetImpl sheet) {
@@ -62,19 +65,6 @@ public class XMLToSheetConverterImpl implements XMLToSheetConverter {
                     Cell ID: %s""", sheet.getLayout().getRow(), sheet.getLayout().getColumn(), cellID);
             throw new IllegalArgumentException(format);
         }
-
-        Set<String> rangeNames = OriginalValueParser.SUM.extract(stlCell.getSTLOriginalValue());
-        rangeNames.addAll(OriginalValueParser.AVERAGE.extract(stlCell.getSTLOriginalValue()));
-
-        rangeNames.forEach(rangeName -> {
-            if (!sheet.getRanges().containsKey(rangeName)) {
-                String format = String.format("""
-                    File contains a Range Function for a non-existing range.
-                    Range Name: %s
-                    Cell ID: %s""", rangeName, cellID);
-                throw new IllegalArgumentException(format);
-            }
-        });
 
         Cell cell = new CellImpl(cellID, stlCell.getSTLOriginalValue(), 1, sheet);
         sheet.getCells().put(cell.getCellId(), cell);

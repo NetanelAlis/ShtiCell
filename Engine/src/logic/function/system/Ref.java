@@ -1,7 +1,7 @@
 package logic.function.system;
 
 import component.cell.api.CellType;
-import component.sheet.api.ReadOnlySheet;
+import component.sheet.api.ReadonlySheet;
 import logic.function.Function;
 import logic.function.returnable.api.Returnable;
 import logic.function.returnable.impl.SpecialValues;
@@ -20,7 +20,7 @@ public class Ref implements Function {
     }
 
     @Override
-    public Returnable invoke(ReadOnlySheet sheet) {
+    public Returnable invoke(ReadonlySheet sheet) {
         return sheet.getCell(this.CellID).getEffectiveValue().getCellType().equals(CellType.NO_VALUE) ?
                 SpecialValues.EMPTY :
                 sheet.getCell(this.CellID).getEffectiveValue();

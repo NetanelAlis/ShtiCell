@@ -5,7 +5,6 @@ import logic.function.BinaryFunction;
 import logic.function.Function;
 import logic.function.returnable.api.Returnable;
 import logic.function.returnable.impl.ReturnableImpl;
-import logic.function.returnable.impl.SpecialValues;
 
 public class Equal extends BinaryFunction {
     private final String name = "EQUAL";

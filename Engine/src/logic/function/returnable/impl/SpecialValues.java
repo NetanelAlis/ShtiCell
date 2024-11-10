@@ -33,9 +33,7 @@ public enum SpecialValues implements Returnable {
     public CellType getCellType() {
         return CellType.NO_VALUE;
     }
-
-
-
+    
     @Override
     public <T> T tryConvertTo(Class<T> type) {
         throw new UnsupportedOperationException("Cannot convert Anything to ERROR_VALUE");

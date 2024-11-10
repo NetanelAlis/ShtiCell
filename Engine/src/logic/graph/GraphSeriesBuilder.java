@@ -2,7 +2,7 @@ package logic.graph;
 
 import component.cell.api.Cell;
 import component.range.api.Range;
-import logic.function.returnable.api.Returnable;
+import dto.returnable.EffectiveValueDTO;
 
 import java.util.*;
 
@@ -19,19 +19,28 @@ public class GraphSeriesBuilder {
         this.topRow = Integer.parseInt(graphRange.getFrom().getCellId().substring(1));
     }
 
-    public LinkedHashMap<Returnable, LinkedHashMap <Returnable, Returnable>> build() {
+    public LinkedHashMap<EffectiveValueDTO, LinkedHashMap <EffectiveValueDTO, EffectiveValueDTO>> build() {
 
-        LinkedHashMap<Returnable, LinkedHashMap<Returnable, Returnable>> graphSeries = new LinkedHashMap<>();
+        LinkedHashMap<EffectiveValueDTO, LinkedHashMap<EffectiveValueDTO, EffectiveValueDTO>> graphSeries =
+                new LinkedHashMap<>();
         List<Cell> xAxisCells = this.getCellsInRow(topRow);
         xAxisCells = xAxisCells.subList(1,xAxisCells.size());
-        List<Cell> seriesCategories = this.getCellsInColumn(graphRange.getFrom().getCellId().substring(0,1));
+        
+        List<Cell> seriesCategories =
+                this.getCellsInColumn(graphRange.getFrom().getCellId().substring(0,1));
+        
         seriesCategories = seriesCategories.subList(1,seriesCategories.size());
         List<List<Cell>> yAxisCells = this.getCollFromRange();
 
         for(int i = 0; i < seriesCategories.size(); i++){
             List<Cell> currentYaxisCells = this.getCurrentYaxisCells(i, yAxisCells);
-            graphSeries.put(seriesCategories.get(i).getEffectiveValue(), this.createChart(xAxisCells,currentYaxisCells));
-
+            EffectiveValueDTO categoryKey = new EffectiveValueDTO(seriesCategories.get(i).getEffectiveValue());
+            
+            if (graphSeries.containsKey(categoryKey)){
+                throw new IllegalArgumentException("Duplicate category " + categoryKey.getEffectiveValue());
+            }
+            
+            graphSeries.put(categoryKey, this.createChart(xAxisCells,currentYaxisCells));
         }
 
         return graphSeries;
@@ -57,10 +66,15 @@ public class GraphSeriesBuilder {
         return cols;
     }
 
-    private LinkedHashMap<Returnable, Returnable> createChart(List<Cell> seriesCategories, List<Cell> yCells) {
-        LinkedHashMap<Returnable, Returnable> xyChartMap = new LinkedHashMap<>();
+    private LinkedHashMap<EffectiveValueDTO, EffectiveValueDTO> createChart(List<Cell> seriesCategories, List<Cell> yCells) {
+        LinkedHashMap<EffectiveValueDTO, EffectiveValueDTO> xyChartMap = new LinkedHashMap<>();
         for (int i = 0; i <= seriesCategories.size() - 1 ; i++) {
-            xyChartMap.put(seriesCategories.get(i).getEffectiveValue(), yCells.get(i).getEffectiveValue());
+            EffectiveValueDTO xAxisValue = new EffectiveValueDTO(seriesCategories.get(i).getEffectiveValue());
+            if (xyChartMap.containsKey(xAxisValue)) {
+                throw new IllegalArgumentException("Duplicate category " + xAxisValue.getEffectiveValue());
+            }
+            
+            xyChartMap.put(xAxisValue, new EffectiveValueDTO(yCells.get(i).getEffectiveValue()));
         }
 
         return xyChartMap;

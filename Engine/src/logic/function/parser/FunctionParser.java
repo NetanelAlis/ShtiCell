@@ -423,16 +423,6 @@ public enum FunctionParser {
             Function firstArgument = parseFunction(arguments.getFirst());
             Function secondArgument = parseFunction(arguments.getLast());
 
-            CellType firstArgType = firstArgument.getReturnType();
-            CellType secondArgType = secondArgument.getReturnType();
-
-//            if ((!firstArgType.equals(CellType.STRING) && !firstArgType.equals(CellType.UNKNOWN)) ||
-//                    (!secondArgType.equals(CellType.STRING) && !secondArgType.equals(CellType.UNKNOWN))) {
-//                throw new IllegalArgumentException("Invalid argument types for CONCAT function." +
-//                        " Expected STRING, but got " + firstArgument.getReturnType() +
-//                        " and " + secondArgument.getReturnType());
-//            }
-
             return new Concat(firstArgument, secondArgument);
         }
     },

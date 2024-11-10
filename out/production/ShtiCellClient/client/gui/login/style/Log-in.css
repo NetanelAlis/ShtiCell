@@ -1,0 +1,90 @@
+/* General container alignment */
+.root {
+    -fx-background-color: #ffffff; /* Light background */
+    -fx-padding: 20;
+}
+
+.stack-pane {
+    -fx-background-color: #ffffff;
+}
+
+.welcome-label {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #fbfbfb;
+}
+
+.logo-label {
+    -fx-font-size: 48px;
+    -fx-text-fill: #333;
+    -fx-font-weight: bold;
+}
+
+.input-field {
+    -fx-pref-width: 250px;
+    -fx-pref-height: 40px;
+    -fx-background-color: #fff;
+    -fx-border-width: 2px;
+    -fx-border-color: linear-gradient(to right, #00c6ff, #0072ff);
+    -fx-padding: 5px;
+    -fx-font-size: 14px;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+}
+
+.login-button {
+    -fx-pref-width: 250px;
+    -fx-pref-height: 40px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-background-color: linear-gradient(to right, #00c6ff, #0072ff);
+    -fx-cursor: hand;
+    -fx-border-width: 1px;
+}
+
+.login-button:hover {
+    -fx-pref-width: 250px;
+    -fx-pref-height: 40px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-background-color: linear-gradient(to right, #0072ff, #00c6ff);
+    -fx-cursor: hand;
+    -fx-border-width: 1px;
+}
+
+#error-label .text {
+    -fx-font-family: system;
+    -fx-font-size: 10;
+    -fx-font-weight: normal;
+    -fx-fill: red;
+}
+
+/* ------------- SCROLL PANE ---------------*/
+.scroll-pane .scroll-bar .track-background {
+    -fx-background-color: #f5f5ff;
+}
+
+.scroll-pane .scroll-bar .thumb {
+    -fx-background-color: #dbe4ff;
+    -fx-cursor: hand;
+}
+
+.scroll-pane .scroll-bar .thumb:hover {
+    -fx-background-color: #bac8ff;
+}
+
+.scroll-pane .scroll-bar .thumb:pressed {
+    -fx-background-color: #bac8ff;
+}
+
+.scroll-pane:fitToWidth:fitToHeight .scroll-bar:horizontal .decrement-button .decrement-arrow {
+    -fx-background-color: #bac8ff;
+}
+
+.scroll-pane:fitToWidth:fitToHeight .scroll-bar:horizontal .increment-button .increment-arrow {
+    -fx-background-color: #bac8ff;
+}
