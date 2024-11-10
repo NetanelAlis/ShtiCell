@@ -10,6 +10,7 @@
     -fx-border-radius: 12px; /* rounded border */
     -fx-background-radius: 12px;
 }
+
 .button:hover {
     -fx-text-fill: #f5f5ff; /* text color */
     -fx-background-color: #4c6ef5; /* background color */

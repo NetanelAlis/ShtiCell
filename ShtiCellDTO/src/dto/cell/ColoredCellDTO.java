@@ -7,7 +7,7 @@ import javafx.scene.paint.Color;
 
 public class ColoredCellDTO {
     private final String cellId;
-    private EffectiveValueDTO effectiveValueDTO;
+    private final EffectiveValueDTO effectiveValue;
     private SerializableColor backgroundColor;
     private SerializableColor textColor;
     private final boolean isActive;
@@ -16,12 +16,13 @@ public class ColoredCellDTO {
     public ColoredCellDTO(Cell cell, String cellID) {
         if (cell != null) {
             this.cellId = cell.getCellId();
-            this.effectiveValueDTO = new EffectiveValueDTO(cell.getEffectiveValue());
+            this.effectiveValue = new EffectiveValueDTO(cell.getEffectiveValue());
             this.backgroundColor = cell.getBackgroundColor();
             this.textColor = cell.getTextColor();
             this.isActive = true;
         } else {
             this.cellId = cellID;
+            this.effectiveValue = null;
             this.isActive = false;
             this.backgroundColor = new SerializableColor(Color.WHITE);
             this.textColor = new SerializableColor(Color.BLACK);
@@ -37,7 +38,7 @@ public class ColoredCellDTO {
     }
     
     public EffectiveValueDTO getEffectiveValue() {
-        return this.effectiveValueDTO;
+        return this.effectiveValue;
     }
     
     public Color getBackgroundColor() {

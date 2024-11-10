@@ -3,27 +3,35 @@ package client.gui.home.permission.table;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-public class PermissionTableEntry {
-    StringProperty userName;
-    StringProperty requestType;
-    StringProperty requestStatus;
+import java.util.Objects;
 
-    public PermissionTableEntry(String userName, String requestType, String requestStatus) {
-        this.userName = new SimpleStringProperty(userName);
-        this.requestType = new SimpleStringProperty(requestType);
+public class PermissionTableEntry {
+    private final StringProperty username;
+    private final StringProperty permissionType;
+    private final StringProperty requestStatus;
+    
+    public PermissionTableEntry(String username, String permissionType, String requestStatus) {
+        this.username = new SimpleStringProperty(username);
+        this.permissionType = new SimpleStringProperty(permissionType);
         this.requestStatus = new SimpleStringProperty(requestStatus);
     }
-
-    public String getUserName() {
-        return userName.get();
+    
+    public String getUsername() { return this.username.get(); }
+    
+    public String getPermissionType() { return this.permissionType.get(); }
+    
+    public String getRequestStatus() { return this.requestStatus.get(); }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PermissionTableEntry that = (PermissionTableEntry) o;
+        return Objects.equals(username, that.username) && Objects.equals(permissionType, that.permissionType) && Objects.equals(requestStatus, that.requestStatus);
     }
-
-    public String getRequestType() {
-        return requestType.get();
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(username, permissionType, requestStatus);
     }
-
-    public String getRequestStatus() {
-        return requestStatus.get();
-    }
-
 }

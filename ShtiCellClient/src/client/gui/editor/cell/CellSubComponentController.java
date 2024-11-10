@@ -11,13 +11,13 @@ import javafx.scene.paint.Color;
 
 public class CellSubComponentController {
     
-    @FXML
-    private Label cellComponent;
+    @FXML private Label cellComponent;
+    
     private MainEditorController mainEditorController;
     private StringProperty cellID;
     private Color backgroundColor;
     private Color textColor;
-
+    
     public CellSubComponentController() {
         this.backgroundColor = Color.WHITE;
         this.textColor = Color.BLACK;
@@ -43,8 +43,8 @@ public class CellSubComponentController {
         return this.cellComponent.textProperty();
     }
     
-    public void setMainController(MainEditorController mainEditorController) {
-        this.mainEditorController = mainEditorController;
+    public void setMainController(MainEditorController mainViewController) {
+        this.mainEditorController = mainViewController;
     }
     
     public void deselect(String className) {
@@ -92,12 +92,8 @@ public class CellSubComponentController {
                 (int) (textColor.getGreen() * 255),
                 (int) (textColor.getBlue() * 255));
     }
-
-    public Color getBackgroundColor() {
-        return this.backgroundColor;
-    }
-
-    public Color getTextColor() {
-        return this.textColor;
-    }
+    
+    public Color getBackgroundColor() { return this.backgroundColor; }
+    
+    public Color getTextColor() { return this.textColor; }
 }

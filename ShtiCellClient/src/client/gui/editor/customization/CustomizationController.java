@@ -1,6 +1,6 @@
 package client.gui.editor.customization;
 
-import dto.cell.CellDTO;
+import client.gui.editor.cell.CellSubComponentController;
 import client.gui.editor.main.view.MainEditorController;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
@@ -28,9 +28,8 @@ public class CustomizationController {
     private IntegerProperty columnWidthProperty;
     private IntegerProperty rowHeightProperty;
     private StringProperty columnNameProperty;
-    private final BooleanProperty isInReaderModeProperty;
-
-
+    private BooleanProperty isInReaderModeProperty;
+    
     public CustomizationController() {
         this.isInReaderModeProperty = new SimpleBooleanProperty(true);
         this.columnWidthProperty = new SimpleIntegerProperty();
@@ -45,18 +44,16 @@ public class CustomizationController {
         this.columnIndexLabel.textProperty().bind(Bindings.format("Column %s", columnNameProperty));
         this.columnTextAlignmentLabel.textProperty().bind(Bindings.format("Column %s", columnNameProperty));
         
+        this.columnWidthSpinner.disableProperty().bind(
+                this.columnIndexLabel.textProperty().isEqualTo("Column "));
         
-        this.columnWidthSpinner.disableProperty().bind(this.columnIndexLabel.textProperty().isEqualTo("Column "));
-
+        this.rowHeightSpinner.disableProperty().bind(
+                this.rowIndexLabel.textProperty().isEqualTo("Row "));
         
-        this.rowHeightSpinner.disableProperty().bind(this.rowIndexLabel.textProperty().isEqualTo("Row "));
-
         this.leftAlignmentButton.disableProperty().bind(this.columnNameProperty.isEmpty());
-
         this.centerAlignmentButton.disableProperty().bind(this.columnNameProperty.isEmpty());
-
         this.rightAlignmentButton.disableProperty().bind(this.columnNameProperty.isEmpty());
-
+        
         this.backgroundColorPicker.disableProperty().bind(
                 Bindings.or(this.selectedCellLabel.textProperty().isEmpty(),
                             this.isInReaderModeProperty));
@@ -135,10 +132,10 @@ public class CustomizationController {
         this.textColorPicker.setValue(Color.BLACK);
     }
     
-    public void setMainController(MainEditorController mainEditorController) {
-        this.mainEditorController = mainEditorController;
+    public void setMainController(MainEditorController mainViewController) {
+        this.mainEditorController = mainViewController;
     }
-
+    
     public void setSelectedColumn(String columnName, int currentPrefWidth) {
         this.columnNameProperty.set(columnName);
         this.columnWidthSpinner.getValueFactory().setValue(currentPrefWidth);
@@ -149,10 +146,10 @@ public class CustomizationController {
         this.rowHeightSpinner.getValueFactory().setValue(currentPrefHeight);
     }
     
-    public void setSelectedCell(String cellID, Color backgroundColor, Color textColor) {
-        this.selectedCellLabel.setText(cellID);
-        this.backgroundColorPicker.setValue(backgroundColor);
-        this.textColorPicker.setValue(textColor);
+    public void setSelectedCell(CellSubComponentController cell) {
+        this.selectedCellLabel.setText(cell.cellIDProperty().get());
+        this.backgroundColorPicker.setValue(cell.getBackgroundColor());
+        this.textColorPicker.setValue(cell.getTextColor());
     }
     
     public void deselectCell() {
@@ -176,7 +173,7 @@ public class CustomizationController {
         this.columnWidthSpinner.getValueFactory().setValue(0);
         this.rowHeightSpinner.getValueFactory().setValue(0);
     }
-
+    
     public void disableEditableActions(boolean disable) {
         this.isInReaderModeProperty.set(disable);
     }

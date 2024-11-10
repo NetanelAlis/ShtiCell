@@ -16,7 +16,7 @@
 
 <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxWidth="300.0" minWidth="300.0" prefWidth="300.0" styleClass="customizations-grid" stylesheets="@style/CustomizationsStyle.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.gui.editor.customization.CustomizationController">
    <content>
-      <GridPane alignment="TOP_CENTER" hgap="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" styleClass="customizations-grid" vgap="10.0">
+      <GridPane alignment="TOP_CENTER" hgap="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="customizations-grid" vgap="10.0">
         <columnConstraints>
             <ColumnConstraints maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" />
@@ -42,9 +42,9 @@
             <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="NEVER" />
         </rowConstraints>
          <children>
-            <Spinner fx:id="columnWidthSpinner" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="65.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+            <Spinner fx:id="columnWidthSpinner" prefHeight="25.0" prefWidth="80.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
             <Label text="Width" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-            <Spinner fx:id="rowHeightSpinner" prefHeight="25.0" prefWidth="65.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+            <Spinner fx:id="rowHeightSpinner" prefHeight="25.0" prefWidth="80.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
             <Label text="Height" GridPane.columnIndex="2" GridPane.rowIndex="3" />
             <Label styleClass="header" text="Column\Row Size" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
             <Label styleClass="header" text="Cell Customizations" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="9" />
@@ -70,7 +70,7 @@
             <Label fx:id="rowIndexLabel" text="Row 4" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <Label fx:id="selectedCellLabel" styleClass="sub-header" text="A4" GridPane.columnIndex="2" GridPane.rowIndex="10" />
             <Label styleClass="header" text="Text Alignment" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
-            <Separator prefWidth="200.0" GridPane.columnSpan="3" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+            <Separator prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
             <Separator prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="8" />
             <Label fx:id="columnTextAlignmentLabel" layoutX="31.0" layoutY="79.0" styleClass="sub-header" text="Column A" GridPane.columnIndex="1" GridPane.rowIndex="6" />
             <Button fx:id="resetStyleButton" mnemonicParsing="false" onAction="#onResetClicked" styleClass="reset-button" text="Reset" GridPane.columnIndex="1" GridPane.rowIndex="13">

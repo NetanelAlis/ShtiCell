@@ -1,0 +1,76 @@
+/*--------------ROOT----------------------*/
+.scroll-pane:fitToWidth:fitToHeight {
+    -fx-background-color: #f5f5ff;
+}
+
+.grid-pane {
+    -fx-background-color: #f5f5ff;
+}
+
+/*--------------LABEL----------------------*/
+#table-header {
+    -fx-background-color: linear-gradient(to left, rgba(92,124,250,1) 70%, rgba(112,72,232,1) 100%);
+    -fx-border-radius: 5px 5px 0px 0px;
+    -fx-background-radius: 5px 5px 0px 0px;
+}
+
+#table-header .text {
+    -fx-fill: white;
+    -fx-font-weight: Bold;
+}
+
+/*--------------TABLE----------------------*/
+.table-view {
+    -fx-border-width: 0 0 3px 0;
+    -fx-border-color: #91a7ff;
+}
+
+/* Styling the header */
+.table-view .column-header {
+    -fx-background-color: #91a7ff;
+    -fx-padding: 10px;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-border-color: white;
+}
+
+.table-view:row-selection .column-header-background .nested-column-header .table-column {
+    -fx-border-width: 0px 1px 0px 0px;
+    -fx-border-color: white;
+}
+
+#last-column {
+    -fx-border-width: 0px;
+}
+
+.table-view:row-selection .column-header-background {
+    -fx-background-color: #91a7ff;
+}
+
+/* Styling header labels */
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-alignment: LEFT;
+}
+
+/* Styling individual rows */
+.table-row-cell {
+    -fx-background-color: transparent;
+}
+
+/* Styling even rows */
+.table-row-cell:even {
+    -fx-background-color: rgba(237, 242, 255, 0.50);
+}
+
+/* Styling normal cells */
+.table-cell {
+    -fx-alignment: CENTER-LEFT;
+    -fx-padding: 0px 10px;
+    -fx-border-color: transparent;
+    -fx-font-size: 13px;
+    -fx-text-fill: #606060;
+    -fx-font-family: sans-serif;
+}
+

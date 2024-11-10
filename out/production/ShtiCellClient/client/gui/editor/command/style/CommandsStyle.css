@@ -87,7 +87,7 @@
 .choice-box,
 .menu-button:openvertically{
     -fx-background-color: #f5f5ff;
-    -fx-border-color: white;
+    -fx-border-color: #91a7ff;
     -fx-border-width: 3px;
     -fx-border-radius: 20%;
     -fx-cursor: hand;

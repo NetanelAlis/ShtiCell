@@ -2,17 +2,18 @@ package component.cell.impl;
 
 import component.cell.api.Cell;
 import component.range.api.Range;
-import component.sheet.api.ReadOnlySheet;
+import component.sheet.api.ReadonlySheet;
 import component.sheet.api.Sheet;
 import javafx.scene.paint.Color;
 import logic.function.parser.FunctionParser;
 import logic.function.parser.OriginalValueParser;
 import logic.function.returnable.api.Returnable;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class CellImpl implements Cell {
-    private final ReadOnlySheet sheet;
+    private final ReadonlySheet sheet;
     private String cellId;
     private String originalValue;
     private Returnable effectiveValue;
@@ -21,23 +22,24 @@ public class CellImpl implements Cell {
     private SerializableColor textColor;
     private final List<Cell> dependingOn;
     private final List<Cell> influencingOn;
-
-    public CellImpl(String cellID, String originalValue, int version, ReadOnlySheet sheet) {
+    private String updatedBy;
+    
+    public CellImpl(String cellID, String originalValue, int version, ReadonlySheet sheet) {
         this.cellId = Character.toUpperCase(cellID.charAt(0)) + cellID.substring(1);
         this.originalValue = originalValue;
         this.version = version;
+        this.updatedBy = "";
         this.backgroundColor = new SerializableColor(Color.WHITE);
         this.textColor = new SerializableColor(Color.BLACK);
         this.dependingOn = new ArrayList<>();
         this.influencingOn = new ArrayList<>();
         this.sheet = sheet;
         
-
         this.getInfluencingCellsFromDummy();
         this.setDependencies();
     }
 
-    private void getInfluencingCellsFromDummy(){
+    private void getInfluencingCellsFromDummy() {
         Cell dummyCell = this.sheet.getCell(this.cellId);
         if(dummyCell != null){
             this.influencingOn.addAll(dummyCell.getInfluencedCells());
@@ -97,7 +99,7 @@ public class CellImpl implements Cell {
     }
 
     @Override
-    public void setOriginalValue(String value, int newVersion) {
+    public void setOriginalValue(String value, int newVersion, String username) {
         this.originalValue = value;
         
         this.dependingOn.forEach(cell -> cell.getInfluencedCells().remove(this));
@@ -105,6 +107,7 @@ public class CellImpl implements Cell {
         this.setDependencies();
         
         this.version = newVersion;
+        this.updatedBy = username;
     }
 
     @Override
@@ -165,6 +168,21 @@ public class CellImpl implements Cell {
     }
     
     @Override
+    public String getUpdatedBy() {
+        return this.updatedBy;
+    }
+    
+    @Override
+    public void setUpdatedBy(String username) {
+        this.updatedBy = username;
+    }
+    
+    @Override
+    public void setDynamicValue(String newOriginalValue) {
+        this.originalValue = newOriginalValue;
+    }
+    
+    @Override
     public void setBackgroundColor(Color color) {
         this.backgroundColor = new SerializableColor(color);
     }
@@ -172,7 +190,6 @@ public class CellImpl implements Cell {
     @Override
     public void setTextColor(Color color) {
         this.textColor = new SerializableColor(color);
-        
     }
     
     @Override

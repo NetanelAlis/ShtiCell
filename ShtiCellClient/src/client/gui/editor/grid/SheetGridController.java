@@ -8,10 +8,12 @@ import client.gui.editor.cell.CellSubComponentController;
 import client.gui.editor.cell.DependenciesCellModel;
 import client.gui.editor.main.view.MainEditorController;
 import javafx.scene.control.Button;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import static client.gui.editor.main.view.MainEditorController.effectiveValueFormatter;
 
 public class SheetGridController {
@@ -24,7 +26,7 @@ public class SheetGridController {
     private final List<Button> columnHeaders = new ArrayList<>();
     private final List<Button> rowHeaders = new ArrayList<>();
     private final Map<String, CellSubComponentController> cellsControllers = new HashMap<>();
-
+    
     public void initialize() {
         this.rowHeaders.forEach((button -> {
             button.setOnAction(event -> {
@@ -65,8 +67,8 @@ public class SheetGridController {
         this.cellsControllers.put(cellID, controller);
     }
     
-    public void setMainController(MainEditorController mainEditorController) {
-        this.mainEditorController = mainEditorController;
+    public void setMainController(MainEditorController mainViewController) {
+        this.mainEditorController = mainViewController;
     }
     
     public Map<String, CellSubComponentController> getCellsControllers() {
@@ -74,10 +76,10 @@ public class SheetGridController {
     }
     
     public void initializeGridModel(Map<String, ColoredCellDTO> cells) {
-        this.gridModel = new GridModel(cellsControllers);
+        this.gridModel = new GridModel(this.cellsControllers);
         this.updateGridModel(cells);
     }
-
+    
     public void updateGridModel(Map<String, ColoredCellDTO> cells) {
         cells.forEach((cellID, cell) -> {
             this.gridModel.getCellValueProperty(cellID).set(effectiveValueFormatter(cell.getEffectiveValue()));

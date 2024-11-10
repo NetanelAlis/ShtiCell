@@ -1,9 +1,8 @@
 package logic.function.math;
 
-import component.cell.api.Cell;
 import component.cell.api.CellType;
 import component.range.api.Range;
-import component.sheet.api.ReadOnlySheet;
+import component.sheet.api.ReadonlySheet;
 import logic.function.Function;
 import logic.function.returnable.api.Returnable;
 import logic.function.returnable.impl.ReturnableImpl;
@@ -23,7 +22,7 @@ public class Average implements Function {
     }
     
     @Override
-    public Returnable invoke(ReadOnlySheet sheet) {
+    public Returnable invoke(ReadonlySheet sheet) {
         double sumResult = 0;
         long numOfElements = 0;
         

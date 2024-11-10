@@ -11,7 +11,7 @@ import java.util.Set;
 public interface Cell extends Serializable {
     String getCellId();
     String getOriginalValue();
-    void setOriginalValue(String Value, int newVersion);
+    void setOriginalValue(String Value, int newVersion, String username);
     Returnable getEffectiveValue();
     boolean calculateEffectiveValue();
     int getVersion();
@@ -24,4 +24,7 @@ public interface Cell extends Serializable {
     void updateVersion(int newVersion);
     Set<String> getUsedRanges();
     void updateCellID(String newID);
+    String getUpdatedBy();
+    void setUpdatedBy(String username);
+    void setDynamicValue(String newOriginalValue);
 }

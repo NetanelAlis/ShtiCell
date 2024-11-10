@@ -6,6 +6,7 @@ import component.range.impl.RangeImpl;
 import component.sheet.api.Sheet;
 import component.sheet.topological.order.TopologicalOrder;
 import jaxb.generated.STLSheet;
+
 import java.io.*;
 import java.util.*;
 
@@ -125,7 +126,7 @@ public class SheetImpl implements Sheet {
     }
     
     @Override
-    public Sheet updateSheet(SheetImpl newSheetVersion, boolean isOriginalValueChanged) {
+    public Sheet updateSheet(SheetImpl newSheetVersion, boolean isOriginalValueChanged, String username) {
         List<Cell> cellsThatHaveChanged =
                 TopologicalOrder.SORT.topologicalSort(newSheetVersion.getCells())
                         .stream()
@@ -138,7 +139,10 @@ public class SheetImpl implements Sheet {
 
         // successful calculation. update sheet and relevant cells version
         int newVersion = newSheetVersion.increaseVersion();
-        cellsThatHaveChanged.forEach(cell -> cell.updateVersion(newVersion));
+        cellsThatHaveChanged.forEach((cell) -> {
+            cell.updateVersion(newVersion);
+            cell.setUpdatedBy(username);
+        });
         newSheetVersion.numOfCellsUpdated = cellsThatHaveChanged.size();
 
         return newSheetVersion;
@@ -147,7 +151,7 @@ public class SheetImpl implements Sheet {
     @Override
     public void createRange(String rangeName, String range) {
         if(!this.getRanges().containsKey(rangeName)) {
-                this.getRanges().put(rangeName, new RangeImpl(rangeName, range, this));
+            this.getRanges().put(rangeName, new RangeImpl(rangeName, range, this));
         } else {
             throw new IllegalArgumentException("The Range " + rangeName + " already exists");
         }
@@ -160,6 +164,11 @@ public class SheetImpl implements Sheet {
         } else {
             this.ranges.remove(rangeName);
         }
+    }
+    
+    @Override
+    public void updateDynamicSheet() {
+            TopologicalOrder.SORT.topologicalSort(this.getCells()).forEach(Cell::calculateEffectiveValue);
     }
     
     private int increaseVersion() {
@@ -198,7 +207,7 @@ public class SheetImpl implements Sheet {
     }
     
     @Override
-    public Map<String, Cell> getCells(){
+    public Map<String, Cell> getCells() {
         return this.cells;
     }
     

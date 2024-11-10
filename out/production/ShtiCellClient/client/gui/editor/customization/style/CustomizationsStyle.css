@@ -24,10 +24,6 @@
     -fx-background-color: #bac8ff;
 }
 
-.ranges-grid {
-    -fx-background-color: #f5f5ff;
-}
-
 /*------------------ BUTTON ------------------*/
 .button {
     /* padding */
@@ -113,13 +109,18 @@
 .spinner {
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
+    -fx-padding: 2px 5px;
+    -fx-background-color: #f5f5ff;
+    -fx-border-color: transparent;
+    -fx-cursor: hand;
 }
 
 .spinner .text-field {
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
     -fx-background-insets: 0;
-    -fx-border-color: transparent;
+    -fx-border-width: 3px;
+    -fx-border-color: #91a7ff;
 }
 
 .spinner .increment-arrow-button,
@@ -130,13 +131,16 @@
 }
 
 .color-picker{
+    -fx-padding: 2px 5px;
     -fx-background-color: #f5f5ff;
-    -fx-border-color: transparent;
+    -fx-border-color: #91a7ff;
     -fx-cursor: hand;
+    -fx-border-width: 3px;
+    -fx-border-radius: 20%;
 }
 
 .arrow,
 .increment-arrow,
 .decrement-arrow{
-    -fx-background-color: black;
+    -fx-background-color: #91a7ff;
 }

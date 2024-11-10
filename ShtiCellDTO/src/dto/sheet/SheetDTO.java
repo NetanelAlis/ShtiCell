@@ -4,14 +4,13 @@ import component.cell.api.Cell;
 import component.sheet.api.Sheet;
 import component.sheet.impl.SheetImpl;
 import dto.returnable.EffectiveValueDTO;
-import logic.function.returnable.api.Returnable;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class SheetDTO {
     private final String sheetName;
-    private final LayoutDTO layout;
+    private final SheetDTO.LayoutDTO layout;
     private final Map<String, EffectiveValueDTO> cells;
     private final int version;
     private final int numOfCellsUpdated;
@@ -62,7 +61,7 @@ public class SheetDTO {
         return sheetName;
     }
 
-    public LayoutDTO getLayout() {
+    public SheetDTO.LayoutDTO getLayout() {
         return layout;
     }
 

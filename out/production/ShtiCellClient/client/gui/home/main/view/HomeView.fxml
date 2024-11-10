@@ -5,36 +5,28 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.gui.home.main.view.HomeViewController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" stylesheets="@style/HomeView.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.gui.home.main.view.HomeViewController">
    <top>
-      <VBox minHeight="70.0" spacing="10.0" BorderPane.alignment="CENTER">
-         <children>
-            <Button fx:id="loadSheetButton" mnemonicParsing="false" onAction="#onLoadSheetClicked" text="Load Sheet From File" />
-         </children>
-         <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </padding>
-      </VBox>
+      <Button mnemonicParsing="false" onAction="#onLoadSheetClicked" text="Load Sheet From File">
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="25.0" right="25.0" top="10.0" />
+         </BorderPane.margin>
+      </Button>
    </top>
    <center>
-      <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" BorderPane.alignment="CENTER">
+      <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" minViewportHeight="400.0" minViewportWidth="400.0" minWidth="100.0" prefViewportHeight="400.0" prefViewportWidth="400.0" BorderPane.alignment="CENTER">
          <content>
             <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL">
-               <items>
-                  <fx:include fx:id="sheetTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" minWidth="300.0" source="../../sheet/table/SheetsTable.fxml" BorderPane.alignment="CENTER" />
-                  <fx:include fx:id="permissionTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" minWidth="300.0" source="../../permission/table/PermissionsTable.fxml" />
-               </items>
+              <items>
+                  <fx:include fx:id="sheetsTable" minHeight="200.0" minWidth="300.0" source="../../sheet/table/SheetsTable.fxml" BorderPane.alignment="CENTER" />
+                  <fx:include fx:id="permissionsTable" minHeight="200.0" minWidth="300.0" source="../../permission/table/PermissionsTable.fxml" />
+              </items>
             </SplitPane>
          </content>
       </ScrollPane>
    </center>
    <right>
-      <ScrollPane fitToHeight="true" fitToWidth="true">
-         <content>
-            <fx:include fx:id="commandComponent" source="../../command/CommandsComponent.fxml" />
-         </content>
-      </ScrollPane>
+      <fx:include fx:id="commands" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" minWidth="100.0" source="../../Command/CommandsComponent.fxml" />
    </right>
 </BorderPane>

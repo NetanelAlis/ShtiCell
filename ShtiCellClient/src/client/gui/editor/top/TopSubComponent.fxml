@@ -10,13 +10,13 @@
    <content>
       <ScrollPane fitToHeight="true" fitToWidth="true" vbarPolicy="NEVER">
          <content>
-            <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="20.0" styleClass="hbox">
+            <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="20.0" styleClass="Hbox">
                <children>
                   <fx:include fx:id="actionLine" source="../action/line/ActionLine.fxml" HBox.hgrow="ALWAYS" />
                   <ChoiceBox fx:id="versionsChoiceBox" onMouseClicked="#onVersionMenuClicked" prefWidth="140.0" />
                </children>
                <padding>
-                  <Insets left="10.0" right="20.0" />
+                  <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
                </padding>
             </HBox>
          </content>

@@ -10,6 +10,7 @@ import java.util.List;
 public class CellModel implements ActionLineCellModel, DependenciesCellModel {
     private StringProperty cellIDProperty;
     private StringProperty lastUpdatedVersionProperty;
+    private StringProperty updatedByProperty;
     private StringProperty selectedCellProperty;
     private List<String> dependingOnList;
     private List<String> influencingOnList;
@@ -17,6 +18,7 @@ public class CellModel implements ActionLineCellModel, DependenciesCellModel {
     public CellModel() {
         this.cellIDProperty = new SimpleStringProperty("");
         this.lastUpdatedVersionProperty = new SimpleStringProperty("");
+        this.updatedByProperty = new SimpleStringProperty("");
         this.selectedCellProperty = new SimpleStringProperty();
         this.dependingOnList = new ArrayList<>();
         this.influencingOnList = new ArrayList<>();
@@ -28,7 +30,7 @@ public class CellModel implements ActionLineCellModel, DependenciesCellModel {
         cellIDProperty.bind(Bindings.concat("Cell ID ", this.cellIDProperty));
         
         lastUpdatedVersionProperty.bind(
-                Bindings.concat("Last Updated Version ", this.lastUpdatedVersionProperty));
+                Bindings.format("Updated On Version %s %s", this.lastUpdatedVersionProperty, this.updatedByProperty));
     }
     
     @Override
@@ -39,6 +41,11 @@ public class CellModel implements ActionLineCellModel, DependenciesCellModel {
     @Override
     public StringProperty getLastUpdatedVersionProperty() {
         return this.lastUpdatedVersionProperty;
+    }
+    
+    @Override
+    public StringProperty getUpdatedByProperty() {
+        return this.updatedByProperty;
     }
     
     @Override

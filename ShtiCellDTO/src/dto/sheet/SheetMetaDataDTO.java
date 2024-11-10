@@ -1,34 +1,33 @@
 package dto.sheet;
 
-import user.permission.PermissionType;
-
 public class SheetMetaDataDTO {
+    private String ownerName;
     private String sheetName;
-    private int numberOfCols;
     private int numberOfRows;
-    private String userName;
-    private PermissionType permission;
-
-    public SheetMetaDataDTO(String sheetName, int numberOfCols, int numberOfRows, String userName, PermissionType permission) {
+    private int numberOfColumns;
+    private String permission;
+    
+    public SheetMetaDataDTO(String ownerName,
+                            String sheetName,
+                            int numberOfRows,
+                            int numberOfColumns,
+                            String permission) {
+        this.ownerName = ownerName;
         this.sheetName = sheetName;
-        this.numberOfCols = numberOfCols;
         this.numberOfRows = numberOfRows;
+        this.numberOfColumns = numberOfColumns;
         this.permission = permission;
-        this.userName = userName;
     }
+    
+    public String getOwnerName() { return this.ownerName; }
+    
     public String getSheetName() {
         return this.sheetName;
     }
-    public int getNumberOfCols() {
-        return this.numberOfCols;
-    }
-    public int numberOfRows() {
-        return this.numberOfRows;
-    }
-    public String getUserName() {
-        return this.userName;
-    }
-    public String getPermission() {
-        return this.permission.getType();
-    }
+    
+    public int getNumberOfRows() { return this.numberOfRows; }
+    
+    public int getNumberOfColumns() { return this.numberOfColumns; }
+    
+    public String getPermission() { return this.permission; }
 }

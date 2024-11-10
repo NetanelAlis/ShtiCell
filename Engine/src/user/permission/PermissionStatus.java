@@ -1,18 +1,13 @@
 package user.permission;
 
 public enum PermissionStatus {
-    ACCEPTED("Accepted"),
-    DENIED("Denied"),
-    PENDING("Pending"),
-    OWNER("Owner");
-
-    private final String status;
-
-    PermissionStatus(String status) {
-        this.status = status;
-    }
-
-    public String getStatus() {
-        return this.status;
-    }
+    APPROVED("Approved"),
+    REJECTED("Rejected"),
+    PENDING("Pending");
+    
+    private final String permissionStatus;
+    
+    PermissionStatus(String permissionStatus) { this.permissionStatus = permissionStatus; }
+    
+    public String getPermissionStatus() { return this.permissionStatus; }
 }

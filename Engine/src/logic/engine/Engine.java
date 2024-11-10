@@ -2,15 +2,14 @@ package logic.engine;
 
 import dto.cell.CellDTO;
 import dto.cell.CellStyleDTO;
-import dto.permission.RequestedRequestForTableDTO;
+import dto.filter.FilterParametersDTO;
+import dto.permission.PermissionDTO;
+import dto.permission.SentPermissionRequestDTO;
 import dto.range.RangeDTO;
 import dto.range.RangesDTO;
 import dto.returnable.EffectiveValueDTO;
-import dto.sheet.ColoredSheetDTO;
-import dto.sheet.SheetAndRangesDTO;
-import dto.sheet.SheetMetaDataDTO;
+import dto.sheet.*;
 import dto.version.VersionChangesDTO;
-import user.permission.PermissionType;
 
 import java.io.InputStream;
 import java.util.LinkedHashMap;
@@ -18,63 +17,37 @@ import java.util.List;
 
 public interface Engine {
     void loadData(String path);
-
-    void loadDataFromInputStream(InputStream inputStream);
-
-    void updateSingleCellData(String cellID, String value, String userName);
-
-    boolean isSheetLoaded();
-
-    void loadFromFile(String path);
-
-    void saveToFile(String path);
-
-    RangeDTO addRange(String rangeName, String range);
-
-    void removeRange(String rangeName);
-
-    RangesDTO getAllRanges(String userName);
-
-    void updateCellStyle(CellStyleDTO cellStyleDTO);
-
-    List<String> getColumnsListOfRange(String rangeToFilter, String userName);
-
-    List<EffectiveValueDTO> getUniqueItemsToFilterBy(String columnToFilterBy, String rangeToFilter, String username);
-
-    LinkedHashMap<EffectiveValueDTO, LinkedHashMap<EffectiveValueDTO, EffectiveValueDTO>> getGraphFromRange(String rangeToBuildGraphFrom, String username);
-
-    String getSheetName();
-
-    void createPermissionRequest(PermissionType requestedPermission, String username);
-
-    int getUserActiveVersion(String userName);
-
-    //// DTOs///////
-    ColoredSheetDTO getColoredSheetDTO(String userName);
-
-    CellDTO getSingleCellData(String cellID, String userName);
-
+    void loadDataFromStream(InputStream stream);
+    String getName();
+    ColoredSheetDTO getColoredSheetAsDTO(String username);
+    SheetDTO getSheetAsDTO(String username);
+    CellDTO getSingleCellData(String cellID, String username);
+    void updateSingleCellData(String cellID, String value, String username);
     VersionChangesDTO showVersions();
-
-    SheetAndRangesDTO getSheetVersionAndRangesAsDTO(int version, String userName);
-
+    SheetAndRangesDTO getSheetVersionAsDTO(int version, String username);
+    boolean isUserCannotEdit(int version, String username);
+    boolean isSheetLoaded();
+    void loadFromFile(String path);
+    void saveToFile(String path);
+    RangeDTO addRange(String rangeName, String range);
+    void removeRange(String rangeName);
+    RangesDTO getAllRanges(String username);
+    void updateCellStyle(CellStyleDTO cellStyle);
     ColoredSheetDTO sortRangeOfCells(String range, List<String> columnsToSortBy, String username);
-
-    ColoredSheetDTO filterRangeOfCells(String rangeToFilterBy, String columnToFilterBy, List<Integer> itemsToFilterBy, String username);
-
-    SheetMetaDataDTO getSheetMetaDataDTO(String userName);
-
-    List<RequestedRequestForTableDTO> getAllRequestsAsRequestedRequestForTableDTO();
-
-    void updatePermissionStatus(String requesterUserName, PermissionType requestedPermission, boolean requestApproved, int requestNumber);
-
-    boolean isPermittedToWrite(String username);
-
-    boolean isInLastVersion(String userName);
-
-    void updateUserActiveSheetVersion(String userName);
-
+    ColoredSheetDTO filterRangeOfCells(FilterParametersDTO filterParameters, String username);
+    List<String> getColumnsListOfRange(String rangeToFilter, String username);
+    List<EffectiveValueDTO> getUniqueItemsToFilterBy(String columnToFilterBy, String rangeToFilter, String username);
+    SheetMetaDataDTO getSheetMetaData(String currentUserName);
+    LinkedHashMap<EffectiveValueDTO, LinkedHashMap<EffectiveValueDTO, EffectiveValueDTO>> getGraphFromRange(String rangeToBuildGraphFrom, String username);
+    void createNewPermissionRequest(SentPermissionRequestDTO requestToSend, String sender);
+    List<PermissionDTO> getAllPermissions();
+    void updatePermissionForUser(String sender, boolean answer, int requestID);
+    void updateUserActiveVersion(String username);
+    boolean isPermitted(String username);
+    boolean isInLatestVersion(String username);
+    int getUsersActiveVersion(String username);
     Object getSheetEditLock();
-
-    boolean isUserCantEditTheSheet(int version, String userName);
+    boolean shouldNotifyUser(String username);
+    SheetAndCellDTO dynamicCellUpdate(String cellID, String newOriginalValue, String username);
+    void finishDynamicAnalysis(String username);
 }

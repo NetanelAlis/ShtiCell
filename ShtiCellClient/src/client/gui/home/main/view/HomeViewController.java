@@ -1,21 +1,22 @@
 package client.gui.home.main.view;
 
-import client.Main;
 import client.gui.app.MainAppViewController;
 import client.gui.exception.ExceptionWindowController;
-import client.gui.home.command.CommandComponentController;
-import client.gui.home.command.PermissionRequestTableEntry;
+import client.gui.home.Command.CommandsController;
+import client.gui.home.Command.PermissionRequestTableEntry;
 import client.gui.home.file.upload.FileUploadController;
-import client.gui.home.permission.table.PermissionTableController;
-import client.gui.home.sheet.table.SheetTableController;
+import client.gui.home.permission.table.PermissionsTableController;
 import client.gui.home.sheet.table.SheetTableEntry;
+import client.gui.home.sheet.table.SheetsTableController;
+import client.gui.util.Constants;
+import client.gui.util.http.HttpClientUtil;
+import client.main.Main;
 import client.task.FileLoadingTask;
-import client.util.Constants;
-import client.util.http.HttpClientUtil;
-import dto.permission.ReceivedRequestForTableDTO;
-import dto.permission.SendRequestDTO;
+import dto.permission.ReceivedPermissionRequestDTO;
+import dto.permission.SentPermissionRequestDTO;
 import dto.sheet.SheetMetaDataDTO;
 import javafx.application.Platform;
+import javafx.beans.property.StringProperty;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -29,73 +30,71 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
+
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
 public class HomeViewController implements Closeable {
-
-
-    @FXML private Button loadSheetButton;
-    @FXML private SheetTableController sheetTableController;
-    @FXML private PermissionTableController permissionTableController;
-    @FXML private CommandComponentController commandComponentController;
+    
+    @FXML private CommandsController commandsController;
+    @FXML private SheetsTableController sheetsTableController;
+    @FXML private PermissionsTableController permissionsTableController;
+    
+    private SheetTableEntry selectedSheet;
     private Stage primaryStage;
-    private SheetTableEntry lastSelectedSheetEntry;
-    private MainAppViewController mainAppViewController;
-
-    @FXML public void initialize() {
-        if(this.sheetTableController != null) {
-          this.sheetTableController.setHomeViewController(this);
+    private MainAppViewController mainAppController;
+    
+    @FXML
+    private void initialize() {
+        if (this.sheetsTableController != null) {
+            this.sheetsTableController.setMainController(this);
         }
-
-        if(this.permissionTableController != null) {
-            this.permissionTableController.setHomeViewController(this);
+        
+        if (this.commandsController != null) {
+            this.commandsController.setMainController(this);
         }
-
-        if(this.commandComponentController != null){
-            this.commandComponentController.setHomeViewController(this);
+        
+        if (this.permissionsTableController != null) {
+            this.permissionsTableController.setMainController(this);
         }
-
     }
-
-//    public void setUserNameProperty(String userNameProperty){
-//        this.userNameProperty.set(userNameProperty);
-//    }
-
+    
     @FXML
     void onLoadSheetClicked(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select Sheet file");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("xml files", "*.xml"));
-        File selectedFile = fileChooser.showOpenDialog(primaryStage);
+        File selectedFile = fileChooser.showOpenDialog(this.primaryStage);
         if (selectedFile == null) {
             return;
         }
-
+        
         String absolutePath = selectedFile.getAbsolutePath();
         this.loadNewSheetFromXML(absolutePath);
     }
-
+    
     private void loadNewSheetFromXML(String absolutePath) {
         FileUploadController fileUploadController = this.openFileUploadWindow();
-        Task<Boolean> fileLoadingTask = new FileLoadingTask(absolutePath, fileUploadController, this::addNewSheet);
-
+        Task<Void> fileLoadingTask = new FileLoadingTask(
+                absolutePath,
+                fileUploadController,
+                this::addNewSheet);
+        
         this.bindFileLoadingTaskToUIComponents(fileUploadController, fileLoadingTask);
-
         new Thread(fileLoadingTask).start();
     }
-
+    
     private FileUploadController openFileUploadWindow() {
         FileUploadController fileUploadController = null;
         try {
             // Load the FileUploadController and FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/gui/home/file/upload/FileUploadComponent.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(Constants.FILE_UPLOAD_FXML_RESOURCE_LOCATION));
             Parent root = loader.load();
-
+            
             fileUploadController = loader.getController();
-
+            
             // Set the scene and content
             Stage popUpStage = new Stage();
             Scene scene = new Scene(root);
@@ -103,152 +102,144 @@ public class HomeViewController implements Closeable {
             fileUploadController.setStage(popUpStage);
             popUpStage.getIcons().add(
                     new Image(Objects.requireNonNull(
-                            Main.class.getResourceAsStream(Constants.SHTICELL_ICON_LOCATION))));
+                            Main.class.getResourceAsStream(Constants.SHTICELL_LOGO_RESOURCE_LOCATION))));
             // Make the window modal (blocks interactions with the main window)
             popUpStage.initModality(Modality.APPLICATION_MODAL);
-
+            
             // Show the window
             popUpStage.show();
-
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        
         return fileUploadController;
     }
-
-    private void bindFileLoadingTaskToUIComponents(FileUploadController fileUploadController, Task<Boolean> fileLoadingTask) {
+    
+    private void bindFileLoadingTaskToUIComponents(FileUploadController fileUploadController, Task<Void> fileLoadingTask) {
         fileUploadController.bindProgressComponents(fileLoadingTask);
     }
-
-    public void addNewSheet(SheetMetaDataDTO sheetMetaDataDTO) {
-        this.sheetTableController.addNewSheet(sheetMetaDataDTO);
+    
+    private void addNewSheet(SheetMetaDataDTO sheetNameAndSize) {
+        this.sheetsTableController.addSheetEntry(sheetNameAndSize);
     }
-
-    private void setPrimaryStage(Stage stage) {
-        this.primaryStage = stage;
-    }
-
-    public void sendNewPermissionRequest(String sheetName, String permissionType) {
-        SendRequestDTO sendRequestDTO = new SendRequestDTO(permissionType, sheetName);
-        String json = Constants.GSON_INSTANCE.toJson(sendRequestDTO);
-        RequestBody body = RequestBody.create(json, MediaType.parse("application/json"));
+    
+    public void sendNewPermissionRequest(String sheetName, String newPermission) {
+        SentPermissionRequestDTO requestToSend = new SentPermissionRequestDTO(sheetName, newPermission);
+        
         Request request = new Request.Builder()
-                .url(Constants.REQUEST_PERMISSION)
-                .post(body)
+                .url(Constants.SEND_PERMISSION_REQUEST)
+                .post(RequestBody.create(Constants.GSON_INSTANCE.toJson(requestToSend),
+                        MediaType.parse("application/json")))
                 .build();
-
+        
         HttpClientUtil.runAsync(request, new Callback() {
-
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                Platform.runLater(() -> {;
-                    ExceptionWindowController.openExceptionPopup("Something went wrong: " + e.getMessage());
-                });
-            }
-
+            
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                try (ResponseBody responseBody = response.body()) {
+                try(ResponseBody responseBody = response.body()) {
                     if (response.code() != 200) {
                         String responseBodyString = responseBody.string();
-                        Platform.runLater(() -> {
-                            commandComponentController.updateErrorLabel(responseBodyString);
-                        });
+                        Platform.runLater(() -> commandsController.updateNewRequestErrorLabel(responseBodyString));
                     } else {
-                        Platform.runLater(() -> {
-                            commandComponentController.clearNewPermissionRequest();
-                        });
+                        Platform.runLater(() -> commandsController.clearNewPermissionRequestsFields());
                     }
                 }
             }
-        });
-    }
-
-    public void updateCurrentSelectedSheet(SheetTableEntry newSheetEntry) {
-        this.lastSelectedSheetEntry = newSheetEntry.deepCopy();
-        this.permissionTableController.updateSheetNameInRefresher(newSheetEntry);
-    }
-
-    public void replyToPermissionRequest(PermissionRequestTableEntry selectedItem, boolean approveRequest) {
-        HttpUrl url = HttpUrl.parse(Constants.RESPONSE_TO_PERMISSION_REQUEST)
-                .newBuilder()
-                .addQueryParameter("request_approved", String.valueOf(approveRequest))
-                .build();
-
-        ReceivedRequestForTableDTO permissionRequest = new ReceivedRequestForTableDTO(selectedItem.getPermissions(), selectedItem.getSender(), selectedItem.getSheetName(), selectedItem.getRequestNumber());
-        String json = Constants.GSON_INSTANCE.toJson(permissionRequest);
-
-        RequestBody body = RequestBody.create(json, MediaType.parse("application/json"));
-        Request request = new Request.Builder()
-                .url(url) // Use the URL with query parameter
-                .post(body)
-                .build();
-
-        HttpClientUtil.runAsync(request, new Callback() {
-
+            
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                Platform.runLater(() -> {
-                    ExceptionWindowController.openExceptionPopup("Something went wrong: " + e.getMessage());
-                });
-            }
-
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                try (ResponseBody responseBody = response.body()) {
-                    if (response.code() != 200) {
-                        String responseBodyString = responseBody.string();
-                        Platform.runLater(() -> {
-                            ExceptionWindowController.openExceptionPopup("Something went wrong: " + responseBodyString);
-                        });
-                    }
-                }
+                Platform.runLater(() ->
+                        ExceptionWindowController.openExceptionPopup(
+                                "Something went wrong: " + e.getMessage())
+                );
             }
         });
     }
-
-    public void setAppMainController(MainAppViewController mainAppViewController) {
-        this.mainAppViewController = mainAppViewController;
+    
+    public void setSelectedSheet(SheetTableEntry newValue) {
+        this.selectedSheet = newValue.deepCopy();
+        this.permissionsTableController.setSelectedSheet(this.selectedSheet.getSheetName());
     }
-
+    
+    public void replyToPermissionRequest(PermissionRequestTableEntry selectedRequest, boolean answer) {
+        ReceivedPermissionRequestDTO requestToReplyTo = new ReceivedPermissionRequestDTO(
+                selectedRequest.getSender(),
+                selectedRequest.getSheetName(),
+                selectedRequest.getPermission(),
+                selectedRequest.getRequestID()
+        );
+        
+        HttpUrl url = HttpUrl.parse(Constants.ANSWER_PERMISSION_REQUEST)
+                .newBuilder()
+                .addQueryParameter("answer", String.valueOf(answer))
+                .build();
+        
+        Request request = new Request.Builder()
+                .url(url)
+                .post(RequestBody.create(Constants.GSON_INSTANCE.toJson(requestToReplyTo),
+                        MediaType.parse("application/json")))
+                .build();
+        
+        HttpClientUtil.runAsync(request, new Callback() {
+            
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try(ResponseBody responseBody = response.body()) {
+                    if (response.code() != 200) {
+                        String responseBodyString = responseBody.string();
+                        Platform.runLater(() ->
+                                ExceptionWindowController.openExceptionPopup(
+                                        "Something went wrong: " + responseBodyString)
+                        );
+                    }
+                }
+            }
+            
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Platform.runLater(() ->
+                        ExceptionWindowController.openExceptionPopup(
+                                "Something went wrong: " + e.getMessage())
+                );
+            }
+        });
+    }
+    
+    @Override
+    public void close() throws IOException {
+        this.commandsController.close();
+        this.sheetsTableController.close();
+        this.permissionsTableController.close();
+    }
+    
+    public void setAppMainController(MainAppViewController mainAppController) {
+        this.mainAppController = mainAppController;
+    }
+    
     public void setActive() {
-        if(this.sheetTableController != null) {
-            this.sheetTableController.startSheetTableRefresher();
-        }
-
-        if(this.permissionTableController != null) {
-            this.permissionTableController.startPermissionTableRefresher();
-        }
-
-        if(this.commandComponentController != null){
-            this.commandComponentController.startPermissionTableRefresher();
-        }
+        this.sheetsTableController.startTableRefresher();
+        this.permissionsTableController.startTableRefresher();
+        this.commandsController.startTableRefresher();
     }
-
-    public void close() {
-        this.sheetTableController.close();
-        this.permissionTableController.close();
-        this.commandComponentController.close();
-    }
-
+    
     public void setInActive() {
         try {
-            this.sheetTableController.close();
-            this.permissionTableController.close();
-            this.commandComponentController.close();
-        } catch (Exception ignored) {
-        }
+            this.sheetsTableController.close();
+            this.permissionsTableController.close();
+            this.commandsController.close();
+        } catch (IOException ignore) {}
     }
-
-    public void viewSheet() {
-        if(this.lastSelectedSheetEntry == null){
-            this.commandComponentController.updateViewSheetErrorLabel("Please select a sheet");
-        } else if(this.lastSelectedSheetEntry.getPermissions().equalsIgnoreCase(Constants.NO_PERMISSION)){
-            this.commandComponentController.updateViewSheetErrorLabel("No permission to view sheet");
+    
+    public boolean viewSheet() {
+        if (this.selectedSheet == null) {
+            this.commandsController.updateViewSheetErrorLabel("No sheet selected");
+        } else if (this.selectedSheet.getPermission().equalsIgnoreCase(Constants.NONE_PERMISSION_TYPE)) {
+            this.commandsController.updateViewSheetErrorLabel("Unauthorized to view this sheet");
+        } else {
+            this.mainAppController.switchToEditor(this.selectedSheet.getSheetName());
+            return true;
         }
-        else
-            this.commandComponentController.updateViewSheetErrorLabel("");
-            this.mainAppViewController.switchToEditorPage(this.lastSelectedSheetEntry.getSheetName());
+        return false;
     }
 }

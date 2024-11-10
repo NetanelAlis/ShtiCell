@@ -3,19 +3,16 @@ package dto.sheet;
 import dto.cell.CellDTO;
 
 public class SheetAndCellDTO {
-    ColoredSheetDTO sheet;
-    CellDTO cell;
-
-    public SheetAndCellDTO(ColoredSheetDTO sheet, CellDTO cell) {
-        this.sheet = sheet;
-        this.cell = cell;
+    
+    private final ColoredSheetDTO coloredSheetDTO;
+    private final CellDTO cellDTO;
+    
+    public SheetAndCellDTO(ColoredSheetDTO coloredSheetDTO, CellDTO cellDTO) {
+        this.coloredSheetDTO = coloredSheetDTO;
+        this.cellDTO = cellDTO;
     }
-
-    public ColoredSheetDTO getSheet() {
-        return sheet;
-    }
-
-    public CellDTO getCell() {
-        return cell;
-    }
+    
+    public ColoredSheetDTO getSheetDTO() { return this.coloredSheetDTO; }
+    
+    public CellDTO getCellDTO() { return this.cellDTO; }
 }

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ShticellDTO">
+    <output-path>$PROJECT_DIR$/out/artifacts/ShticellDTO</output-path>
+    <root id="archive" name="ShticellDTO.jar">
+      <element id="module-output" name="ShticellDTO" />
+    </root>
+  </artifact>
+</component>

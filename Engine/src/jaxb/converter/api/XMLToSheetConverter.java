@@ -9,5 +9,4 @@ import java.io.InputStream;
 public interface XMLToSheetConverter {
     Sheet convert(String xml) throws FileNotFoundException, JAXBException;
     Sheet convertFromStream(InputStream inputStream) throws FileNotFoundException, JAXBException;
-
 }

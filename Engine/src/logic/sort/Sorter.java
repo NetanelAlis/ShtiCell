@@ -170,6 +170,3 @@ public class Sorter {
         return column;
     }
 }
-
-
-

@@ -1,0 +1,40 @@
+.main-app-grid-pane {
+    -fx-background-color: white ;
+}
+
+#shticell {
+    -fx-text-fill: #4dabf7;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-color: #edf2ff;
+}
+
+#username .text {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+#back-button {
+    -fx-padding: 5px 10px;
+    -fx-font-size: 12px; /* font size */
+    -fx-font-weight: Bold;
+    -fx-background-color: #5c7cfa; /* Change background color on hover */
+    -fx-text-fill: #f5f5ff;
+    -fx-border-color: #5c7cfa; /* blue border color */
+    -fx-border-width: 3px; /* border thickness */
+    -fx-cursor: hand; /* cursor style */
+    -fx-border-radius: 12px; /* rounded border */
+    -fx-background-radius: 12px;
+}
+
+#back-button:hover {
+    -fx-text-fill: #f5f5ff; /* text color */
+    -fx-background-color: #4c6ef5; /* background color */
+    -fx-border-color: #4c6ef5;
+}
+
+#back-button:pressed {
+    -fx-text-fill: #f5f5ff; /* text color */
+    -fx-background-color: #748ffc; /* background color */
+    -fx-border-color: #748ffc;
+}

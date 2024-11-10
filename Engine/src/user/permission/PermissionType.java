@@ -5,14 +5,10 @@ public enum PermissionType {
     READER("Reader"),
     WRITER("Writer"),
     NONE("None");
-
-    private final String type;
-
-    PermissionType(String type) {
-        this.type = type;
-    }
-
-    public String getType() {
-        return this.type;
-    }
+    
+    private final String permission;
+    
+    PermissionType(String permission) { this.permission = permission; }
+    
+    public String getPermission() { return this.permission; }
 }

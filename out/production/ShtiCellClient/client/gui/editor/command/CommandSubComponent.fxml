@@ -8,6 +8,7 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
@@ -17,7 +18,7 @@
       <GridPane alignment="TOP_CENTER" hgap="5.0" styleClass="commands-grid" vgap="5.0">
         <columnConstraints>
             <ColumnConstraints hgrow="NEVER" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="110.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="130.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="100.0" prefWidth="120.0" />
             <ColumnConstraints hgrow="NEVER" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
         </columnConstraints>
@@ -26,18 +27,22 @@
             <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="NEVER" />
           <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="NEVER" />
           <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="NEVER" />
+            <RowConstraints maxHeight="15.0" minHeight="15.0" prefHeight="15.0" vgrow="NEVER" />
             <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="NEVER" />
-            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="NEVER" />
-            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="NEVER" />
+            <RowConstraints maxHeight="45.0" minHeight="45.0" prefHeight="45.0" vgrow="NEVER" />
             <RowConstraints maxHeight="60.0" minHeight="60.0" prefHeight="60.0" vgrow="NEVER" />
             <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="NEVER" />
-            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="NEVER" />
-            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="NEVER" />
-            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="NEVER" />
-            <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
-            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="NEVER" />
-            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="NEVER" />
-            <RowConstraints />
+            <RowConstraints maxHeight="45.0" minHeight="45.0" prefHeight="45.0" vgrow="NEVER" />
+            <RowConstraints maxHeight="45.0" minHeight="45.0" prefHeight="45.0" vgrow="NEVER" />
+            <RowConstraints maxHeight="60.0" minHeight="60.0" prefHeight="60.0" vgrow="NEVER" />
+            <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="NEVER" />
+            <RowConstraints maxHeight="45.0" minHeight="45.0" prefHeight="45.0" vgrow="NEVER" />
+            <RowConstraints maxHeight="60.0" minHeight="60.0" prefHeight="60.0" vgrow="NEVER" />
+            <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="NEVER" />
+            <RowConstraints maxHeight="45.0" minHeight="45.0" prefHeight="45.0" vgrow="NEVER" />
+            <RowConstraints maxHeight="1.7976931348623157E308" vgrow="ALWAYS" />
+            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="ALWAYS" />
+            <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" />
         </rowConstraints>
          <children>
             <Label text="Top Right Boundary" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
@@ -49,7 +54,7 @@
             <ChoiceBox fx:id="filterColumnChoiceBox" layoutX="158.0" layoutY="156.0" maxWidth="1.7976931348623157E308" onMouseClicked="#onColumnToFilterByClicked" GridPane.columnIndex="2" GridPane.rowIndex="9" />
             <Label styleClass="header" text="Filter" GridPane.columnIndex="1" GridPane.rowIndex="9" />
             <Separator GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="4" />
-            <Separator GridPane.columnSpan="2" GridPane.rowIndex="8" />
+            <Separator GridPane.columnIndex="1" GridPane.rowIndex="8" />
             <Button fx:id="filterButton" mnemonicParsing="false" onAction="#onFilterButtonClicked" text="FILTER" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="11" />
             <Button fx:id="sortButton" mnemonicParsing="false" onAction="#onSortClicked" text="SORT" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="7" />
             <TextField fx:id="columnsToSortByTextField" promptText="Choose Columns Separated By   ;" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.rowIndex="6" />
@@ -60,15 +65,20 @@
             </Label>
             <MenuButton fx:id="filterElementMenuButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Select Items" GridPane.columnIndex="2" GridPane.rowIndex="10" />
             <Label fx:id="filterErrorLabel" alignment="TOP_LEFT" styleClass="error-label" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="10" GridPane.rowSpan="2" GridPane.valignment="TOP" />
-            <Separator layoutX="25.0" layoutY="304.0" GridPane.columnSpan="2" GridPane.rowIndex="12" />
+            <Separator layoutX="25.0" layoutY="304.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
             <Label styleClass="header" text="Graph" GridPane.columnIndex="1" GridPane.rowIndex="13" />
             <ChoiceBox fx:id="graphTypeChoiceBox" layoutX="167.0" layoutY="320.0" maxWidth="1.7976931348623157E308" GridPane.columnIndex="2" GridPane.rowIndex="13" />
-            <Button fx:id="buildGraphButton" layoutX="229.0" layoutY="385.0" mnemonicParsing="false" onAction="#onBuildGraphClicked" text="Build" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="14" />
+            <Button fx:id="buildGraphButton" layoutX="229.0" layoutY="385.0" mnemonicParsing="false" onAction="#onBuildGraphClicked" text="BUILD" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="14" />
             <Label fx:id="graphErrorLabel" layoutX="25.0" layoutY="259.0" styleClass="error-label" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="14" GridPane.rowSpan="2" GridPane.valignment="TOP">
                <font>
                   <Font size="10.0" />
                </font>
             </Label>
+            <Separator prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="15" />
+            <Label styleClass="header" text="Dynamic Analisys" GridPane.columnIndex="1" GridPane.rowIndex="16" />
+            <FlowPane fx:id="dynamicAnalysisFlowPane" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="17" />
+            <Button mnemonicParsing="false" onAction="#onFinishAnalysisClicked" text="Finish Analysis" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="18" />
+            <Button mnemonicParsing="false" onAction="#onAddAnalyserClicked" text="+" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="18" />
          </children>
       </GridPane>
    </content>

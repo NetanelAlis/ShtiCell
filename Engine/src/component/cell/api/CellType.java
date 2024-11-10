@@ -3,9 +3,9 @@ package component.cell.api;
 import logic.function.returnable.impl.SpecialValues;
 
 public enum CellType {
-    NUMERIC(Double.class){
+    NUMERIC(Double.class) {
         @Override
-        public String toString(){
+        public String toString() {
             return "Numeric";
         }
     },

@@ -15,45 +15,42 @@ import javafx.scene.control.*;
 import javafx.util.Duration;
 
 public class RangesController {
-
-    @FXML
-    private TextField bottomLeftBoundaryTextField;
-    @FXML
-    private TextField topRightBoundaryTextField;
-    @FXML
-    private TextField rangeNameTextField;
-    @FXML
-    private Button saveRangeButton;
-    @FXML
-    private Button deleteRangeButton;
-    @FXML
-    private Label deleteRangeErrorLabel;
-    @FXML
-    private Label newRangeErrorLabel;
-    @FXML
-    private ListView<RangeDTO> rangesListView;
+    
+    @FXML private TextField bottomLeftBoundaryTextField;
+    @FXML private TextField topRightBoundaryTextField;
+    @FXML private TextField rangeNameTextField;
+    @FXML private Button saveRangeButton;
+    @FXML private Button deleteRangeButton;
+    @FXML private Label deleteRangeErrorLabel;
+    @FXML private Label newRangeErrorLabel;
+    @FXML private ListView<RangeDTO> rangesListView;
 
     private MainEditorController mainEditorController;
     private RangesModel rangesModel;
-
+    
     private final BooleanProperty isSelectedRangeProperty;
     private final StringProperty saveRangeErrorProperty;
     private final StringProperty deleteRangeErrorProperty;
     private final BooleanProperty isInReaderModeProperty;
-
+    
     public RangesController() {
+        this.isInReaderModeProperty = new SimpleBooleanProperty(true);
         this.isSelectedRangeProperty = new SimpleBooleanProperty(false);
         this.saveRangeErrorProperty = new SimpleStringProperty("");
         this.deleteRangeErrorProperty = new SimpleStringProperty("");
-        this.isInReaderModeProperty = new SimpleBooleanProperty(true);
     }
-
+    
     @FXML
     private void initialize() {
         this.newRangeErrorLabel.textProperty().bind(this.saveRangeErrorProperty);
         this.deleteRangeErrorLabel.textProperty().bind(this.deleteRangeErrorProperty);
-        this.deleteRangeButton.disableProperty().bind(Bindings.or(this.isInReaderModeProperty,this.rangesListView.getSelectionModel().selectedItemProperty().isNull()));
-
+        
+        this.deleteRangeButton.disableProperty().bind(Bindings.or(
+                this.rangesListView.getSelectionModel().selectedItemProperty().isNull(),
+                this.isInReaderModeProperty
+        ));
+        
+        
         this.saveRangeButton.disableProperty().bind(
                 Bindings.or(
                         this.isInReaderModeProperty,
@@ -62,17 +59,18 @@ public class RangesController {
                                 Bindings.or(
                                         this.topRightBoundaryTextField.textProperty().isEmpty(),
                                         this.bottomLeftBoundaryTextField.textProperty().isEmpty()
-                                )
-                        )));
-
+                )
+        )));
+        
         this.rangesListView.setOnMouseClicked(event -> {
             RangeDTO selectedRange = this.rangesListView.getFocusModel().focusedItemProperty().get();
             this.mainEditorController.toggleSelectedRange(selectedRange, this.rangesModel.getSelectedRange());
             this.rangesModel.setSelectedRange(selectedRange);
             this.isSelectedRangeProperty.set(true);
             this.deleteRangeErrorProperty.set("");
-
+            
         });
+        
         this.rangesListView.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
                 PauseTransition pause = new PauseTransition(Duration.millis(10));
@@ -88,23 +86,18 @@ public class RangesController {
                 pause.play();
             }
         });
-
     }
-
+    
     @FXML
     void onDeleteRangeClicked(ActionEvent event) {
-        RangeDTO rangeToDelete = this.rangesListView.getFocusModel().getFocusedItem();
-        if (rangeToDelete != null){
-            this.mainEditorController.deleteRange(rangeToDelete.getName());
-        }
+        this.mainEditorController.deleteRange(this.rangesListView.getFocusModel().getFocusedItem());
     }
-
-    public void deleteRange() {
-        RangeDTO rangeToDelete = this.rangesListView.getFocusModel().getFocusedItem();
+    
+    public void removeRange(RangeDTO rangeToDelete) {
         this.rangesModel.deleteRange(rangeToDelete);
         this.deleteRangeErrorProperty.set("");
     }
-
+    
     @FXML
     void onSaveRangeClicked(ActionEvent event) {
         this.mainEditorController.addNewRange(
@@ -112,41 +105,41 @@ public class RangesController {
                 this.topRightBoundaryTextField.getText(),
                 this.bottomLeftBoundaryTextField.getText());
     }
-
-    public void addNewRange(RangeDTO newRange) {
-            this.rangesModel.rangesProperty().add(newRange);
-            this.clearNewRangeFields();
+    
+    public void acceptNewRange(RangeDTO newRange) {
+        this.rangesModel.rangesProperty().add(newRange);
+        this.clearNewRangeFields();
     }
-
-    public void setMainController(MainEditorController mainEditorController) {
-        this.mainEditorController = mainEditorController;
+    
+    public void setMainController(MainEditorController mainViewController) {
+        this.mainEditorController = mainViewController;
     }
-
+    
     public void initializeRangesModel(RangesDTO rangesDTO) {
         this.rangesModel = new RangesModelImpl(this.rangesListView, rangesDTO);
-
+        
     }
-
+    
     public void updateSaveErrorLabel(String message) {
         this.saveRangeErrorProperty.set(message);
     }
-
+    
     public void updateDeleteErrorLabel(String message) {
         this.deleteRangeErrorProperty.set(message);
     }
-
+    
     public void resetController() {
         this.clearNewRangeFields();
         this.deleteRangeErrorProperty.set("");
     }
-
+    
     public void clearNewRangeFields() {
         this.rangeNameTextField.textProperty().set("");
         this.topRightBoundaryTextField.textProperty().set("");
         this.bottomLeftBoundaryTextField.textProperty().set("");
         this.saveRangeErrorProperty.set("");
     }
-
+    
     public void disableEditableActions(boolean disable) {
         this.rangeNameTextField.setDisable(disable);
         this.topRightBoundaryTextField.setDisable(disable);
@@ -154,4 +147,3 @@ public class RangesController {
         this.isInReaderModeProperty.set(disable);
     }
 }
-

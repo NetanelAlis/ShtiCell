@@ -1,10 +1,10 @@
 package client.gui.editor.action.line;
 
+import dto.cell.CellDTO;
 import client.gui.editor.cell.ActionLineCellModel;
 import client.gui.editor.cell.CellModel;
-import client.gui.editor.top.TopSubComponentController;
-import dto.cell.CellDTO;
 import client.gui.editor.main.view.MainEditorController;
+import client.gui.editor.top.TopSubComponentController;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -27,8 +27,8 @@ public class ActionLineController {
     private BooleanProperty isInReaderModeProperty;
     
     public ActionLineController() {
-        actionLineCellModel = new CellModel();
-        isInReaderModeProperty = new SimpleBooleanProperty(true);
+        this.actionLineCellModel = new CellModel();
+        this.isInReaderModeProperty = new SimpleBooleanProperty(true);
     }
     
     @FXML
@@ -39,7 +39,7 @@ public class ActionLineController {
         
         this.originalValueTextField.disableProperty().bind(
                 Bindings.or(this.cellIDLabel.textProperty().isEqualTo("Cell ID "),
-                        isInReaderModeProperty));
+                        this.isInReaderModeProperty));
         
         this.actionLineCellModel.bind(
                 this.cellIDLabel.textProperty(),
@@ -57,24 +57,29 @@ public class ActionLineController {
         this.topSubComponentController = topSubComponentController;
     }
     
-    public void setMainController(MainEditorController mainEditorController) {
-        this.mainEditorController = mainEditorController;
+    public void setMainController(MainEditorController mainViewController) {
+        this.mainEditorController = mainViewController;
     }
     
     public void showCellDetails(CellDTO cellDTO) {
-        this.actionLineCellModel.getCellIDProperty().set(cellDTO.getCellId());
         this.originalValueTextField.setText(cellDTO.getOriginalValue());
+        this.actionLineCellModel.getCellIDProperty().set(cellDTO.getCellId());
         this.actionLineCellModel.getLastUpdatedVersionProperty().set(String.valueOf(cellDTO.getVersion()));
+        
+        if (cellDTO.getUpdatedBy().isEmpty()) {
+            this.actionLineCellModel.getUpdatedByProperty().set("");
+        } else {
+            this.actionLineCellModel.getUpdatedByProperty().set("By " + cellDTO.getUpdatedBy());
+        }
     }
-    
     
     public void resetCellModel() {
-        this.actionLineCellModel.getCellIDProperty().set("");
         this.originalValueTextField.setText("");
+        this.actionLineCellModel.getCellIDProperty().set("");
         this.actionLineCellModel.getLastUpdatedVersionProperty().set("");
+        this.actionLineCellModel.getUpdatedByProperty().set("");
     }
     
-
     public void disableEditableActions(boolean disable) {
         this.isInReaderModeProperty.set(disable);
     }

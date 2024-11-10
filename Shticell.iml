@@ -4,7 +4,5 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="angus-activation" level="project" />
-    <orderEntry type="library" name="javafx.base" level="project" />
   </component>
 </module>

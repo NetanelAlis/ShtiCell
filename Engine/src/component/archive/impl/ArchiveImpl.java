@@ -9,20 +9,21 @@ import java.io.ObjectOutputStream;
 import java.util.*;
 
 public class ArchiveImpl implements Archive {
+
     private final Map<Integer, Sheet> storedSheets = new HashMap<>();
     private final List<Integer> changesPerVersion = new LinkedList<>();
-
-    private Object changesPerVersionLock = new Object();
-    private Object storedSheetsLock = new Object();
+    
+    private final Object storedSheetsLock = new Object();
+    private final Object changesPerVersionsLock = new Object();
 
     @Override
     public void storeInArchive(Sheet sheet) {
         synchronized (storedSheetsLock) {
-        this.storedSheets.put(sheet.getVersion(), sheet);
+            this.storedSheets.put(sheet.getVersion(), sheet);
         }
-
-        synchronized (changesPerVersionLock) {
-        this.changesPerVersion.add(sheet.getNumOfCellsUpdated());
+        
+        synchronized (changesPerVersionsLock) {
+            this.changesPerVersion.add(sheet.getNumOfCellsUpdated());
         }
     }
 
@@ -30,25 +31,26 @@ public class ArchiveImpl implements Archive {
     public Sheet retrieveVersion(int version) {
         synchronized (storedSheetsLock) {
             Sheet restoredSheet = this.storedSheets.get(version);
-
+            
             if (restoredSheet == null) {
                 throw new IllegalArgumentException("Version " + version + " does not exist.");
             }
+            
             return restoredSheet;
         }
     }
 
     @Override
     public Sheet retrieveLatestVersion() {
-        synchronized (changesPerVersionLock) {
-        return this.retrieveVersion(this.changesPerVersion.size());
+        synchronized (changesPerVersionsLock) {
+            return this.retrieveVersion(this.changesPerVersion.size());
         }
     }
 
     @Override
     public List<Integer> getAllVersionsChangesList() {
-        synchronized (changesPerVersionLock) {
-        return this.changesPerVersion;
+        synchronized (changesPerVersionsLock) {
+            return this.changesPerVersion;
         }
     }
 

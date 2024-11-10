@@ -8,19 +8,15 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.stage.Stage;
 
-
 public class FileUploadController {
 
-    @FXML
-    private Button cancelButton;
-    @FXML
-    private ProgressBar progressBar;
-    @FXML
-    private Label progressPercentLabel;
+    @FXML private Button cancelButton;
+    @FXML private ProgressBar progressBar;
+    @FXML private Label progressPercentLabel;
 
     private Stage fileUploadStage;
 
-    public void bindProgressComponents(Task<Boolean> aTask) {
+    public void bindProgressComponents(Task<Void> aTask) {
         // task progress bar
         progressBar.progressProperty().bind(aTask.progressProperty());
 
@@ -37,7 +33,7 @@ public class FileUploadController {
         );
 
         cancelButton.setOnAction(event -> this.onTaskClosed(aTask));
-        fileUploadStage.setOnCloseRequest(event -> this.onTaskClosed(aTask));
+        fileUploadStage.setOnCloseRequest(event -> onTaskClosed(aTask));
     }
 
     public void onTaskFinished() {
@@ -48,7 +44,7 @@ public class FileUploadController {
         this.fileUploadStage.close();
     }
 
-    private void onTaskClosed(Task<Boolean> aTask) {
+    private void onTaskClosed(Task<Void> aTask) {
         if (aTask.isRunning()) {
             aTask.cancel();
             onTaskFinished();

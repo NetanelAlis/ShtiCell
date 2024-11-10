@@ -7,8 +7,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="ShticellDTO" />
     <orderEntry type="library" name="javafx.base" level="project" />
-    <orderEntry type="module" module-name="ShtiCellDTO" />
     <orderEntry type="library" name="okHttp" level="project" />
     <orderEntry type="library" name="Gson" level="project" />
   </component>

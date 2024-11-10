@@ -3,20 +3,25 @@ package client.gui.editor.command;
 import client.gui.editor.main.view.MainEditorController;
 import dto.returnable.EffectiveValueDTO;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
+
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import static client.gui.editor.main.view.MainEditorController.effectiveValueFormatter;
+import static client.gui.util.Constants.DYNAMIC_ANALYSIS_FXML_RESOURCE_LOCATION;
 
 public class CommandsController {
     
+    @FXML private FlowPane dynamicAnalysisFlowPane;
     @FXML private TextField bottomLeftBoundaryTextField;
     @FXML private TextField topRightBoundaryTextField;
     @FXML private TextField columnsToSortByTextField;
@@ -29,18 +34,17 @@ public class CommandsController {
     @FXML private Label graphErrorLabel;
     @FXML private Button buildGraphButton;
     @FXML private ChoiceBox<String> graphTypeChoiceBox;
-
-
-    private List<ChoiceBox<String>> additionalColumnsToSortBy;
+    
+    private List<DynamicAnalysisController> dynamicAnalysisControllers;
     
     private MainEditorController mainEditorController;
     private StringProperty sortErrorProperty;
     private StringProperty filterErrorProperty;
     
     public CommandsController() {
+        this.dynamicAnalysisControllers = new ArrayList<>();
         this.sortErrorProperty = new SimpleStringProperty("");
         this.filterErrorProperty = new SimpleStringProperty("");
-        this.additionalColumnsToSortBy = new ArrayList<>();
     }
     
     @FXML private void initialize() {
@@ -58,43 +62,63 @@ public class CommandsController {
         this.graphTypeChoiceBox.getSelectionModel().selectFirst();
 
         this.columnsToSortByTextField.disableProperty().bind(
-                        Bindings.or(this.bottomLeftBoundaryTextField.textProperty().isEmpty(),
-                                    this.topRightBoundaryTextField.textProperty().isEmpty()));
+                Bindings.or(this.bottomLeftBoundaryTextField.textProperty().isEmpty(),
+                        this.topRightBoundaryTextField.textProperty().isEmpty()));
         
         this.filterColumnChoiceBox.disableProperty().bind(
-                            Bindings.or(this.bottomLeftBoundaryTextField.textProperty().isEmpty(),
-                                        this.topRightBoundaryTextField.textProperty().isEmpty()));
+                Bindings.or(this.bottomLeftBoundaryTextField.textProperty().isEmpty(),
+                        this.topRightBoundaryTextField.textProperty().isEmpty()));
 
         this.graphTypeChoiceBox.disableProperty().bind(
-                        Bindings.or(this.bottomLeftBoundaryTextField.textProperty().isEmpty(),
-                                this.topRightBoundaryTextField.textProperty().isEmpty()));
-
+                Bindings.or(this.bottomLeftBoundaryTextField.textProperty().isEmpty(),
+                        this.topRightBoundaryTextField.textProperty().isEmpty()));
+        
         this.filterElementMenuButton.disableProperty().bind(
                 Bindings.or(this.filterColumnChoiceBox.disableProperty(),
                         Bindings.or(this.filterColumnChoiceBox.getSelectionModel()
-                                        .selectedItemProperty().isEqualTo("Select Column"),
-                                this.filterColumnChoiceBox.getSelectionModel().selectedItemProperty().isNull())));
+                                    .selectedItemProperty().isEqualTo("Select Column"),
+                                    this.filterColumnChoiceBox.getSelectionModel().selectedItemProperty().isNull())));
         
-        
+        this.buildGraphButton.disableProperty().bind(
+                Bindings.or(this.graphTypeChoiceBox.disableProperty(),
+                        this.graphTypeChoiceBox.getSelectionModel()
+                                .selectedItemProperty().isEqualTo("Graph Type")));
         
         this.sortButton.disableProperty().bind(this.columnsToSortByTextField.textProperty().isEmpty());
         
         this.filterButton.disableProperty().bind(this.filterElementMenuButton.disableProperty());
-
-        this.buildGraphButton.disableProperty().bind(Bindings.or(this.graphTypeChoiceBox.disableProperty(), this.graphTypeChoiceBox.getSelectionModel().selectedItemProperty().isEqualTo("Graph Type")));
-
+        
+        this.addAnalyser();
+        
         this.filterColumnChoiceBox.getSelectionModel().selectedItemProperty()
                 .addListener((observable, oldValue, newValue) -> {
             if(newValue != null && !newValue.equals("Select Column")) {
-                        this.mainEditorController.getUniqueItems(this.filterColumnChoiceBox.getValue(),
-                                getCurrentRangeAsString());
-                this.filterElementMenuButton.getItems().clear();
+                this.mainEditorController
+                        .getUniqueItems(this.filterColumnChoiceBox.getValue(), getCurrentRangeAsString());
             }
         });
-
     }
-
-    public void updateAvailableItemsToFilterBy(List<EffectiveValueDTO> availableFilters) {
+    
+    private void addAnalyser() {
+        URL editorPageUrl = getClass().getResource(DYNAMIC_ANALYSIS_FXML_RESOURCE_LOCATION);
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(editorPageUrl);
+            this.dynamicAnalysisFlowPane.getChildren().add(fxmlLoader.load());
+            DynamicAnalysisController newController = fxmlLoader.getController();
+            newController.setAnalyserID(this.dynamicAnalysisControllers.size());
+            newController.setCommandsController(this);
+            this.dynamicAnalysisControllers.add(newController);
+            if (this.mainEditorController != null) {
+                this.mainEditorController.addDynamicAnalysisController(this.dynamicAnalysisControllers);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void updateFilterElementMenuButton(List<EffectiveValueDTO> availableFilters) {
+        this.filterElementMenuButton.getItems().clear();
         availableFilters.forEach((item) -> {
             if (item != null) {
                 CheckMenuItem checkMenuItem = new CheckMenuItem(effectiveValueFormatter(item));
@@ -105,6 +129,19 @@ public class CommandsController {
     
     private String getCurrentRangeAsString() {
         return this.topRightBoundaryTextField.getText() + ".." + this.bottomLeftBoundaryTextField.getText();
+    }
+    
+    @FXML
+    void onFinishAnalysisClicked(ActionEvent event) {
+        this.dynamicAnalysisControllers.clear();
+        this.dynamicAnalysisFlowPane.getChildren().clear();
+        this.mainEditorController.exitDynamicAnalysisMode();
+        this.addAnalyser();
+    }
+    
+    @FXML
+    void onAddAnalyserClicked(ActionEvent event) {
+        this.addAnalyser();
     }
     
     @FXML
@@ -120,10 +157,15 @@ public class CommandsController {
             
             List<Integer> itemsToFilterIndices = this.getItemsToFilter();
             
-             this.mainEditorController.filterRange(
-                    getCurrentRangeAsString(),
-                    this.filterColumnChoiceBox.getValue(),
-                    getItemsToFilter());
+            if (itemsToFilterIndices.isEmpty()){
+                this.filterErrorProperty.set("Must select at least one item");
+            } else {
+                this.filterErrorProperty.set("");
+                this.mainEditorController.filterRange(
+                        getCurrentRangeAsString(),
+                        this.filterColumnChoiceBox.getValue(),
+                        getItemsToFilter());
+            }
         }
     }
     
@@ -142,47 +184,45 @@ public class CommandsController {
     @FXML
     void onColumnToFilterByClicked(MouseEvent event) {
         event.consume();
-
         this.mainEditorController.getColumnsOfRange(getCurrentRangeAsString());
     }
-
+    
     public void updateFilterColumnChoiceBox(List<String> columnsToFilterBy) {
         this.filterColumnChoiceBox.getItems().clear();
         this.filterColumnChoiceBox.getItems().add("Select Column");
         if (columnsToFilterBy.isEmpty()) {
             this.filterColumnChoiceBox.getSelectionModel().selectFirst();
-            ;
         } else {
             this.filterColumnChoiceBox.getItems().addAll(columnsToFilterBy);
             this.filterColumnChoiceBox.show();
-
-
         }
     }
 
     @FXML
     void onSortClicked(ActionEvent event) {
-        String rangeToSort = this.topRightBoundaryTextField.getText()
-                + ".." + this.bottomLeftBoundaryTextField.getText();
+        String rangeToSort = this.getCurrentRangeAsString();
+        
         List<String> columnsToSortBy = this.getColumnsToSortBy();
         this.mainEditorController.sortRange(rangeToSort, columnsToSortBy);
     }
 
     @FXML
     public void onBuildGraphClicked(ActionEvent actionEvent) {
-        String rangeToBuildGraphFrom =
-                this.topRightBoundaryTextField.getText() + ".." + this.bottomLeftBoundaryTextField.getText();
-
-        this.mainEditorController.buildGraph(rangeToBuildGraphFrom, this.graphTypeChoiceBox.getSelectionModel().getSelectedItem());
+        String rangeToBuildGraphFrom = this.getCurrentRangeAsString();
+        
+        this.mainEditorController.buildGraph(
+                rangeToBuildGraphFrom, this.graphTypeChoiceBox.getSelectionModel().getSelectedItem());
     }
-
-    public void selectFirstInGraphTypeChoiceBox(){
-            this.graphTypeChoiceBox.getSelectionModel().selectFirst();
-        }
+    
+    public void updateGraphTypeChoiceBox() {
+        this.updateGraphErrorLabel("");
+        this.graphTypeChoiceBox.getSelectionModel().selectFirst();
+    }
 
     private List<String> getColumnsToSortBy() {
         List<String> columnsToSortBy = new ArrayList<>();
         String[] columnsNames = this.columnsToSortByTextField.getText().split(";");
+        
         for (String columnsName : columnsNames) {
             columnsToSortBy.add(columnsName.trim().toUpperCase());
         }
@@ -191,8 +231,8 @@ public class CommandsController {
     }
 
 
-    public void setMainController(MainEditorController mainEditorController) {
-        this.mainEditorController = mainEditorController;
+    public void setMainController(MainEditorController mainViewController) {
+        this.mainEditorController = mainViewController;
     }
 
     public void resetController() {
@@ -219,5 +259,9 @@ public class CommandsController {
 
     public void updateGraphErrorLabel(String message) {
         this.graphErrorLabel.setText(message);
+    }
+    
+    public List<DynamicAnalysisController> getDynamicAnalysisControllers() {
+        return this.dynamicAnalysisControllers;
     }
 }

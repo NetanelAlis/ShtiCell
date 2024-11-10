@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class ColoredSheetDTO {
     private final String sheetName;
-    private final ColoredLayoutDTO layout;
+    private final ColoredSheetDTO.ColoredLayoutDTO layout;
     private final Map<String, ColoredCellDTO> cells;
     private final int version;
     private final int numOfCellsUpdated;
@@ -61,7 +61,7 @@ public class ColoredSheetDTO {
         return sheetName;
     }
     
-    public ColoredLayoutDTO getLayout() {
+    public ColoredSheetDTO.ColoredLayoutDTO getLayout() {
         return layout;
     }
     

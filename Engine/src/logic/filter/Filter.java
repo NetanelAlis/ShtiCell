@@ -35,7 +35,7 @@ public class Filter {
                 String effectiveValueAsString = String.valueOf(columnToFilter.get(i)
                         .getEffectiveValue().getValue());
                 
-                if (item.getEffectiveValue().equals(effectiveValueAsString)) {
+                if (String.valueOf(item.getEffectiveValue()).equals(effectiveValueAsString)) {
                     filteredCells.add(rangeInRows.get(i));
                     break;
                 }
@@ -112,6 +112,3 @@ public class Filter {
         return column;
     }
 }
-
-
-

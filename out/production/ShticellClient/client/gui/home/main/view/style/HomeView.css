@@ -1,0 +1,77 @@
+.root {
+    -fx-background-color: #f5f5ff;
+}
+
+.split-pane {
+    -fx-margin: 10px;
+    -fx-padding: 0px 10px;
+    -fx-background-color: #f5f5ff;
+}
+
+.split-pane:vertical .split-pane-divider {
+    /*-fx-background-color: #dbe4ff;*/
+    -fx-background-color: #bac8ff;
+    -fx-padding: 2px;
+    -fx-background-radius: 50px
+}
+
+.scroll-pane:fitToWidth:fitToHeight {
+    -fx-border-width: 0px;
+    -fx-border-color: red;
+
+}
+
+/* ------------- BUTTON ---------------*/
+.button {
+    /* padding */
+    -fx-font-size: 12px; /* font size */
+    -fx-font-weight: Bold;
+    -fx-text-fill: #91a7ff; /* text color */
+    -fx-background-color: #f5f5ff; /* background color */
+    -fx-border-color: #91a7ff; /* blue border color */
+    -fx-border-width: 3px; /* border thickness */
+    -fx-cursor: hand; /* cursor style */
+    -fx-border-radius: 20%; /* rounded border */
+    -fx-background-radius: 50px;
+}
+.button:hover {
+    -fx-background-color: #91a7ff; /* Change background color on hover */
+    -fx-text-fill: white;
+    -fx-font-weight: Bold;/* text color change on hover, set to black by default */
+    -fx-border-color: #91a7ff; /* blue border color */
+}
+
+.button:pressed {
+    -fx-background-color: #748ffc; /* Change background color on hover */
+    -fx-text-fill: white;
+    -fx-font-weight: Bold;/* text color change on hover, set to black by default */
+    -fx-border-color: #748ffc; /* blue border color */
+}
+
+/* ------------- SCROLL PANE ---------------*/
+.scroll-pane .scroll-bar .track-background {
+    -fx-background-color: #f5f5ff;
+}
+
+.scroll-pane .scroll-bar .thumb {
+    -fx-background-color: #dbe4ff;
+    -fx-cursor: hand;
+}
+
+.scroll-pane .scroll-bar .thumb:hover {
+    -fx-background-color: #bac8ff;
+}
+
+.scroll-pane .scroll-bar .thumb:pressed {
+    -fx-background-color: #bac8ff;
+}
+
+.scroll-pane:fitToWidth:fitToHeight .scroll-bar:horizontal .decrement-button .decrement-arrow {
+    -fx-background-color: #bac8ff;
+}
+
+.scroll-pane:fitToWidth:fitToHeight .scroll-bar:horizontal .increment-button .increment-arrow {
+    -fx-background-color: #bac8ff;
+}
+
+

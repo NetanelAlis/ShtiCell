@@ -3,7 +3,7 @@ package component.range.impl;
 import component.cell.api.Cell;
 import component.cell.impl.CellImpl;
 import component.range.api.Range;
-import component.sheet.api.ReadOnlySheet;
+import component.sheet.api.ReadonlySheet;
 import component.sheet.api.Sheet;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public class RangeImpl implements Range {
     private int numOfUsages;
     
     
-    public RangeImpl(String name, String range, ReadOnlySheet sheet) {
+    public RangeImpl(String name, String range, ReadonlySheet sheet) {
         this.name = name;
         this.numOfUsages = 0;
         String[] edges = range.split("\\.\\.");
@@ -44,18 +44,17 @@ public class RangeImpl implements Range {
     }
     
     @Override
-    public void populateRange(ReadOnlySheet sheet) {
+    public void populateRange(ReadonlySheet sheet) {
         this.cells = new ArrayList<>();
         int fromRow = Integer.parseInt(this.from.substring(1));
         int toRow = Integer.parseInt(this.to.substring(1));
         char fromCol = Character.toUpperCase(this.from.charAt(0));
         char toCol = Character.toUpperCase(this.to.charAt(0));
         
-        
         for (int row = fromRow; row <= toRow; row++) {
             for (char col = fromCol; col <= toCol; col++) {
                 String currentCellId ="" + col + row;
-                Cell currentCell = sheet.getCells().get(currentCellId);
+                Cell currentCell = sheet.getCell(currentCellId);
                 
                 if (currentCell == null) {
                     currentCell = new CellImpl(currentCellId, "", sheet.getVersion(), sheet);
@@ -63,7 +62,6 @@ public class RangeImpl implements Range {
                 }
                 
                 cells.add(currentCell);
-                
             }
         }
     }
@@ -114,7 +112,7 @@ public class RangeImpl implements Range {
                 .mapToObj(c -> String.valueOf((char) c)) // convert int to string
                 .toList();
     }
-
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -2,7 +2,7 @@
     -fx-background-color: #ffffff;
 }
 
-.hbox {
+.Hbox {
     -fx-background-color: #f5f5ff;
 }
 
@@ -80,6 +80,14 @@
     -fx-cursor: hand;
     -fx-border-color: #f5f5ff;
     -fx-border-radius: 1px;
+    -fx-background-radius: 10px;
+}
+
+.new-version-available {
+    -fx-border-color: #ff6b6b;
+    -fx-border-width: 3px;
+    -fx-cursor: hand;
+    -fx-border-radius: 10px;
     -fx-background-radius: 10px;
 }
 
@@ -172,12 +180,4 @@
     -fx-min-height: 7px; /* Minimum height */
     -fx-max-width: 10px; /* Maximum width */
     -fx-max-height: 7px; /* Maximum height */
-}
-
-.not-on-last-version{
-    -fx-border-color: orangered;
-    -fx-border-width: 3px;
-    -fx-cursor: hand;
-    -fx-border-radius: 20%;
-    -fx-background-radius: 50px;
 }

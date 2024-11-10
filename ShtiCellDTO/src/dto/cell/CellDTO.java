@@ -12,6 +12,7 @@ public class CellDTO {
     private final String cellId;
     private final String originalValue;
     private final EffectiveValueDTO effectiveValue;
+    private final String updatedBy;
     private final int version;
     private SerializableColor backgroundColor;
     private SerializableColor textColor;
@@ -25,6 +26,7 @@ public class CellDTO {
             this.cellId = cell.getCellId();
             this.originalValue = cell.getOriginalValue();
             this.effectiveValue = new EffectiveValueDTO(cell.getEffectiveValue());
+            this.updatedBy = cell.getUpdatedBy();
             this.version = cell.getVersion();
             this.backgroundColor = cell.getBackgroundColor();
             this.textColor = cell.getTextColor();
@@ -43,7 +45,8 @@ public class CellDTO {
             this.cellId = cellID;
             this.originalValue = "";
             this.effectiveValue = null;
-            this.version = 0;
+            this.version = 1;
+            this.updatedBy = "";
             this.dependingOn = null;
             this.influencingOn = null;
             this.isActive = false;
@@ -71,6 +74,8 @@ public class CellDTO {
     public int getVersion() {
         return this.version;
     }
+    
+    public String getUpdatedBy() { return this.updatedBy; }
     
     public Color getBackgroundColor() {
         return this.backgroundColor.getColor();

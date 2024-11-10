@@ -1,18 +1,18 @@
 <component name="ArtifactManager">
-  <artifact type="exploded-war" name="ShtiCellWebApp:Web exploded">
-    <output-path>$PROJECT_DIR$/out/artifacts/ShtiCellWebApp_Web_exploded</output-path>
+  <artifact type="exploded-war" name="ShticellWebApp:Web exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/ShticellWebApp_Web_exploded</output-path>
     <root id="root">
-      <element id="javaee-facet-resources" facet="ShtiCellWebApp/web/Web" />
+      <element id="javaee-facet-resources" facet="ShticellWebApp/web/Web" />
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">
-          <element id="module-output" name="ShtiCellWebApp" />
+          <element id="module-output" name="ShticellWebApp" />
           <element id="module-output" name="Engine" />
-          <element id="module-output" name="ShtiCellDTO" />
+          <element id="module-output" name="ShticellDTO" />
         </element>
         <element id="directory" name="lib">
           <element id="library" level="project" name="angus-activation" />
-          <element id="library" level="project" name="javafx.base" />
           <element id="library" level="project" name="Gson" />
+          <element id="library" level="project" name="javafx.base" />
         </element>
       </element>
     </root>

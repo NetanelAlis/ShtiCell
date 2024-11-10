@@ -1,20 +1,19 @@
 package dto.version;
 
 public class EditorRefresherAnswerDTO {
-    private boolean userCantEditTheSheet;
-    private boolean userNotOnLastSheetVersion;
-
-    public EditorRefresherAnswerDTO(boolean userCantEditTheSheet, boolean userNotOnLastSheetVersion) {
-        this.userCantEditTheSheet = userCantEditTheSheet;
-        this.userNotOnLastSheetVersion = userNotOnLastSheetVersion;
+    private final boolean isInReaderMode;
+    private final boolean shouldSendNotification;
+    private final int latestVersion;
+    
+    public EditorRefresherAnswerDTO(boolean isInReaderMode, boolean shouldSendNotification, int latestVersion) {
+        this.isInReaderMode = isInReaderMode;
+        this.shouldSendNotification = shouldSendNotification;
+        this.latestVersion = latestVersion;
     }
-
-    public boolean isUserNotOnLastSheetVersion() {
-        return userNotOnLastSheetVersion;
-    }
-
-     public boolean isUserCantEditTheSheet() {
-        return userCantEditTheSheet;
-    }
-
+    
+    public boolean isInReaderMode() { return this.isInReaderMode; }
+    
+    public boolean shouldSendNotification() { return this.shouldSendNotification; }
+    
+    public int getLatestVersion() { return this.latestVersion; }
 }
