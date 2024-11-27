@@ -1,6 +1,6 @@
 # ShtiCell
 
-**ShtiCell** is a Java-based spreadsheet application inspired by popular tools like Google Sheets and Excel. Developed as part of a course project, it combines familiar spreadsheet functionalities with a unique, flexible, and advanced implementation.
+**ShtiCell** is a Java-based spreadsheet application inspired by popular tools like Google Sheets and Excel. it combines familiar spreadsheet functionalities with a unique, flexible, and advanced implementation.
 
 ## Overview
 
